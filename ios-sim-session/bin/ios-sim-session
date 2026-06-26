@@ -1,0 +1,222 @@
+#!/usr/bin/env bash
+#
+# ios-sim-session — pin one agent session to one iOS Simulator + an isolated build,
+# so multiple concurrent sessions (Claude, Codex, a human in Xcode) never clash on
+# the same device or the same DerivedData build database.
+#
+# The clash has TWO shared resources, and this tool isolates BOTH:
+#   1. the simulator device   — claim a free UDID per session, all simctl ops target it
+#   2. the xcodebuild build    — per-session DerivedData path, so build DBs never collide
+#
+# Session identity: there is no env var that survives across separate shell calls, so
+# the *agent* is the persistence layer. Pick a short session id (SID) once at the start
+# of your session and pass --sid <SID> to every command. The claim file maps SID -> UDID.
+#
+# Usage:
+#   ios-sim-session claim   [--sid SID] [--device "iPhone 17 Pro"]
+#   ios-sim-session udid     --sid SID
+#   ios-sim-session build    --sid SID [--scheme NAME] [--project-dir DIR]
+#   ios-sim-session install  --sid SID [--scheme NAME] [--project-dir DIR]
+#   ios-sim-session capture  --sid SID --out FILE [--launch-args "..."] [--bundle-id ID]
+#   ios-sim-session run      --sid SID --out FILE [--launch-args "..."]   # build+install+capture
+#   ios-sim-session release  --sid SID [--shutdown]
+#   ios-sim-session status
+#
+set -euo pipefail
+
+ROOT="${IOS_SIM_SESSION_HOME:-$HOME/.ios-sim-session}"
+CLAIMS="$ROOT/claims"
+mkdir -p "$CLAIMS"
+
+die() { echo "ios-sim-session: $*" >&2; exit 1; }
+
+# ---- arg parsing ----------------------------------------------------------
+CMD="${1:-}"; shift || true
+SID=""; DEVICE=""; SCHEME=""; PROJECT_DIR=""; OUT=""; LAUNCH_ARGS=""; BUNDLE_ID=""; SHUTDOWN=0; MIN_IOS=""
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --sid)          SID="$2"; shift 2;;
+    --device)       DEVICE="$2"; shift 2;;
+    --min-ios)      MIN_IOS="$2"; shift 2;;
+    --scheme)       SCHEME="$2"; shift 2;;
+    --project-dir)  PROJECT_DIR="$2"; shift 2;;
+    --out)          OUT="$2"; shift 2;;
+    --launch-args)  LAUNCH_ARGS="$2"; shift 2;;
+    --bundle-id)    BUNDLE_ID="$2"; shift 2;;
+    --shutdown)     SHUTDOWN=1; shift;;
+    *) die "unknown option: $1";;
+  esac
+done
+
+claim_file() { echo "$CLAIMS/$1"; }
+
+read_claim() {
+  local f; f="$(claim_file "$1")"
+  [ -f "$f" ] || die "no claim for sid '$1' — run 'claim --sid $1' first"
+  # claim file: line1=UDID line2=PID line3=device line4=derivedData
+  CLAIMED_UDID="$(sed -n 1p "$f")"
+  CLAIMED_DD="$(sed -n 4p "$f")"
+}
+
+# UDIDs currently claimed by ANY session (source of truth for "taken")
+claimed_udids() {
+  [ -d "$CLAIMS" ] || return 0
+  for f in "$CLAIMS"/*; do [ -f "$f" ] && sed -n 1p "$f"; done 2>/dev/null
+}
+
+require_project() {
+  PROJECT_DIR="${PROJECT_DIR:-$PWD}"
+  [ -n "$SCHEME" ] || die "--scheme is required (or set a default in your skill wrapper)"
+}
+
+# resolve a -workspace/-project flag for xcodebuild from PROJECT_DIR
+xcode_target_flag() {
+  local ws proj
+  ws="$(find "$PROJECT_DIR" -maxdepth 2 -name '*.xcworkspace' -not -path '*/.*' | head -1)"
+  if [ -n "$ws" ]; then echo "-workspace $ws"; return; fi
+  proj="$(find "$PROJECT_DIR" -maxdepth 2 -name '*.xcodeproj' -not -path '*/.*' | head -1)"
+  [ -n "$proj" ] || die "no .xcworkspace or .xcodeproj under $PROJECT_DIR"
+  echo "-project $proj"
+}
+
+derived_data_path() { echo "$HOME/Library/Developer/Xcode/DerivedData/${SCHEME}-sess-$1"; }
+
+app_path() {
+  find "$CLAIMED_DD/Build/Products/Debug-iphonesimulator" -maxdepth 1 -name '*.app' | head -1
+}
+
+resolve_bundle_id() {
+  [ -n "$BUNDLE_ID" ] && return 0
+  local app plist
+  app="$(app_path)"; [ -n "$app" ] || die "no built .app found — run build first"
+  plist="$app/Info.plist"
+  BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist" 2>/dev/null)"
+  [ -n "$BUNDLE_ID" ] || die "could not read CFBundleIdentifier from $plist"
+}
+
+# ---- commands -------------------------------------------------------------
+case "$CMD" in
+
+claim)
+  if [ -z "$SID" ]; then SID="s$(date +%s | tail -c 6)"; fi
+  f="$(claim_file "$SID")"
+  if [ -f "$f" ]; then
+    CLAIMED_UDID="$(sed -n 1p "$f")"
+    echo "sid '$SID' already claims $CLAIMED_UDID"; echo "$CLAIMED_UDID"; exit 0
+  fi
+  taken="$(claimed_udids | sort -u || true)"
+  # Eligible pool = SHUTDOWN, unclaimed iPhone sims on a COMPATIBLE iOS runtime.
+  # A sim on iOS 18.x cannot run an app whose deployment target is 26.0, so we must
+  # filter by runtime version, not just "any iPhone".
+  #   MIN_IOS: explicit --min-ios, else IPHONEOS_DEPLOYMENT_TARGET from the project,
+  #            else 0 (=> just take the newest available runtime).
+  if [ -z "${MIN_IOS:-}" ]; then
+    MIN_IOS="$(grep -rh 'IPHONEOS_DEPLOYMENT_TARGET' "${PROJECT_DIR:-$PWD}"/*.xcodeproj/project.pbxproj 2>/dev/null \
+                | grep -oE '[0-9]+(\.[0-9]+)?' | sort -V | head -1)"
+    MIN_IOS="${MIN_IOS:-0}"
+  fi
+  # Emit "rtmajorminor|udid|name" for every eligible candidate, then pick the lowest
+  # runtime that still satisfies MIN_IOS (closest match), or the newest if MIN_IOS=0.
+  cand="$(xcrun simctl list devices available 2>/dev/null | awk -v taken="$taken" -v want="$DEVICE" '
+    /^-- iOS [0-9]/ { rt=$3; next }
+    /\(Shutdown\)/ && /iPhone/ {
+      line=$0
+      name=line; sub(/ +\(.*/,"",name); sub(/^ +/,"",name)
+      match(line, /[0-9A-F]{8}-[0-9A-F-]+/); udid=substr(line,RSTART,RLENGTH)
+      if (udid=="" || rt=="") next
+      if (want!="" && name!=want) next
+      if (index(taken, udid)) next
+      printf "%s|%s|%s\n", rt, udid, name
+    }')"
+  [ -n "$cand" ] || die "no free shutdown iPhone on iOS >= ${MIN_IOS}${DEVICE:+ matching '$DEVICE'}"
+  # filter to rt >= MIN_IOS, sort by version; MIN_IOS=0 => newest first, else lowest-that-fits
+  sel="$(echo "$cand" | awk -F'|' -v min="$MIN_IOS" '{ if (min==0 || $1+0 >= min+0) print }' | sort -t'|' -k1,1V)"
+  [ -n "$sel" ] || die "no simulator on iOS >= ${MIN_IOS}; install a newer runtime or pass --min-ios"
+  if [ "$MIN_IOS" = "0" ]; then line="$(echo "$sel" | tail -1)"; else line="$(echo "$sel" | head -1)"; fi
+  pick="$(echo "$line" | cut -d'|' -f2)"; pickname="$(echo "$line" | cut -d'|' -f3)"
+  xcrun simctl boot "$pick" >/dev/null 2>&1 || true
+  xcrun simctl bootstatus "$pick" -b >/dev/null 2>&1 || true
+  dd="$(SCHEME="${SCHEME:-App}" derived_data_path "$SID")"
+  printf '%s\n%s\n%s\n%s\n' "$pick" "$$" "$pickname" "$dd" > "$f"
+  echo "claimed $pickname ($pick) for sid '$SID'"
+  echo "$pick"
+  ;;
+
+udid)
+  [ -n "$SID" ] || die "--sid required"
+  read_claim "$SID"; echo "$CLAIMED_UDID"
+  ;;
+
+build)
+  [ -n "$SID" ] || die "--sid required"
+  require_project; read_claim "$SID"
+  dd="$(derived_data_path "$SID")"
+  # rewrite claim line4 with the scheme-correct DerivedData path
+  f="$(claim_file "$SID")"; tmp="$(mktemp)"
+  awk -v d="$dd" 'NR==4{print d; next} {print}' "$f" > "$tmp" && mv "$tmp" "$f"
+  flag="$(xcode_target_flag)"
+  echo "building scheme=$SCHEME → DerivedData=$dd"
+  # shellcheck disable=SC2086
+  xcodebuild $flag -scheme "$SCHEME" \
+    -destination "generic/platform=iOS Simulator" \
+    -derivedDataPath "$dd" \
+    build 2>&1 | grep -iE "BUILD (SUCCEEDED|FAILED)|error:" | head
+  ;;
+
+install)
+  [ -n "$SID" ] || die "--sid required"
+  read_claim "$SID"
+  app="$(app_path)"; [ -n "$app" ] || die "no built .app — run build first"
+  resolve_bundle_id
+  xcrun simctl terminate "$CLAIMED_UDID" "$BUNDLE_ID" >/dev/null 2>&1 || true
+  xcrun simctl install "$CLAIMED_UDID" "$app"
+  echo "installed $BUNDLE_ID on $CLAIMED_UDID"
+  ;;
+
+capture)
+  [ -n "$SID" ] || die "--sid required"
+  [ -n "$OUT" ] || die "--out required"
+  read_claim "$SID"; resolve_bundle_id
+  mkdir -p "$(dirname "$OUT")"
+  xcrun simctl terminate "$CLAIMED_UDID" "$BUNDLE_ID" >/dev/null 2>&1 || true
+  sleep 1
+  # shellcheck disable=SC2086
+  xcrun simctl launch "$CLAIMED_UDID" "$BUNDLE_ID" $LAUNCH_ARGS >/dev/null 2>&1 || true
+  sleep 7
+  xcrun simctl io "$CLAIMED_UDID" screenshot "$OUT" >/dev/null 2>&1
+  echo "captured → $OUT"
+  ;;
+
+run)
+  [ -n "$SID" ] || die "--sid required"
+  "$0" build   --sid "$SID" ${SCHEME:+--scheme "$SCHEME"} ${PROJECT_DIR:+--project-dir "$PROJECT_DIR"}
+  "$0" install --sid "$SID"
+  "$0" capture --sid "$SID" --out "$OUT" ${LAUNCH_ARGS:+--launch-args "$LAUNCH_ARGS"}
+  ;;
+
+release)
+  [ -n "$SID" ] || die "--sid required"
+  f="$(claim_file "$SID")"
+  if [ -f "$f" ]; then
+    udid="$(sed -n 1p "$f")"
+    [ "$SHUTDOWN" = "1" ] && xcrun simctl shutdown "$udid" >/dev/null 2>&1 || true
+    rm -f "$f"
+    echo "released sid '$SID'${SHUTDOWN:+ (sim shut down)}"
+  else
+    echo "no claim for sid '$SID'"
+  fi
+  ;;
+
+status)
+  echo "claims in $CLAIMS:"
+  shopt -s nullglob
+  for f in "$CLAIMS"/*; do
+    sid="$(basename "$f")"
+    printf "  %-10s udid=%s pid=%s device=%s\n" "$sid" "$(sed -n 1p "$f")" "$(sed -n 2p "$f")" "$(sed -n 3p "$f")"
+  done
+  ;;
+
+*)
+  die "unknown command '$CMD' (claim|udid|build|install|capture|run|release|status)"
+  ;;
+esac
