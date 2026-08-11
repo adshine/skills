@@ -3,6 +3,8 @@
 A collection of agent skills (Claude Code / Codex / any SKILL.md-compatible agent).
 Each subdirectory is a self-contained skill: a `SKILL.md` plus any helper scripts.
 
+Read: [Stop Guessing at UI Quality: Two Open Skills for AI Coding Agents](articles/introducing-interaction-qa-skills.md)
+
 ## Skills
 
 | Skill | What it does |
