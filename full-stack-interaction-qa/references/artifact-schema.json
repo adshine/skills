@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FSQA event envelope",
+  "type": "object",
+  "required": ["v", "event_id", "run_id", "scenario_id", "case_id", "lane", "t_mono_ns", "t_wall_utc", "payload", "redacted"],
+  "properties": {
+    "v": {"const": 1},
+    "event_id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "scenario_id": {"type": "string"},
+    "case_id": {"type": "string"},
+    "lane": {"enum": ["action", "dom", "frame", "fe_state", "http", "trace", "log", "db", "cache", "queue", "ws", "sse", "fault", "assert"]},
+    "t_mono_ns": {"type": "integer"},
+    "t_wall_utc": {"type": "string"},
+    "action_id": {"type": ["string", "null"]},
+    "intent_id": {"type": ["string", "null"]},
+    "trace_id": {"type": ["string", "null"]},
+    "request_id": {"type": ["string", "null"]},
+    "stream_msg_id": {"type": ["string", "null"]},
+    "entity_id": {"type": ["string", "null"]},
+    "payload": {"type": "object"},
+    "artifacts": {"type": "array", "items": {"type": "string"}},
+    "redacted": {"const": true}
+  }
+}

@@ -1,0 +1,1 @@
+{"name":"save","initial":"idle","terminal":["saved","failed","cancelled"],"transitions":[{"from":"idle","event":"SUBMIT","to":"saving"},{"from":"saving","event":"SAVE_OK","to":"saved"},{"from":"saving","event":"SAVE_FAIL","to":"failed"},{"from":"saving","event":"CANCEL","to":"cancelled"},{"from":"failed","event":"RETRY","to":"saving"}]}

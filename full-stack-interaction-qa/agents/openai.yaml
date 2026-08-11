@@ -1,0 +1,4 @@
+interface:
+  display_name: "Full-Stack Interaction QA"
+  short_description: "Correlate UI interactions with backend truth"
+  default_prompt: "Use $full-stack-interaction-qa to trace this interaction from user action through backend truth and UI reconciliation."

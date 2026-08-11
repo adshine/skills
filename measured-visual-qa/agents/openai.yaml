@@ -1,0 +1,4 @@
+interface:
+  display_name: "Measured Visual QA"
+  short_description: "Measure static and motion UI defects with evidence"
+  default_prompt: "Use $measured-visual-qa to capture, measure, annotate, and verify this static or interaction UI defect."
