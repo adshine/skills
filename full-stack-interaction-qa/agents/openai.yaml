@@ -1,4 +1,4 @@
 interface:
   display_name: "Full-Stack Interaction QA"
-  short_description: "Correlate UI interactions with backend truth"
-  default_prompt: "Use $full-stack-interaction-qa to trace this interaction from user action through backend truth and UI reconciliation."
+  short_description: "Correlate backend-dependent interactions with HTTP/DB/trace truth"
+  default_prompt: "Use $full-stack-interaction-qa only when HTTP/index/backend lanes exist; correlate this backend-dependent interaction with traces and durable state. Do not pick for UI-only search or rendered UI alone."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Motion Visual QA"
+  short_description: "Record and diagnose CSS-native and timeline motion defects"
+  default_prompt: "Use $motion-visual-qa to record, classify, and verify this flicker, enter/exit, easing, or scroll/view motion defect."

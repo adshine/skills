@@ -1,0 +1,4 @@
+interface:
+  display_name: "Interaction Feel QA"
+  short_description: "Verify click, hover, focus, and native widget feel"
+  default_prompt: "Use $interaction-feel-qa to probe hit slop, hover/focus, light-dismiss, and keyboard feel for this control."

@@ -1,25 +1,33 @@
-# Stop Guessing at UI Quality: Two Open Skills for AI Coding Agents
+# Stop Guessing at UI Quality: Interaction QA Skills for AI Coding Agents
 
 Modern coding agents can build an interface remarkably quickly. They can translate a prompt into components, wire up interactions, and produce a working application in minutes.
 
 But "working" is not the same as correct.
 
-A button can respond while its hover state jumps out of alignment. An accordion can open while its trigger is visibly off-center. A checkout flow can pass a frontend test while the backend records the wrong state. A page can match a reference at one viewport and fall apart on mobile.
+A button can respond while its hit target feels wrong. An accordion can settle on-center while its enter transition flickers. A checkout flow can show a success toast while the backend records the wrong state. A CLI can print "Done" while the fixture filesystem is wrong. A page can match a designer's intent at one viewport and drift from the named source at another.
 
-These problems live between disciplines. They require visual judgment, interaction testing, frontend inspection, backend evidence, and a reliable way to explain what failed.
+These problems live between disciplines. One skill cannot own all of them. This repository ships a **frozen QA catalog**: separate `SKILL.md` keys with explicit pick surfaces and non-goals so agents stop collapsing unrelated failures into one workflow.
 
-To help address this, I have published two open-source skills for `SKILL.md`-compatible AI coding agents:
+## Live QA catalog
 
-- [Measured Visual QA](https://github.com/adshine/skills/tree/master/measured-visual-qa)
-- [Full-Stack Interaction QA](https://github.com/adshine/skills/tree/master/full-stack-interaction-qa)
+| Key | Pick when | Non-goals (one line) |
+|-----|-----------|----------------------|
+| [`measured-visual-qa`](https://github.com/adshine/skills/tree/master/measured-visual-qa) | Settled 2D layout/geometry: DOM rect vs painted px, gutters, rhythm, clipping, optical center, open/closed settled states | Not motion, hover feel, WebGL/3D, HTTP/DB, or CLI/fs |
+| [`motion-visual-qa`](https://github.com/adshine/skills/tree/master/motion-visual-qa) | Flicker, enter/exit, easing, duration, PRM, scroll/view timelines, CSS-native motion | Not settled layout px, click feel, HTTP/DB, or CLI/fs |
+| [`interaction-feel-qa`](https://github.com/adshine/skills/tree/master/interaction-feel-qa) | Click/drag/hover/focus feel, hit slop, light-dismiss, keyboard, native widget state | Not 2D layout px, CSS motion, HTTP/DB, or CLI/fs |
+| [`source-fidelity-qa`](https://github.com/adshine/skills/tree/master/source-fidelity-qa) | Shipped UI vs a **named** frozen source (Figma file+node, DS tokens/components, written spec, functional contract) | Not Figma authoring; no named source → Unknown, not Pass |
+| [`cli-fs-qa`](https://github.com/adshine/skills/tree/master/cli-fs-qa) | CLI invocation, exit code, stdout/stderr, isolated fixture FS, lockfile hashes, doctor findings | Not HTTP/DB/trace; spinner is not truth |
+| [`full-stack-interaction-qa`](https://github.com/adshine/skills/tree/master/full-stack-interaction-qa) | Backend-dependent flows where UI must agree with HTTP/trace/DB/queue truth | Not click-feel, static layout, CSS motion, CLI/fs, or 3D; missing backend evidence ≠ Pass |
 
-Together, they give coding agents a more rigorous way to inspect interfaces, diagnose interaction failures, and produce evidence that humans can review.
+### Reserved (not shipped)
 
-## The problem with "looks good"
+| Key | Intent |
+|-----|--------|
+| `spatial-runtime-qa` | Reserved for Three.js / WebGL / canvas **scene-graph** runtime QA. **Not built.** Do not invent the folder. Do not treat `measured-visual-qa` or `full-stack-interaction-qa` as covering WebGL or 3D. |
 
-Visual QA is often reduced to a screenshot and a subjective opinion: "It looks close enough."
+Do **not** create `figma-source-qa`. Figma is one adapter inside `source-fidelity-qa`, not a separate skill and not required when the freeze is tokens or a written contract.
 
-That misses a lot. Spacing may be inconsistent by only a few pixels. Content can be technically centered but optically unbalanced. A hover animation may look correct at its final state while shifting neighboring elements during the transition. A scroll-triggered sequence may work in one direction but fail when reversed.
+## Why the split exists
 
 Traditional automated tests are good at checking discrete facts:
 
@@ -28,91 +36,89 @@ Traditional automated tests are good at checking discrete facts:
 - Did the expected text appear?
 - Did the route change?
 
-Those checks are necessary, but they do not tell us whether the complete experience was correct. A user does not experience the frontend, backend, and animation system as separate layers. They experience one continuous interaction. Our testing methods should reflect that.
+Those checks are necessary, but they do not tell us whether the complete experience was correct. A user does not experience layout, motion, feel, design fidelity, CLI side effects, and backend persistence as one blob. Our skills should not either.
 
-## Measured Visual QA
+**Common misreads this catalog forbids:**
 
-[Measured Visual QA](https://github.com/adshine/skills/tree/master/measured-visual-qa) helps an agent move from subjective inspection to evidence-led analysis.
+- `full-stack-interaction-qa` does **not** cover CLI/filesystem contracts—that is `cli-fs-qa`.
+- `measured-visual-qa` does **not** cover WebGL/3D, motion flicker, or hover feel—those are `spatial-runtime-qa` (reserved), `motion-visual-qa`, and `interaction-feel-qa`.
+- A green FSQA backend lane does not Pass a feel or layout gate.
+- A settled screenshot Pass does not Pass a motion path.
+- `backend: none` is never an FSQA Pass.
 
-The skill provides a workflow for:
+## Measured Visual QA (settled 2D only)
 
-- Measuring alignment, spacing, dimensions, and visual rhythm
-- Comparing implementation screenshots against references
-- Annotating screenshots so problems are easy to locate
-- Extracting representative frames from screen recordings
-- Examining transitional states, not only initial and final states
-- Classifying visual and temporal failures consistently
+[`measured-visual-qa`](https://github.com/adshine/skills/tree/master/measured-visual-qa) moves static layout inspection from opinion to evidence: DOM boxes, painted pixels, and composition rhythm within ≤1 CSS-px tethers.
 
-Imagine a horizontal logo marquee. Each item is centered in its default container, then expands on hover to reveal a label. The resting state may look perfect. The final hover state may also look acceptable. The bug might exist only during the 150 milliseconds between them.
+It owns open/closed **settled** states, gutters, clipping, and optical center. It does **not** own hover animation, flicker, scroll timelines, or 3D.
 
-A neighboring logo could jump. The hovered item could drift away from its original center. Text could be clipped for two frames. The animation might expand from the left instead of symmetrically from the center.
+## Motion Visual QA
 
-Measured Visual QA treats those frames as evidence. Instead of guessing at the CSS, the agent can record the interaction, extract key frames, annotate the changing geometry, and identify the exact state where the visual contract breaks.
+[`motion-visual-qa`](https://github.com/adshine/skills/tree/master/motion-visual-qa) owns temporal evidence. Recording is primary; seeking is optional proof. **SKIPPED seeking ≠ Pass.**
 
-## Full-Stack Interaction QA
+Each path must be classified `time-seekable`, `scroll-seekable`, `state-seekable`, or `recording-only`. The closed CSS-native adapter contract covers `@starting-style` / `allow-discrete`, dialog/popover top-layer, `interpolate-size` / `::details-content`, Houdini `@property`, Scroll/View timelines, offset-path, view transitions, and `prefers-reduced-motion` as a blocking separate context.
 
-[Full-Stack Interaction QA](https://github.com/adshine/skills/tree/master/full-stack-interaction-qa) extends that discipline across the complete product interaction.
+## Interaction Feel QA
 
-It helps agents capture and correlate:
+[`interaction-feel-qa`](https://github.com/adshine/skills/tree/master/interaction-feel-qa) owns whether the control *feels* right: hit slop, sticky hover, focus traps, light-dismiss, keyboard parity, and native widget state. Geometry can pass while feel fails. A visible “Copied” label or spinner is not proof. FSQA is never the gate for these checks.
 
-- User actions and browser state
-- Network requests and responses
-- Console and runtime errors
-- Backend events and persisted state
-- Visual changes over time
-- Final user-visible outcomes
+## Source Fidelity QA
 
-It includes practical interaction models for saving, searching, uploading files, and completing payments.
+[`source-fidelity-qa`](https://github.com/adshine/skills/tree/master/source-fidelity-qa) owns shipped UI versus a **named frozen source**. No named source → **Unknown**, not Pass. A design-system token freeze with no Figma can still Pass or Fail. This skill does not edit Figma files; `figma-use` / `figma-generate-*` are authoring tools, not fidelity QA.
 
-Consider a file upload. The progress indicator reaches 100%, and a success message appears. A simple UI test might declare victory. But what if the backend job failed? What if the database still reports the file as processing? What if refreshing the page makes it disappear?
+## CLI / Filesystem QA
 
-Full-Stack Interaction QA encourages the agent to establish a correlation contract across the entire flow. The click, request, server operation, stored state, and visible confirmation should describe the same successful interaction.
+[`cli-fs-qa`](https://github.com/adshine/skills/tree/master/cli-fs-qa) owns process exit codes, streams, isolated fixture trees, lockfile hashes, and doctor findings. Authoritative truth is the fixture filesystem. Do not require HTTP, DB, or distributed traces—and do not send these contracts to FSQA.
 
-That is a much stronger conclusion than "the success message appeared."
+## Full-Stack Interaction QA (fenced)
+
+[`full-stack-interaction-qa`](https://github.com/adshine/skills/tree/master/full-stack-interaction-qa) correlates user actions with HTTP, streams, traces, logs, and durable state. Missing backend evidence is a gap, never Pass.
+
+It explicitly does **not** clear click-feel, static layout, CSS motion, CLI/fs, or 3D concerns.
 
 ## Better together
 
-Measured Visual QA asks whether the interface looks correct, stays stable through every state, and matches the intended reference.
+A complete quality loop uses the right key per failure class:
 
-Full-Stack Interaction QA asks whether the interaction behaved correctly across every relevant layer and whether the visible result reflects what actually happened.
+1. Name the expected contract and pick the catalog key.
+2. Capture only the evidence lanes that key requires.
+3. Classify the failure without absorbing out-of-scope concerns.
+4. Fix and re-run the same key with identical thresholds.
+5. Escalate across keys only when the owner truly changes (for example settled geometry after a motion fix).
 
-Used together, they support a complete quality loop:
-
-1. Define the expected interaction.
-2. Capture the action and its state changes.
-3. Inspect network, runtime, and backend evidence.
-4. Extract and compare important visual frames.
-5. Classify the failure.
-6. Produce a reproducible report.
-7. Fix the implementation and repeat the evaluation.
-
-This is especially valuable for AI coding agents. Agents are fast at generating code, but speed can encourage guesswork. A structured QA skill gives the agent a disciplined way to observe before editing and verify before claiming success.
+This is especially valuable for AI coding agents. Agents are fast at generating code, but speed can encourage guesswork. A structured, split catalog gives the agent a disciplined way to observe before editing and verify before claiming success.
 
 ## Install and test the skills
 
-Clone the public repository and copy either skill into your agent's skills directory:
+Clone the public repository and copy the skills you need into your agent's skills directory:
 
 ```bash
 git clone https://github.com/adshine/skills.git adshine-skills
 cp -R adshine-skills/measured-visual-qa ~/.codex/skills/
+cp -R adshine-skills/motion-visual-qa ~/.codex/skills/
+cp -R adshine-skills/interaction-feel-qa ~/.codex/skills/
+cp -R adshine-skills/source-fidelity-qa ~/.codex/skills/
+cp -R adshine-skills/cli-fs-qa ~/.codex/skills/
 cp -R adshine-skills/full-stack-interaction-qa ~/.codex/skills/
 ```
 
 Restart or reload your agent if it does not discover newly installed skills automatically. Other `SKILL.md`-compatible agents may use a different skills directory.
 
-Try Measured Visual QA with:
+Example prompts:
 
-> Record the accordion interaction on desktop and mobile. Extract representative frames, measure trigger alignment and content movement, annotate any failures, and produce a visual QA report before recommending changes.
+> Use measured-visual-qa on the settled open and closed accordion states. Measure trigger alignment against divider rhythm and annotate any ≤1 CSS-px tether failures.
 
-Try Full-Stack Interaction QA with:
+> Use motion-visual-qa to record the accordion enter/exit, classify the path, apply the `@starting-style` adapter, and run prefers-reduced-motion as a separate blocking context.
 
-> Test the file-upload flow from selection through persisted completion. Correlate the browser state, network activity, backend result, and refreshed UI. Report any mismatch with reproducible evidence.
+> Use interaction-feel-qa on the popover: probe hit slop, outside dismiss, Escape, and keyboard focus restore. Do not treat a spinner as proof.
 
-Try both together with:
+> Use source-fidelity-qa against this named Figma file+node (or DS token freeze). If no source is named, return Unknown.
 
-> Evaluate this save interaction end to end. Confirm that the persisted state is correct, then inspect the loading, success, error, and refreshed visual states for alignment, layout shifts, and misleading feedback.
+> Use cli-fs-qa to run the scaffold CLI in an isolated fixture and assert exit code, stderr, and lockfile hash.
 
-The best test is an interaction where you already know about a subtle bug. That makes it easier to assess whether the skill helps your agent discover the problem rather than merely describe the happy path.
+> Use full-stack-interaction-qa on file upload from selection through persisted completion. Treat missing DB/trace evidence as a gap, not Pass.
+
+The best test is a case where you already know about a subtle bug. That makes it easier to assess whether the skill helps your agent discover the problem rather than merely describe the happy path.
 
 ## Help improve the skills
 
@@ -122,4 +128,4 @@ After testing, please share your agent and environment, the prompt you used, wha
 
 Use the structured [skill feedback form](https://github.com/adshine/skills/issues/new?template=skill-feedback.yml) to report your experience.
 
-The goal is straightforward: help agents stop guessing, start observing, and produce interface work that is not only functional, but visibly and behaviorally correct.
+The goal is straightforward: help agents stop guessing, pick the right QA key, and produce interface work that is not only functional, but visibly and behaviorally correct.

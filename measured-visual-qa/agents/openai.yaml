@@ -1,4 +1,4 @@
 interface:
   display_name: "Measured Visual QA"
-  short_description: "Measure static and motion UI defects with evidence"
-  default_prompt: "Use $measured-visual-qa to capture, measure, annotate, and verify this static or interaction UI defect."
+  short_description: "Measure settled 2D layout geometry with evidence. Do not use for hover or motion."
+  default_prompt: "Use $measured-visual-qa to capture, measure, annotate, and verify this settled layout or geometry defect. Do not use for hover or motion."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Source Fidelity QA"
+  short_description: "Compare shipped UI to a named frozen source"
+  default_prompt: "Use $source-fidelity-qa to diff this shipped UI against the named frozen source (Figma node, DS tokens, spec, or contract)."
