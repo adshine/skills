@@ -89,10 +89,13 @@ Independent variable is **scroll progress**, not milliseconds.
 - Record scroll offset / timeline progress with every screenshot.
 - **Time-seek: skip.** Do not advance a clock and call it scroll progress.
 
-### f. Pseudo `offset-path` / `offset-distance`
+### f. Pseudo `offset-path` / `offset-distance` (`recording-only`)
 
-- Record travel along the path at native cadence.
-- When `offset-distance` (or equivalent) is readable, sample progress; otherwise use recording-only centroid tracking.
+Force class: **`recording-only`**. Compositor/pseudo offset motion is not honestly time-seekable or scroll-seekable from this skill.
+
+- Prefer native-cadence recording plus encoded frames; track painted pixel centroid of the moving region.
+- Readable `offset-distance` values may annotate the report but do not upgrade the seek class.
+- **Seeking: skip.** SKIPPED seeking is not Pass by itself—recording must still clear the motion gates.
 - Confirm the element stays on the path and does not clip unexpectedly at corners.
 
 ### g. View Transitions API (`recording-only` unless documented hooks)

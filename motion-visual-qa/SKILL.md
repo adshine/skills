@@ -72,7 +72,7 @@ Read `references/animation-adapters.md` for procedures. Summary:
 | **c.** `interpolate-size` + `::details-content` | `state-seekable` + recording | Record open/close. Sample details/summary rects, `[open]`, sibling X, `block-size`. |
 | **d.** Houdini `@property` typed keyframes | `recording-only` | Native-cadence record + encoded frames. Computed custom props if exposed, else pixel centroid. Seeking: skip. |
 | **e.** `ScrollTimeline` / `ViewTimeline` (`view()` / `scroll()`) | `scroll-seekable` | Independent variable is scroll progress, not ms. Time-seek: skip. |
-| **f.** Pseudo `offset-path` / `offset-distance` | recording + optional progress samples | Record path travel; sample distance if exposed. |
+| **f.** Pseudo `offset-path` / `offset-distance` | `recording-only` | Native-cadence record + encoded frames / pixel centroid. Seeking: skip (compositor/pseudo). |
 | **g.** View Transitions API | `recording-only` (unless documented state hooks) | Record old→new; do not invent seek points. |
 | **h.** `prefers-reduced-motion` | separate blocking context | Re-run with PRM on; motion tokens must be 0 ms / suppressed. |
 
