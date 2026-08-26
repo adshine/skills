@@ -1,0 +1,4 @@
+interface:
+  display_name: "CLI / Filesystem QA"
+  short_description: "Verify CLI exit codes, streams, and fixture FS"
+  default_prompt: "Use $cli-fs-qa to run this CLI against an isolated fixture filesystem and assert exit code, streams, and lockfile hashes."

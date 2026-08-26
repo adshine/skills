@@ -1,11 +1,26 @@
 ---
 name: full-stack-interaction-qa
-description: Diagnose and verify backend-dependent product interactions by correlating user actions, rendered UI evidence, frontend state, HTTP, WebSocket or SSE messages, distributed traces, logs, database or queue transitions, deterministic faults, and state-machine assertions. Use for save, upload, search, checkout, payment-like, authentication, optimistic UI, retry, cancellation, offline/reconnect, eventual-consistency, stale-response, duplicate-effect, race-condition, rollback, and partial-failure flows where visible UI behavior must agree with backend truth.
+description: Diagnose and verify backend-dependent product interactions by correlating user actions, rendered UI evidence, frontend state, HTTP, WebSocket or SSE messages, distributed traces, logs, database or queue transitions, deterministic faults, and state-machine assertions. Use for save, upload, search, checkout, payment-like, authentication, optimistic UI, retry, cancellation, offline/reconnect, eventual-consistency, stale-response, duplicate-effect, race-condition, rollback, and partial-failure flows where visible UI behavior must agree with backend truth. Not for click/hover/focus feel (interaction-feel-qa), settled 2D layout pixels (measured-visual-qa), CSS motion/flicker/easing (motion-visual-qa), CLI/fixture-filesystem contracts (cli-fs-qa), shipped-vs-source UI without backend (source-fidelity-qa), or 3D scene graphs (spatial-runtime-qa, not built). Missing HTTP/DB/trace evidence is a gap, never Pass; backend: none is never Pass.
 ---
 
 # Full-Stack Interaction QA
 
 Treat UI frames as one evidence lane, not the source of backend truth. Build a correlation graph for each scenario, assert its product state machine, and run deterministic fault cases before declaring an interaction correct.
+
+## Non-goals (fence)
+
+Do not pick this skill for:
+
+| Concern | Skill |
+|---|---|
+| Click, drag, hover, focus feel, hit slop, light-dismiss | `interaction-feel-qa` |
+| Settled 2D layout / painted geometry | `measured-visual-qa` |
+| CSS motion, flicker, easing, scroll/view timelines | `motion-visual-qa` |
+| CLI exit codes, stdout/stderr, fixture FS, lockfile hashes | `cli-fs-qa` |
+| Shipped UI vs named frozen design/token/spec source | `source-fidelity-qa` |
+| Three.js / WebGL / canvas scene graph | `spatial-runtime-qa` (reserved, not shipped) |
+
+Missing HTTP, database/queue, or trace evidence is an **evidence gap**, never Pass. A scenario marked `backend: none` is never Pass under this skill—route pure UI/CLI work elsewhere.
 
 ## Required workflow
 
@@ -69,6 +84,7 @@ Treat UI frames as one evidence lane, not the source of backend truth. Build a c
 - Confirm before injecting faults into shared or production infrastructure.
 - Do not add test-only backend endpoints to production builds without explicit approval and environment guards.
 - Treat missing evidence as unknown, not pass.
+- Do not clear click-feel, static layout, CSS motion, or CLI/fs gates from this skill—even when backend lanes are green.
 
 ## Resources
 
