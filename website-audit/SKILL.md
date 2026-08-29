@@ -15,7 +15,7 @@ A comprehensive, evidence-based website audit framework designed to evaluate web
 ## When to Use This Skill
 
 - Performing pre-launch, quarterly, or post-incident website quality audits.
-- Evaluating digital products across **16 check buckets** (Security, Performance, A11y, SEO, UX, Legal, etc.).
+- Evaluating digital products across **17 check buckets** (Security, Performance, A11y, SEO, UX, Legal, etc.).
 - Translating technical bugs and vitals into **revenue loss, conversion drop-off, and legal risks**.
 - Generating structured audit backlogs with verified receipts (screenshots, logs, HAR, curl).
 
@@ -29,7 +29,7 @@ Phase 1: Scope & Cover Sheet
       Template: [00-cover-sheet.md](templates/00-cover-sheet.md)
 
 Phase 2: Systematic Multi-Bucket Evaluation
-  └── Test scoped pages against the 16 Pre-loaded Check Buckets.
+  └── Test scoped pages against the 17 Pre-loaded Check Buckets.
       Reference: [check-buckets.md](references/check-buckets.md)
 
 Phase 3: Evidence Capture & Logging (Single Source of Truth)
@@ -58,7 +58,7 @@ Phase 6: Dual-Track Deliverable Generation
 
 ## Scope Flags & Domain Aliases
 
-By default, a full 16-bucket audit is performed. When only specific areas are requested, load only the targeted domain playbooks while maintaining the same dual-track report shape:
+By default, a full 17-bucket audit is performed. When only specific areas are requested, load only the targeted domain playbooks while maintaining the same dual-track report shape:
 
 ```bash
 # Run full audit
@@ -77,7 +77,8 @@ By default, a full 16-bucket audit is performed. When only specific areas are re
 | `ux` | Bucket 5 (Navigation), Bucket 6 (Visual/Layout), Bucket 7 (Interaction), Bucket 8 (States) | Mobile viewports, tap targets, UI states, menus |
 | `performance` | Bucket 10 (Performance & Speed) | Core Web Vitals (LCP/INP/CLS), TTFB, payload size, caching |
 | `accessibility` / `a11y` | Bucket 11 (Accessibility) | WCAG 2.2 AA contrast, screen reader labels, keyboard navigation |
-| `seo` | Bucket 12 (SEO Basics), Bucket 13 (Social Share & Open Graph) | Indexation, meta tags, canonicals, rich cards |
+| `seo` | Bucket 12 (SEO, Structured Data & Indexation), Bucket 13 (Social Share & Open Graph) | Indexation, meta tags, canonicals, schema, rich cards |
+| `ai-search` / `ai` | Bucket 17 (AI Search Visibility) | AI crawler access, snippet eligibility, answer readiness, AI citations |
 | `trust` / `legal` | Bucket 4 (Content Truth), Bucket 14 (Trust & Legal) | Transparent claims, pricing, terms, cookie banners |
 | `security` | Bucket 16 (Security Hygiene) | Defense headers (CSP, HSTS), secret leaks, XSS protection |
 | `analytics` | Bucket 15 (Tracking & Analytics) | Event tracking, conversion pixels, unconsented tags |

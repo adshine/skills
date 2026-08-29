@@ -8,13 +8,13 @@ A comprehensive website audit skill for AI coding agents (Claude Code, Codex, An
 
 ## What It Evaluates
 
-Evaluates web applications across **16 pre-loaded check buckets** rolled up into **5 Executive Scorecard Pillars**:
+Evaluates web applications across **17 pre-loaded check buckets** rolled up into **5 Executive Scorecard Pillars**:
 
 1. **Find & Convert:** Landing value prop, primary CTAs, signup flows, checkout steps, promo codes, forms & data capture.
-2. **Content & Trust:** Accurate claims, pricing truth, copyright, legal disclosures, terms of service, refund policies.
+2. **Content & Trust:** Accurate claims plus E-E-A-T credibility signals, pricing truth, copyright, legal disclosures, terms of service, refund policies, multi-jurisdiction privacy compliance (GDPR, 20+ US state laws, GPC opt-out).
 3. **Design & Interaction:** Mobile viewport stability (390px), tap targets (44×44px), working menus, loading/error states.
-4. **Speed & Accessibility:** Core Web Vitals (LCP, INP, CLS), payload size, image compression, WCAG 2.2 AA contrast & keyboard/screen-reader navigation.
-5. **Technical & Security Hygiene:** Technical SEO, Open Graph social cards, security headers (`CSP`, `HSTS`), unconsented tracking pixels, secret leakage.
+4. **Speed & Accessibility:** Core Web Vitals (LCP, INP, CLS), payload size, image compression, WCAG 2.2 AA contrast & keyboard/screen-reader navigation, European Accessibility Act conformance and statement.
+5. **Technical & Security Hygiene:** Technical SEO with structured data and crawl/index verification, AI search visibility (crawler access, snippet eligibility, answer readiness), Open Graph social cards, security headers (`CSP` with `frame-ancestors`, `HSTS`), supply-chain script integrity (SRI, CVE-flagged libraries), Consent Mode v2, unconsented tracking pixels, secret leakage.
 
 ---
 
@@ -64,7 +64,7 @@ website-audit/
 ├── SKILL.md                          # Master orchestrator & 6-phase workflow
 ├── README.md                         # Documentation & install guide
 ├── references/
-│   ├── check-buckets.md              # 16 pre-loaded check question library
+│   ├── check-buckets.md              # 17 pre-loaded check question library
 │   ├── severity-rubric.md            # 2-axis decision matrix
 │   ├── scorecard-rubric.md           # 5-Pillar mathematical scoring formula
 │   └── evidence-standards.md         # Evidence & receipt standards (screenshots, HAR, logs)

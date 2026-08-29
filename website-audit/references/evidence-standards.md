@@ -19,3 +19,9 @@
 | **Accessibility (a11y)** | axe-core violation tree / screen reader trace | CSS Selector, WCAG rule ID, contrast ratio | `node: button.btn-primary (contrast: 2.8:1, required: 4.5:1, WCAG 1.4.3)` |
 | **SEO & Social Share** | HTML snippet / Open Graph debug curl | `<head>` metadata snippet, canonical tag | `<meta property="og:image" content=""> (Empty image tag)` |
 | **Tracking & Analytics** | Network payload / Tag Assistant trace | Event payload, firing order, duplicate IDs | `POST https://analytics.google.com/g/collect fired 2x on single checkout submit` |
+| **Consent Mode & GPC** | Network trace before/after consent, header replay | Consent state, tag behavior, GPC header sent | `with Sec-GPC: 1, Meta Pixel still fires sale event on /product` |
+| **Structured Data** | Rich Results Test output / JSON-LD snippet | Page URL, schema type, validation errors | `Rich Results Test: Product schema missing required 'offers' on /product/x` |
+| **Crawl & Indexation** | Search Console export / crawler report | Indexed vs submitted counts, affected URLs | `GSC: 240 submitted, 61 indexed; 45 soft-404s under /blog/*` |
+| **AI Search Visibility** | robots.txt capture / rendered-vs-raw HTML diff | Blocked bot names, snippet directives, AI answer citation check | `robots.txt blocks GPTBot and ClaudeBot site-wide; owner confirms unintentional` |
+| **Supply-Chain Scripts** | Script inventory / Lighthouse legacy-JS audit | Script URL, SRI presence, CVE ID and library version | `checkout loads https://cdn.example.net/lib.js v2.1 (CVE-2025-1234) without integrity attribute` |
+| **Accessibility Statement (EAA)** | Page capture / absence proof | Statement URL or crawl showing none exists | `no /accessibility or statement link in footer; site sells to EU consumers` |

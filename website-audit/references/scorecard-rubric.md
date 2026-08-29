@@ -6,15 +6,15 @@ To eliminate auditor bias, every per-page scorecard score (1.0 to 10.0) is mathe
 
 ## 1. The 5 Core Scorecard Pillars
 
-The **16 detailed audit check buckets** roll up into **5 Executive Scorecard Pillars**:
+The **17 detailed audit check buckets** roll up into **5 Executive Scorecard Pillars**:
 
 | Pillar | Included Audit Check Buckets | Focus Area |
 | :--- | :--- | :--- |
 | **1. Find & Convert** | 1. Findability, 2. Conversion Path, 3. Forms & Data Capture | Landing clarity, CTAs, signups, checkouts, form validation. |
-| **2. Content & Trust** | 4. Content Truth, 9. Cross-Page Consistency, 14. Trust, Privacy & Legal | Accurate claims, pricing, legal disclosures, terms, consistent UI. |
+| **2. Content & Trust** | 4. Content Truth & Credibility (E-E-A-T), 9. Cross-Page Consistency, 14. Trust, Privacy & Legal | Accurate claims, credibility signals, pricing, privacy law compliance (GDPR, US state laws, GPC), consistent UI. |
 | **3. Design & Interaction** | 5. Navigation & IA, 6. Visual / Layout, 7. Interaction, 8. States | Layout stability, mobile wrap, working buttons/menus, error/loading states. |
-| **4. Speed & A11y** | 10. Performance & Speed, 11. Accessibility (a11y) | Core Web Vitals (LCP/INP/CLS), payload size, WCAG 2.2 AA contrast/focus. |
-| **5. Technical Hygiene** | 12. SEO Basics, 13. Social Share & Open Graph, 15. Tracking & Analytics, 16. Security Hygiene | Meta tags, canonicals, security headers, unconsented pixels, leaked secrets. |
+| **4. Speed & A11y** | 10. Performance & Speed, 11. Accessibility & Legal Compliance | Core Web Vitals (LCP/INP/CLS), payload size, WCAG 2.2 AA contrast/focus, EAA statement. |
+| **5. Technical Hygiene** | 12. SEO, Structured Data & Indexation, 13. Social Share & Open Graph, 15. Tracking & Analytics, 16. Security Hygiene, 17. AI Search Visibility | Meta tags, canonicals, schema, security headers, supply-chain integrity, Consent Mode v2, unconsented pixels, leaked secrets, AI crawler access and answer readiness. |
 
 ---
 
