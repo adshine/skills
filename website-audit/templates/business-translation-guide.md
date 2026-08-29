@@ -4,7 +4,7 @@ When preparing Executive Summaries, map technical findings directly to business 
 
 | Technical Symptom | Plain-English Explanation | Executive & Financial Impact |
 | :--- | :--- | :--- |
-| **LCP > 4.0s (Largest Contentful Paint)** | The main content/product image takes over 4 seconds to appear on mobile screens. | **High Bounce Rate & Lost Sales:** Every 1-second delay reduces conversion rates by 7–10%. Paid traffic bounces before seeing the offer. |
+| **LCP > 4.0s (Largest Contentful Paint)** | The main content/product image takes over 4 seconds to appear on mobile screens. | **High Bounce Rate & Lost Sales:** Every 1-second delay reduces conversion rates by 7-10%. Paid traffic bounces before seeing the offer. |
 | **INP > 500ms (Interaction to Next Paint)** | Buttons and menus feel laggy or freeze for half a second after being clicked. | **Cart Abandonment:** Frustrated users believe the site is unresponsive or broken and leave. |
 | **CLS > 0.25 (Cumulative Layout Shift)** | Content moves around unexpectedly while the page is loading. | **Accidental Clicks & User Frustration:** Users accidentally click wrong buttons or ads while attempting to navigate. |
 | **Missing Content-Security-Policy (CSP)** | The website lacks browser guardrails against unauthorized injected code. | **Data Theft & Brand Damage:** Customer payment information and session cookies can be stolen via third-party scripts. |

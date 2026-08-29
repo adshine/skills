@@ -12,7 +12,7 @@
 - **Area:** Conversion Path / Visual Layout
 - **Severity:** High
 - **Target URL:** `https://example.com/pricing`
-- **Root Cause:** Container `.pricing-grid` has fixed `margin-top: 120px` and unconstrained hero banner height on viewport width ≤ 400px.
+- **Root Cause:** Container `.pricing-grid` has fixed `margin-top: 120px` and unconstrained hero banner height on viewport width <= 400px.
 - **Evidence:** `screenshot: /artifacts/pricing-mobile-wrap-390px.png`
 - **Remediation Code Diff:**
 ```diff
@@ -68,3 +68,49 @@
          placeholder="name@company.com"
 ```
 - **Verification Test:** Run `npx axe-cli https://example.com/signup` and assert 0 violations for `label` rule.
+
+---
+
+### [F-004] Missing Security Defense-in-Depth HTTP Response Headers
+- **Area:** Security Hygiene / Edge Proxy
+- **Severity:** Medium (CVSS: 6.5)
+- **Target URL:** `/*` (Global public endpoints)
+- **Root Cause:** Next.js middleware / reverse proxy config does not emit `Content-Security-Policy` and `X-Frame-Options`.
+- **Evidence:** `curl -sI https://example.com | grep -i x-frame-options (Empty)`
+- **Remediation Code Diff:**
+```diff
+--- a/middleware.ts
++++ b/middleware.ts
+@@ -10,6 +10,8 @@ export function middleware(request: NextRequest) {
+   const response = NextResponse.next();
++  response.headers.set("X-Frame-Options", "DENY");
++  response.headers.set("Content-Security-Policy", "default-src 'self'; img-src 'self' data: https:; script-src 'self';");
+   return response;
+ }
+```
+- **Verification Test:** Run `curl -sI https://example.com | grep -i x-frame-options` and assert `X-Frame-Options: DENY`.
+
+---
+
+### [F-005] Hero Background Image Exceeds LCP Budget
+- **Area:** Performance & Speed
+- **Severity:** High (Core Web Vitals LCP = 4.52s)
+- **Target URL:** `https://example.com/` (Homepage)
+- **Root Cause:** Uncompressed 4.1MB PNG asset `<img src="/assets/hero-bg.png">` without `fetchpriority` or responsive sizing.
+- **Evidence:** `Lighthouse: LCP 4.52s (element: img.hero-bg, size: 4.1MB)`
+- **Remediation Code Diff:**
+```diff
+--- a/src/components/Hero.tsx
++++ b/src/components/Hero.tsx
+@@ -8,6 +8,11 @@ export function Hero() {
+   return (
+     <section className="hero">
+-      <img src="/assets/hero-bg.png" alt="Product Demo" />
++      <img 
++        src="/assets/hero-bg.webp" 
++        alt="Product Demo" 
++        fetchPriority="high"
++        className="w-full h-auto"
++      />
+```
+- **Verification Test:** Re-run Lighthouse on `/` under Mobile 4G throttle profile and assert LCP <= 2.5s.

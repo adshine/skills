@@ -21,7 +21,7 @@ Evaluates web applications across **16 pre-loaded check buckets** rolled up into
 ## Core Architecture
 
 - **Single Source of Truth:** Every issue is logged into the **Master Findings Table** with a stable ID (`F-001`) and verifiable receipt/evidence.
-- **Objective Mathematical Scoring:** Per-page 1–10 scores are calculated directly from findings via standard formula:
+- **Objective Mathematical Scoring:** Per-page 1-10 scores are calculated directly from findings via standard formula:
   $$\text{Score} = \max\Big(1.0,\; 10.0 - 3.0(\text{Blocker}) - 2.0(\text{High}) - 1.0(\text{Medium}) - 0.3(\text{Low})\Big)$$
 - **2-Axis Severity Matrix:** Goal Impairment × User Breadth. (Nits are strictly excluded from Executive summaries).
 

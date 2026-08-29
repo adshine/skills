@@ -5,13 +5,18 @@ $$\text{Score} = \max\Big(1.0,\; 10.0 - (3.0 \times \text{Blocker}) - (2.0 \time
 
 | Page / Route | Find & Convert (1-10) | Content & Trust (1-10) | Design & Interaction (1-10) | Speed & A11y (1-10) | Technical Hygiene (1-10) | Page Health Score | Key Driver / Flagged Finding |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Homepage (`/`)** | 8.0 | 9.0 | 8.5 | 6.0 | 8.0 | 🟢 **7.9 (B)** | LCP hero banner slow (`F-005`) |
-| **Pricing (`/pricing`)** | 6.0 | 8.5 | 7.0 | 7.5 | 8.0 | 🟡 **7.4 (C)** | Mobile CTA below fold (`F-001`) |
-| **Signup (`/signup`)** | 7.0 | 9.0 | 8.0 | 5.0 | 8.0 | 🟡 **7.4 (C)** | Input lacks a11y label (`F-003`) |
-| **Checkout (`/checkout`)** | **3.0** | 7.0 | 6.0 | 7.0 | 6.0 | 🚨 **5.8 (D)** | **Blocker:** Promo code 500 error (`F-002`) |
-| **Dashboard (`/dashboard`)**| 9.0 | 9.5 | 9.0 | 8.5 | 8.5 | 🟢 **8.9 (A-)** | Clean, fast, no critical defects |
+| **Homepage (`/`)** | 10.0 | 10.0 | 9.0 | 8.0 | 9.0 | 🟢 **9.2 (Grade A)** | Hero LCP slow (`F-005`), Menu backdrop (`F-010`) |
+| **Pricing (`/pricing`)** | 8.0 | 9.0 | 10.0 | 10.0 | 9.0 | 🟢 **9.2 (Grade A)** | Mobile CTA below fold (`F-001`), Toggle bug (`F-009`) |
+| **Signup (`/signup`)** | 8.0 | 10.0 | 10.0 | 8.0 | 9.0 | 🟢 **9.0 (Grade A)** | Google OAuth error (`F-008`), Email a11y label (`F-003`) |
+| **Checkout (`/checkout`)** | 7.0 | 9.0 | 8.0 | 10.0 | 9.0 | 🟢 **8.6 (Grade B)** | Promo 500 (`F-002`), Mobile overlap (`F-006`) |
+| **Dashboard (`/dashboard`)**| 10.0 | 10.0 | 10.0 | 10.0 | 9.0 | 🟢 **9.8 (Grade A)** | Clean, reliable, standard global header finding (`F-004`) |
+| **Pillar Average** | **8.6** | **9.6** | **9.4** | **9.2** | **9.0** | **9.2 (Unweighted)** | |
 
 ---
 
-### Key Money-Path Risk Summary:
-> ⚠️ **Checkout Page is at Risk (Score: 5.8 / Grade D):** The presence of Blocker `F-002` directly threatens transaction completion. Must be resolved before expanding paid acquisition campaigns.
+### Site-Wide Weighted Health Calculation
+- **Money-Path Pages (Weight = 2.0):** Homepage (9.2), Pricing (9.2), Signup (9.0), Checkout (8.6)
+- **Standard Pages (Weight = 1.0):** Dashboard (9.8)
+- **Weighted Math:** $\frac{(9.2 \times 2) + (9.2 \times 2) + (9.0 \times 2) + (8.6 \times 2) + (9.8 \times 1)}{2 + 2 + 2 + 2 + 1} = \frac{81.8}{9} =$ **9.1 / 10.0 (Grade A)**
+
+> ⚠️ **Key Focus Area:** Despite an overall Grade A (9.1), the Checkout route (Score: 8.6 / Grade B) contains Blocker `F-002` on promo codes and High defect `F-006` on mobile screens, which must be resolved prior to paid campaign scaling.

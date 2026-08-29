@@ -38,11 +38,11 @@ Phase 3: Evidence Capture & Logging (Single Source of Truth)
       Template: [01-findings-table.md](templates/01-findings-table.md)
 
 Phase 4: Severity & Decision Scoring
-  └── Assign severity via 2-axis decision matrix (Goal Impairment × User Breadth).
+  └── Assign severity via 2-axis decision matrix (Goal Impairment x User Breadth).
       Reference: [severity-rubric.md](references/severity-rubric.md)
 
 Phase 5: Compute Per-Page Health Scorecard
-  └── Calculate mathematical 1–10 scores for the 5 Pillars from the Findings Table.
+  └── Calculate mathematical 1.0-10.0 scores for the 5 Pillars from the Findings Table.
       Reference: [scorecard-rubric.md](references/scorecard-rubric.md)
       Template: [02-scorecard.md](templates/02-scorecard.md)
 
@@ -56,7 +56,7 @@ Phase 6: Dual-Track Deliverable Generation
 
 ---
 
-## Scope Flags (Targeted Invocations)
+## Scope Flags & Domain Aliases
 
 By default, a full 16-bucket audit is performed. When only specific areas are requested, load only the targeted domain playbooks while maintaining the same dual-track report shape:
 
@@ -64,11 +64,23 @@ By default, a full 16-bucket audit is performed. When only specific areas are re
 # Run full audit
 /website-audit
 
-# Targeted domain audit (preserves dual-track output)
+# Targeted domain audits
 /website-audit --only security,performance
 /website-audit --only accessibility
 /website-audit --only conversion,ux
 ```
+
+### Scope Flag Alias Mapping:
+| Flag Token | Mapped Check Buckets | Focus Area |
+| :--- | :--- | :--- |
+| `conversion` | Bucket 1 (Findability), Bucket 2 (Conversion Path), Bucket 3 (Forms) | Landing clarity, money routes, CTA clicks, checkout forms |
+| `ux` | Bucket 5 (Navigation), Bucket 6 (Visual/Layout), Bucket 7 (Interaction), Bucket 8 (States) | Mobile viewports, tap targets, UI states, menus |
+| `performance` | Bucket 10 (Performance & Speed) | Core Web Vitals (LCP/INP/CLS), TTFB, payload size, caching |
+| `accessibility` / `a11y` | Bucket 11 (Accessibility) | WCAG 2.2 AA contrast, screen reader labels, keyboard navigation |
+| `seo` | Bucket 12 (SEO Basics), Bucket 13 (Social Share & Open Graph) | Indexation, meta tags, canonicals, rich cards |
+| `trust` / `legal` | Bucket 4 (Content Truth), Bucket 14 (Trust & Legal) | Transparent claims, pricing, terms, cookie banners |
+| `security` | Bucket 16 (Security Hygiene) | Defense headers (CSP, HSTS), secret leaks, XSS protection |
+| `analytics` | Bucket 15 (Tracking & Analytics) | Event tracking, conversion pixels, unconsented tags |
 
 ---
 
