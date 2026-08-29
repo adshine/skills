@@ -25,3 +25,17 @@
 | **AI Search Visibility** | robots.txt capture / rendered-vs-raw HTML diff | Blocked bot names, snippet directives, AI answer citation check | `robots.txt blocks GPTBot and ClaudeBot site-wide; owner confirms unintentional` |
 | **Supply-Chain Scripts** | Script inventory / Lighthouse legacy-JS audit | Script URL, SRI presence, CVE ID and library version | `checkout loads https://cdn.example.net/lib.js v2.1 (CVE-2025-1234) without integrity attribute` |
 | **Accessibility Statement (EAA)** | Page capture / absence proof | Statement URL or crawl showing none exists | `no /accessibility or statement link in footer; site sells to EU consumers` |
+
+---
+
+## Field vs. Lab Telemetry Rule (Performance Findings)
+
+Synthetic lab runs (Lighthouse, local DevTools) cannot reproduce real human interaction. Lighthouse does not measure INP at all; it approximates responsiveness with proxies. Findings must respect the evidence source:
+
+1. **INP:** High or Blocker severity requires real-user field data: Chrome UX Report (CrUX) p75 or the site's own RUM. With lab-only evidence, INP responsiveness findings are capped at **Medium** severity.
+2. **CLS:** Load-time layout shifts DO reproduce in lab runs, so lab CLS evidence is acceptable; still prefer CrUX/RUM confirmation before assigning Blocker, since post-load shifts (ads, late injections) only appear in field data.
+3. **LCP:** Lab evidence is acceptable (the offending element and payload are directly observable), but cite the throttling profile.
+
+**Accepted receipt formats:**
+- `CrUX field data: p75 INP = 340ms (Needs Improvement), origin: https://example.com, 28-day window`
+- `Lighthouse lab: LCP = 4.2s (element: img#hero, size: 3.8MB, throttled 4G profile)`

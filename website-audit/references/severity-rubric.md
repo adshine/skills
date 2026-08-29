@@ -21,3 +21,9 @@ Every finding must be assigned a severity based on an objective **two-axis decis
 - **Mediums:** Listed in summary counts and roll-up metrics.
 - **Lows:** Kept strictly within the technical findings backlog.
 - **Nits:** Documented only in developer scratch notes or excluded completely.
+
+---
+
+## Special Evidence Capping Rules
+- **Lab-only performance findings:** An interaction-responsiveness (INP) issue measured solely in a simulated lab environment, without CrUX or RUM field telemetry, is capped at **Medium** severity regardless of the lab number. See the Field vs. Lab Telemetry Rule in [evidence-standards.md](evidence-standards.md).
+- **Nit filtering:** Subjective aesthetic opinions (Nits) are strictly excluded from Executive Summaries and scorecards; they never affect a score.

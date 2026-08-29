@@ -48,6 +48,10 @@ Auditors systematically tick each bucket for every scoped page.
 ### 11. Accessibility (a11y) & Legal Compliance
 - **Question:** Can people with disabilities (visual, motor, auditory, cognitive) perceive and operate the page, and does the site meet its legal accessibility obligations?
 - **Checks:** WCAG 2.2 AA color contrast (4.5:1 text, 3.0:1 UI), full keyboard navigation (visible focus rings, no keyboard traps), screen-reader-friendly semantic HTML and ARIA labels.
+- **WCAG 2.2-specific criteria automated linters miss:**
+  - **Focus Not Obscured (2.4.11):** Focused elements must never be covered by sticky headers, footers, cookie banners, or floating chat widgets; tab through every scoped page with sticky UI visible.
+  - **Target Size Minimum (2.5.8):** All interactive elements must meet the 24x24px legal compliance floor; 44x44px remains the UX recommendation (bucket 7), so log 24-44px targets as Low UX findings, below 24px as compliance findings.
+  - **Accessible Authentication (3.3.8):** Never block pasting into password or verification fields; support browser autofill and password managers (`autocomplete` attributes); no cognitive tests (memorization, transcription) as the only login path.
 - **European Accessibility Act (enforceable since June 28, 2025):** If the site sells products or services to EU consumers (e-commerce, banking, ticketing, telecoms), verify EN 301 549 / WCAG AA conformance INCLUDING third-party widgets and embeds, and confirm a published, accurate accessibility statement exists. Missing statement or false conformance claims are per-violation fineable findings, not nits.
 
 ### 12. SEO, Structured Data & Indexation
@@ -73,7 +77,9 @@ Auditors systematically tick each bucket for every scoped page.
 
 ### 16. Security Hygiene & Defense
 - **Question:** Is the website hardened against common web exploits, supply-chain compromise, and data leakage? (Aligned to OWASP Top 10:2025.)
-- **Checks:** Security response headers (`CSP` with `frame-ancestors` as the modern clickjacking control; keep legacy `X-Frame-Options` for old browsers, but recommend `frame-ancestors` in fixes; `HSTS`), no API keys or secrets in client JS bundles, generic error messages (no database stack traces exposed to public), CSRF protection on forms.
+- **Checks:** Security response headers (`CSP` with `frame-ancestors` as the modern clickjacking control; keep legacy `X-Frame-Options` for old browsers, but recommend `frame-ancestors` in fixes; `Strict-Transport-Security` with `max-age=31536000; includeSubDomains`, `preload` where enrolled; `X-Content-Type-Options: nosniff`), no API keys or secrets in client JS bundles, generic error messages (no database stack traces exposed to public), CSRF protection on forms.
+- **Hardware & API lockdown:** `Permissions-Policy` restricting unused device APIs (e.g. `camera=(), microphone=(), geolocation=(), payment=()`) so third-party scripts and iframes cannot silently request them.
+- **Origin isolation (conditional):** `Cross-Origin-Opener-Policy: same-origin` on auth, payment, and account-management surfaces. Do NOT recommend site-wide `Cross-Origin-Embedder-Policy`; it breaks legitimate embeds (YouTube, payment iframes) and belongs only on high-security endpoints after compatibility review.
 - **Supply chain (OWASP 2025 A03):** Inventory all third-party scripts; require Subresource Integrity (`integrity` attribute) on CDN-loaded scripts; flag outdated JS libraries with known CVEs (Lighthouse/Retire.js); scrutinize any third-party script loaded on payment or login pages (Magecart exposure).
 
 ### 17. AI Search Visibility & Answer Readiness
