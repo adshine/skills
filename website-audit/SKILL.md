@@ -21,7 +21,7 @@ A comprehensive, evidence-based website audit framework designed to evaluate web
 
 ---
 
-## The 6-Phase Audit Workflow
+## The 8-Phase Audit Workflow (Phases 7-8 opt-in)
 
 ```
 Phase 1: Scope & Cover Sheet
@@ -29,8 +29,11 @@ Phase 1: Scope & Cover Sheet
       Template: [00-cover-sheet.md](templates/00-cover-sheet.md)
 
 Phase 2: Systematic Multi-Bucket Evaluation
-  └── Test scoped pages against the 17 Pre-loaded Check Buckets.
+  └── Test scoped pages against the 17 Pre-loaded Check Buckets, collecting
+      evidence with real browser runs and analysis scripts (collect with
+      Playwright/requests, analyze with scripts/, judge as the agent).
       Reference: [check-buckets.md](references/check-buckets.md)
+      Execution: [execution-playbook.md](references/execution-playbook.md)
 
 Phase 3: Evidence Capture & Logging (Single Source of Truth)
   └── Log every defect into the Master Findings Table with a stable ID (F-001) and receipt.
@@ -42,7 +45,8 @@ Phase 4: Severity & Decision Scoring
       Reference: [severity-rubric.md](references/severity-rubric.md)
 
 Phase 5: Compute Per-Page Health Scorecard
-  └── Calculate mathematical 1.0-10.0 scores for the 5 Pillars from the Findings Table.
+  └── Run scripts/compute_scorecard.py on the findings table; it is the ONLY
+      allowed source of scorecard numbers (never hand-compute scores).
       Reference: [scorecard-rubric.md](references/scorecard-rubric.md)
       Template: [02-scorecard.md](templates/02-scorecard.md)
 
@@ -52,7 +56,19 @@ Phase 6: Dual-Track Deliverable Generation
   │   Dictionary: [business-translation-guide.md](templates/business-translation-guide.md)
   └── Track 2: Technical Engineering Spec (Code Diffs & Reproduction Steps)
       Template: [04-technical-spec.md](templates/04-technical-spec.md)
+
+Phase 7 (opt-in, --fix, requires the site's repo locally): Closed Remediation Loop
+  └── Patch findings in an isolated worktree; each fix verified by its sensor;
+      3 bounded attempts, then Needs Human; regression barrier per severity tier.
+      Reference: [remediation-loop.md](references/remediation-loop.md)
+      Sensors: [sensor-library.md](references/sensor-library.md)
+
+Phase 8 (opt-in, --gate / --recheck): Quality Gate & Sensor Recheck
+  └── Re-run recorded sensors without rediscovery; CI gate fails on open
+      Blockers/Highs or pillar scores below threshold (scripts/audit_gate.py).
 ```
+
+**Machine state:** findings live in a `findings.json` sidecar conforming to [findings-schema.json](references/findings-schema.json); the markdown table, scorecard, and both report tracks are rendered FROM it. Where a deterministic sensor command exists, record it on the finding (see the sensor library); sensors are the preferred evidence receipt.
 
 ---
 
@@ -68,6 +84,11 @@ By default, a full 17-bucket audit is performed. When only specific areas are re
 /website-audit --only security,performance
 /website-audit --only accessibility
 /website-audit --only conversion,ux
+
+# Closed-loop modes (Phase 7/8; --fix requires the site's repo locally)
+/website-audit --fix
+/website-audit --recheck
+/website-audit --gate blockers
 ```
 
 ### Scope Flag Alias Mapping:
@@ -88,10 +109,14 @@ By default, a full 17-bucket audit is performed. When only specific areas are re
 ## References & Template Index
 
 - **Rubrics & Standards:**
+  - Execution Playbook (collection methods, scripts, multi-agent fan-out): [`references/execution-playbook.md`](references/execution-playbook.md)
   - Severity Matrix: [`references/severity-rubric.md`](references/severity-rubric.md)
   - Scorecard Math: [`references/scorecard-rubric.md`](references/scorecard-rubric.md)
   - Evidence Receipts: [`references/evidence-standards.md`](references/evidence-standards.md)
   - Check Questions: [`references/check-buckets.md`](references/check-buckets.md)
+  - Sensor Library: [`references/sensor-library.md`](references/sensor-library.md)
+  - Remediation Loop & Gate: [`references/remediation-loop.md`](references/remediation-loop.md)
+  - Findings Schema: [`references/findings-schema.json`](references/findings-schema.json)
 - **Output Templates:**
   - Cover Sheet: [`templates/00-cover-sheet.md`](templates/00-cover-sheet.md)
   - Master Findings Table: [`templates/01-findings-table.md`](templates/01-findings-table.md)

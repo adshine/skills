@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "website-audit findings sidecar",
+  "description": "Machine-readable source of truth for an audit run. The markdown findings table, scorecard, and both report tracks are rendered FROM this file, never the other way around.",
+  "type": "object",
+  "required": ["site", "auditDate", "findings"],
+  "properties": {
+    "site": { "type": "string", "description": "Origin under audit, e.g. https://example.com" },
+    "auditDate": { "type": "string", "description": "ISO date of the audit run" },
+    "moneyPath": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Pages weighted 2x in the site score (paths, e.g. /, /pricing, /checkout)"
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "page", "bucket", "pillar", "check", "severity", "status", "found", "evidence", "expected"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^F-[0-9]{3}$" },
+          "page": { "type": "string" },
+          "bucket": { "type": "string", "description": "One of the 17 check buckets by name" },
+          "pillar": {
+            "enum": ["Find & Convert", "Content & Trust", "Design & Interaction", "Speed & A11y", "Technical Hygiene"]
+          },
+          "check": { "type": "string" },
+          "severity": { "enum": ["Blocker", "High", "Medium", "Low", "Nit"] },
+          "status": { "enum": ["Open", "In Progress", "Verified Fixed", "Needs Human", "Wont Fix"] },
+          "found": { "type": "string" },
+          "evidence": { "type": "string", "description": "Receipt per evidence-standards.md: artifact path, log line, or sensor output" },
+          "expected": { "type": "string" },
+          "impact": { "type": "string" },
+          "owner": { "type": "string" },
+          "sensor": {
+            "type": "object",
+            "required": ["cmd"],
+            "properties": {
+              "cmd": { "type": "string", "description": "Shell command; exit 0 means the finding is FIXED. Must fail on the unfixed site." },
+              "note": { "type": "string" }
+            }
+          },
+          "fix_class": {
+            "enum": ["auto", "assisted", "manual"],
+            "description": "auto: sensor-verifiable and code-patchable. assisted: patch draftable, human must verify. manual: human judgement only (content truth, brand, legal interpretation)."
+          },
+          "attempts": {
+            "type": "array",
+            "description": "Remediation attempts (max 3, see remediation-loop.md)",
+            "items": {
+              "type": "object",
+              "required": ["result"],
+              "properties": {
+                "timestamp": { "type": "string" },
+                "patchRef": { "type": "string", "description": "Branch/commit or diff path" },
+                "sensorOutput": { "type": "string" },
+                "result": { "enum": ["pass", "fail"] }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
