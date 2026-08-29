@@ -17,6 +17,7 @@ Read: [Stop Guessing at UI Quality: Interaction QA Skills for AI Coding Agents](
 | [source-fidelity-qa](source-fidelity-qa/) | Diff shipped UI against a named frozen source (Figma node, DS tokens, written spec, or functional contract). | Not authoring/editing Figma; no named source → Unknown, not Pass. |
 | [cli-fs-qa](cli-fs-qa/) | Assert CLI exit codes, stdout/stderr, isolated fixture filesystems, lockfile hashes, and doctor findings. | Not HTTP/DB/trace; spinner is not truth. |
 | [full-stack-interaction-qa](full-stack-interaction-qa/) | Correlate UI actions with HTTP, traces, logs, and DB/queue truth under explicit gates. | Not click-feel, static layout, CSS motion, CLI/fs, or 3D; missing backend evidence ≠ Pass. |
+| [website-audit](website-audit/) | Conduct comprehensive website audits across 16 check buckets with dual-track reporting: Plain-English Executive Summary and Deep Engineering Spec. | Not continuous APM / synthetic uptime monitoring. |
 
 ### Reserved (not shipped)
 
@@ -53,6 +54,7 @@ skills/
   source-fidelity-qa/        SKILL.md, agents/
   cli-fs-qa/                 SKILL.md, agents/
   full-stack-interaction-qa/ SKILL.md, agents/, scripts/, references/
+  website-audit/             SKILL.md, references/, templates/
   articles/                  catalog essay
 ```
 
