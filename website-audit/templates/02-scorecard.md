@@ -1,5 +1,7 @@
 # Per-Page Health Scorecard (Dashboard View)
 
+> ⚠️ **SAMPLE DATA:** All pages, scores, and finding references below are fictional examples. Recompute every score from the real Master Findings Table using the formula; never reuse these numbers.
+
 Calculated mathematically from the **Master Findings Table** using the formula:
 $$\text{Score} = \max\Big(1.0,\; 10.0 - (3.0 \times \text{Blocker}) - (2.0 \times \text{High}) - (1.0 \times \text{Medium}) - (0.3 \times \text{Low})\Big)$$
 

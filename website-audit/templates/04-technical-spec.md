@@ -1,5 +1,7 @@
 # 🛠️ Technical Audit & Remediation Specification (Engineering Track)
 
+> ⚠️ **SAMPLE DATA:** All findings, root causes, code diffs, and file paths below are fictional examples. Replace them with the real site's evidence and fixes; these diffs do not apply to any actual codebase.
+
 **Target Environment:** Production (`https://example.com`)  
 **Audit Reference Commit:** `git rev-parse HEAD`  
 **Tooling:** Lighthouse 12.x, axe-core 4.9, Chrome DevTools, OWASP ZAP

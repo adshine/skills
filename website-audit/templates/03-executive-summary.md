@@ -1,5 +1,7 @@
 # 📊 Executive Website Health Report (Business Track)
 
+> ⚠️ **SAMPLE DATA:** This entire report is fictional example content, including every grade, risk, percentage, and ROI figure. Rewrite all of it from the real audit's findings; presenting these sample numbers to a client would be fabrication.
+
 **Target Website:** `https://example.com`  
 **Audit Date:** YYYY-MM-DD  
 **Overall System Health Grade:** 🟢 **9.1 / 10.0 (Grade A): High Overall Quality with Friction on Money Path**

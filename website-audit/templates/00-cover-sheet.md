@@ -1,5 +1,7 @@
 # Audit Cover Sheet & Scope Definition
 
+> ⚠️ **SAMPLE DATA:** All values below are illustrative examples. Replace every field with the real audit's details before use.
+
 | Audit Field | Target Specification |
 | :--- | :--- |
 | **Target Website & Environment** | `https://example.com` (Production) |

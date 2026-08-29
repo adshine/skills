@@ -2,6 +2,8 @@
 
 Every defect, bug, or risk discovered is logged here with stable IDs (`F-001`), fixed buckets, and required receipts.
 
+> ⚠️ **SAMPLE DATA:** Every finding row below (F-001 to F-010) is fictional example content, including all impact estimates and percentages. Replace all rows with real, evidence-backed findings; never copy these numbers into a real report.
+
 | ID | Page / URL | Area / Bucket | Check | Severity | What Was Found | Evidence (Receipt) | Expected Behavior | Business / User Impact | Owner | Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **F-001** | `/pricing` | Conversion Path | CTA visibility | **High** | Primary "Upgrade" button is pushed below fold on 390px mobile screens. | `screenshot: /artifacts/pricing-cta-mobile.png` | Button visible within initial viewport without scrolling. | Estimated 12% drop in mobile upgrades. | Product / Design | Open |
