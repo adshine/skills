@@ -2,7 +2,7 @@
 
 **Target Website:** `https://example.com`  
 **Audit Date:** YYYY-MM-DD  
-**Overall System Health Grade:** 🟢 **9.1 / 10.0 (Grade A) — High Overall Quality with Friction on Money Path**
+**Overall System Health Grade:** 🟢 **9.1 / 10.0 (Grade A): High Overall Quality with Friction on Money Path**
 
 ---
 
@@ -11,10 +11,10 @@
 The website demonstrates strong foundational design, responsive typography, and solid security posture. However, targeted defects on the checkout and signup paths are causing unnecessary visitor drop-off and potential legal exposure.
 
 ### Top Business & Legal Risks (Linked to Findings):
-1. **Direct Checkout Block on Promo Codes (`F-002` — Blocker):** When shoppers enter a promo code during checkout, the system encounters a server error and locks the purchase button, preventing sales completion.
-2. **Social Signup Failure (`F-008` — High):** Google OAuth registration fails due to an outdated redirect configuration, blocking ~30% of visitors who prefer one-click social signup.
-3. **Mobile Layout & CTA Friction (`F-001` & `F-006` — High):** On mobile devices (390px screens), the pricing CTA is pushed below the initial viewport and checkout input fields collide with order totals.
-4. **Accessibility & ADA Compliance Risk (`F-003` — High):** Critical signup form fields lack screen-reader labels, preventing visually impaired visitors from registering and creating exposure under ADA Title III standards.
+1. **Direct Checkout Block on Promo Codes (`F-002`, Blocker):** When shoppers enter a promo code during checkout, the system encounters a server error and locks the purchase button, preventing sales completion.
+2. **Social Signup Failure (`F-008`, High):** Google OAuth registration fails due to an outdated redirect configuration, blocking ~30% of visitors who prefer one-click social signup.
+3. **Mobile Layout & CTA Friction (`F-001` & `F-006`, High):** On mobile devices (390px screens), the pricing CTA is pushed below the initial viewport and checkout input fields collide with order totals.
+4. **Accessibility & ADA Compliance Risk (`F-003`, High):** Critical signup form fields lack screen-reader labels, preventing visually impaired visitors from registering and creating exposure under ADA Title III standards.
 
 ---
 
@@ -34,6 +34,6 @@ The website demonstrates strong foundational design, responsive typography, and 
 
 | Remediation Phase | Focus Action Items | Expected Business Result / ROI | Target Owner |
 | :--- | :--- | :--- | :--- |
-| **🚨 Immediate (Next 48–72 Hrs)** | • Hotfix checkout 500 error on promo code (`F-002`)<br>• Correct Google OAuth redirect URI (`F-008`)<br>• Add screen-reader labels to signup inputs (`F-003`) | Unblocks 100% of checkout and registration drop-offs; eliminates ADA lawsuit risk. | Engineering Lead |
+| **🚨 Immediate (Next 48 to 72 Hrs)** | • Hotfix checkout 500 error on promo code (`F-002`)<br>• Correct Google OAuth redirect URI (`F-008`)<br>• Add screen-reader labels to signup inputs (`F-003`) | Unblocks 100% of checkout and registration drop-offs; eliminates ADA lawsuit risk. | Engineering Lead |
 | **⚡ Short-Term (Next 2 Weeks)** | • Adjust mobile layout spacing for CTA and checkout (`F-001`, `F-006`)<br>• Compress hero image to AVIF/WebP (`F-005`) | Estimated +8% lift in mobile signups; cuts mobile initial load time in half. | Frontend / Product |
 | **🛡️ Ongoing / Sprint (30 Days)** | • Deploy security headers `CSP` and `X-Frame-Options` (`F-004`)<br>• Resolve mobile menu backdrop tap bug (`F-010`) | Safeguards customer session data and polishes mobile navigation experience. | DevOps / QA |

@@ -1,6 +1,6 @@
 # Scorecard Rubric & Mathematical Formula
 
-To eliminate auditor bias, every per-page scorecard score (1.0–10.0) is mathematically anchored to the **Master Findings Table**.
+To eliminate auditor bias, every per-page scorecard score (1.0 to 10.0) is mathematically anchored to the **Master Findings Table**.
 
 ---
 
@@ -27,11 +27,11 @@ $$\text{Score} = \max\Big(1.0,\; 10.0 - (3.0 \times N_{\text{Blocker}}) - (2.0 \
 ### Score Interpretation & Grade Table:
 | Score Range | Health Grade | Status Meaning | Action Required |
 | :--- | :--- | :--- | :--- |
-| **9.0 – 10.0** | 🟢 **A (Exceptional)** | Clean, reliable, no critical defects. | Routine maintenance. |
-| **7.5 – 8.9** | 🟢 **B (Good)** | Minor polish or isolated medium friction. | Scheduled backlog sprint. |
-| **5.0 – 7.4** | 🟡 **C (Needs Work)** | Multiple friction points or 1-2 High issues. | Address in next sprint. |
-| **3.0 – 4.9** | 🔴 **D (At Risk)** | Blocker or multiple High issues affecting users. | Urgent remediation. |
-| **1.0 – 2.9** | 🚨 **F (Critical Failure)** | Multiple Blockers on the revenue / money path. | Immediate hotfix / triage. |
+| **9.0 to 10.0** | 🟢 **A (Exceptional)** | Clean, reliable, no critical defects. | Routine maintenance. |
+| **7.5 to 8.9** | 🟢 **B (Good)** | Minor polish or isolated medium friction. | Scheduled backlog sprint. |
+| **5.0 to 7.4** | 🟡 **C (Needs Work)** | Multiple friction points or 1-2 High issues. | Address in next sprint. |
+| **3.0 to 4.9** | 🔴 **D (At Risk)** | Blocker or multiple High issues affecting users. | Urgent remediation. |
+| **1.0 to 2.9** | 🚨 **F (Critical Failure)** | Multiple Blockers on the revenue / money path. | Immediate hotfix / triage. |
 
 ---
 

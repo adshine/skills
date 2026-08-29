@@ -50,7 +50,7 @@
 
 ### [F-003] Missing Accessible Name / Form Label on Email Input
 - **Area:** Accessibility (a11y)
-- **Severity:** High (WCAG 2.1 AA 1.3.1, 4.1.2)
+- **Severity:** High (WCAG 2.2 AA 1.3.1, 4.1.2)
 - **Target URL:** `https://example.com/signup`
 - **Offending DOM Node:** `<input type="email" id="user-email" placeholder="Enter your email">` (No `<label for="user-email">` or `aria-label`).
 - **Remediation Code Diff:**
