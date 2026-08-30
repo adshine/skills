@@ -33,6 +33,13 @@ Auditors systematically tick each bucket for every scoped page.
 - **Checks:** No horizontal scrollbar overflow on mobile, proper typographic hierarchy, correct image aspect ratios (no distortion), balanced padding/margin whitespace.
 - **Broken-section sweep (visual, every page):** full-page screenshots of EVERY crawled page, reviewed by eye; flag empty content bands, collapsed grids (especially at 390px), missing featured images leaving voids, content squeezed into one column beside dead space. Scripts cannot see these; only the screenshot review catches them.
 - **Template fingerprint:** identify the theme (`wp-content/themes/<name>` or equivalent) and oldest media dates; stock theme + surviving demo content or mismatched stock imagery is a credibility finding, not a nit.
+- **Art direction fundamentals (mandatory review, not optional taste):** judge the site against these and file failures as findings, typically one site-wide `/*` Medium:
+  - **One dark neutral:** competing darks (e.g. green-black header vs blue-black footer) is the classic template tell.
+  - **One accent color** carrying all interaction (CTAs, links, highlights); count the accent candidates on the homepage; more than two is a finding.
+  - **Imagery coherence:** photos share a color grade, temperature, and subject world tied to what the business actually does; a literal-pun stock photo, an off-topic image on a proof page, or visible third-party branding in imagery (logos on clothing) are findings.
+  - **Header art direction:** interior pages should not all recycle one tinted stock photo.
+  - **One card language:** service/product/blog/case cards share a visual system.
+  - **Hierarchy at conversion moments:** the CTA near a closing headline must not be dwarfed by it; icons attach to their cards; testimonial/client-proof bands are populated or removed.
 
 ### 7. Interaction & Controls
 - **Question:** Does clicking, tapping, typing, scrolling, and dragging work reliably on all interactive components?
