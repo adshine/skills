@@ -20,6 +20,7 @@ Auditors systematically tick each bucket for every scoped page.
 - **Question:** Are claims true AND does the site visibly demonstrate experience, expertise, authoritativeness, and trust?
 - **Checks:** Matching prices across landing/pricing/checkout, current year in footer copyright, valid support email/phone numbers, verified testimonials/badges.
 - **Credibility signals (E-E-A-T):** Author bylines with real bios on articles, visible publish/updated dates, citations for factual claims, complete About and Contact pages, evidence of first-hand experience (original photos, data, case studies) rather than commodity rewrites. Google anchors both classic search and AI-answer visibility in demonstrated content credibility.
+- **Factual spot-checks (domain-expert eye):** read maps, labels, geography, dates, and claimed numbers the way a knowledgeable client would. A misspelled country, an outdated country name, or a region assigned wrongly is a High-credibility finding for any business claiming expertise in that domain; no scanner catches these.
 
 ### 5. Navigation & Information Architecture
 - **Question:** Can users reach every essential page from the header/footer without dead ends or circular links?
@@ -28,10 +29,14 @@ Auditors systematically tick each bucket for every scoped page.
 ### 6. Visual, Layout & Responsive Design
 - **Question:** Does the layout remain balanced, readable, and free of overlap across standard viewports (390px mobile, 768px tablet, 1440px desktop)?
 - **Checks:** No horizontal scrollbar overflow on mobile, proper typographic hierarchy, correct image aspect ratios (no distortion), balanced padding/margin whitespace.
+- **Broken-section sweep (visual, every page):** full-page screenshots of EVERY crawled page, reviewed by eye; flag empty content bands, collapsed grids (especially at 390px), missing featured images leaving voids, content squeezed into one column beside dead space. Scripts cannot see these; only the screenshot review catches them.
+- **Template fingerprint:** identify the theme (`wp-content/themes/<name>` or equivalent) and oldest media dates; stock theme + surviving demo content or mismatched stock imagery is a credibility finding, not a nit.
 
 ### 7. Interaction & Controls
 - **Question:** Does clicking, tapping, typing, scrolling, and dragging work reliably on all interactive components?
 - **Checks:** Touch target sizes (min 44×44px on mobile), buttons disable double-submits, modal dialogs trap and release focus, accordion toggles expand/collapse correctly.
+- **Hover-state sweep:** hover nav items, card grids, and buttons. Content that ONLY appears on hover (card titles, overlay links) is a finding; touch devices have no hover, so hover-gated information is invisible to mobile users. Verify visually with before/after screenshots, not computed styles (styles lie about overlay visibility).
+- **Every control once:** click the search icon, each language switcher option (confirm the language actually changes), the mobile menu toggle at 390px, carousel arrows/dots, and submit one form empty to observe validation. A control that silently does nothing is a finding.
 
 ### 8. States & Feedback
 - **Question:** Does the UI communicate what is happening across all system states?

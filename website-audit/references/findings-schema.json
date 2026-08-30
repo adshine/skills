@@ -19,7 +19,7 @@
         "required": ["id", "page", "bucket", "pillar", "check", "severity", "status", "found", "evidence", "expected"],
         "properties": {
           "id": { "type": "string", "pattern": "^F-[0-9]{3}$" },
-          "page": { "type": "string" },
+          "page": { "type": "string", "description": "Affected page. Use \"/*\" for site-wide findings (headers, global tracking, sitewide JS errors); they score as their own Site-wide row, never against the homepage." },
           "bucket": { "type": "string", "description": "One of the 17 check buckets by name" },
           "pillar": {
             "enum": ["Find & Convert", "Content & Trust", "Design & Interaction", "Speed & A11y", "Technical Hygiene"]

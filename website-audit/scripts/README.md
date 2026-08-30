@@ -9,5 +9,5 @@ Deps: `pip install requests playwright && playwright install chromium`. All scri
 | `headers_check.py` | Security headers (CSP frame-ancestors, HSTS, nosniff, Permissions-Policy, COOP) + security.txt. | `python3 headers_check.py --url https://example.com --url https://example.com/checkout` |
 | `robots_ai_check.py` | AI crawler access in robots.txt + per-page noindex/nosnippet directives. | `python3 robots_ai_check.py --url https://example.com --pages /pricing,/blog` |
 | `crux_fetch.py` | Real-user p75 LCP/INP/CLS from the CrUX API. Needed for High/Blocker INP findings. | `CRUX_API_KEY=... python3 crux_fetch.py --url https://example.com` |
-| `browser_audit.py` | Playwright: viewport screenshots, 390px overflow, tab-order walk (focus obscured/invisible/traps), GPC replay, console errors. | `python3 browser_audit.py --url https://example.com/pricing --artifacts ./artifacts` |
+| `browser_audit.py` | Playwright: viewport screenshots, 390px overflow, tab-order walk (focus obscured/invisible/traps), hover-reveal detection (`--hover`), GPC replay, console errors. | `python3 browser_audit.py --url https://example.com/pricing --artifacts ./artifacts` |
 | `audit_gate.py` | Quality gate + sensor recheck over findings.json. Exits nonzero on open Blockers/Highs or regressions. | `python3 audit_gate.py --findings findings.json --milestone blockers --recheck` |

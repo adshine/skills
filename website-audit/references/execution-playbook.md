@@ -60,6 +60,18 @@ Solo-agent fallback: run the phases sequentially in the same order; the verify p
 
 ---
 
+## The Visual Walkthrough (MANDATORY, not optional)
+
+Scripts cannot see. Broken layouts (empty content bands, collapsed grids, missing images), hover-hidden content, dead language switchers, and template-default tells are invisible to every automated check and obvious to an eye on the page. After the scripted collection:
+
+1. **Screenshot every crawled content page** full-height (desktop) plus the money path at 390px, via `browser_audit.py --screenshots` over the full inventory, not just the money path.
+2. **The auditor VIEWS every screenshot** and judges each one: blank voids, squeezed columns, missing images, overlapping elements, template-default look, stock imagery mismatched to the business.
+3. **Interact with every distinct control once:** hover nav items and card grids (content that appears only on hover is a finding; touch devices have no hover), click the search icon, click every language switcher option and confirm the language actually changes, open the mobile menu at 390px, submit one form empty and check inline validation, click carousel/slider controls.
+4. **Spot-check facts a subject-matter reader would catch:** map labels, country and region names, dates, claimed numbers. A misspelled country on a research firm's coverage map is a High-credibility finding no scanner will ever flag.
+5. **Fingerprint the template:** read `wp-content/themes/<name>` (or equivalent) and the oldest media upload dates from page source; if the theme is stock and demo-era content or imagery survives, judge template-default-ness as a credibility finding.
+
+Hover-reveal detection and console capture also run scripted (`browser_audit.py --hover --console`), but the script output is a lead; the screenshot review is the check.
+
 ## Non-Negotiables
 
 - No finding without a receipt (see [evidence-standards.md](evidence-standards.md)).

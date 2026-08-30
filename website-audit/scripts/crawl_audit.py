@@ -116,6 +116,7 @@ def main():
     pages, findings = {}, []
     queue, seen_links = [base + "/"], set()
     visited = set()
+    themes, upload_years = set(), set()
 
     while queue and len(visited) < args.max_pages:
         url = urldefrag(queue.pop(0))[0]
@@ -145,6 +146,8 @@ def main():
                              "evidence": " -> ".join(chain), "expected": "single 301 hop max"})
 
         if "text/html" in r.headers.get("content-type", ""):
+            themes.update(re.findall(r"wp-content/themes/([a-zA-Z0-9_-]+)", r.text))
+            upload_years.update(re.findall(r"wp-content/uploads/(20\d\d)/", r.text))
             parser = PageParser()
             try:
                 parser.feed(r.text)
@@ -202,7 +205,10 @@ def main():
                              "evidence": f"crawl of {len(pages)} pages found no link to it", "expected": "reachable from site navigation"})
 
     result = {"base": base, "pagesCrawled": len(pages), "sitemapUrls": len(sitemap_urls),
-              "truncated": bool(queue), "pages": pages, "findings": findings}
+              "truncated": bool(queue),
+              "templateFingerprint": {"themes": sorted(themes), "uploadYears": sorted(upload_years),
+                                      "note": "stock theme + old upload years suggests surviving demo content; judge per bucket 6"},
+              "pages": pages, "findings": findings}
     out = json.dumps(result, indent=2)
     if args.out:
         with open(args.out, "w") as f:

@@ -40,3 +40,7 @@ $$\text{Score} = \max\Big(1.0,\; 10.0 - (3.0 \times N_{\text{Blocker}}) - (2.0 \
 The overall website health score weights the critical **money path** pages (Homepage, Pricing, Signup, Checkout) with a 2x multiplier compared to secondary pages (Dashboard, Docs, About):
 
 $$\text{Overall Score} = \frac{\sum (w_i \times \text{PageScore}_i)}{\sum w_i} \quad \text{where } w_{\text{money}} = 2.0,\; w_{\text{standard}} = 1.0$$
+
+## 4. Site-Wide Finding Attribution Rule
+
+A finding that affects every page (missing security headers, unconsented tracking, no privacy policy, global JS errors, sitewide theme problems) is logged ONCE with `page: "/*"`, never against the homepage. It then scores as its own "Site-wide" row in the scorecard at weight 1.0. Stacking global findings on the homepage double-punishes one page and hides the real story; spreading them across all pages multiplies one defect into many. Record page-specific evidence of a global defect (e.g. the header missing on /checkout specifically) inside the one `/*` finding's evidence, not as extra rows.

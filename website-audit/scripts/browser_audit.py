@@ -36,7 +36,7 @@ def audit_url(pw, url, artifacts, do, findings):
     t0 = time.time()
 
     try:
-        if do["screenshots"] or do["overflow"] or do["console"] or do["tab_order"]:
+        if do["screenshots"] or do["overflow"] or do["console"] or do["tab_order"] or do["hover"]:
             ctx = browser.new_context(viewport={"width": 390, "height": 844})
             page = ctx.new_page()
             errors = []
@@ -126,6 +126,68 @@ def audit_url(pw, url, artifacts, do, findings):
                 except Exception as e:
                     result["tabOrder"].append({"error": str(e)})
 
+            if do["hover"]:
+                try:
+                    page.set_viewport_size({"width": 1440, "height": 900})
+                    page.wait_for_timeout(300)
+                    handles = page.query_selector_all(
+                        "[class*=portfolio], [class*=card], [class*=team-item], [class*=case], nav li")
+                    checked, flagged_sigs = 0, set()
+                    for h in handles:
+                        if checked >= 8:
+                            break
+                        box = h.bounding_box()
+                        if not box or not (120 <= box["width"] <= 800 and 100 <= box["height"] <= 650):
+                            continue
+                        sig = h.evaluate("el => el.tagName + '|' + (el.className||'').toString().trim().split(/\\s+/).slice(0,2).join('.')")
+                        if sig in flagged_sigs:
+                            continue
+                        checked += 1
+                        h.scroll_into_view_if_needed()
+                        page.wait_for_timeout(200)
+
+                        def sample():
+                            return page.evaluate("""(b) => {
+                                const pts = [];
+                                for (let i = 1; i <= 3; i++) for (let j = 1; j <= 3; j++) {
+                                    const el = document.elementFromPoint(b.x + b.width*i/4, b.y + b.height*j/4);
+                                    pts.push(el ? el.tagName + '.' + (el.className || '') : '');
+                                }
+                                return pts;
+                            }""", h.bounding_box())
+
+                        def style_state():
+                            return h.evaluate("""el => {
+                                const out = [];
+                                for (const c of el.querySelectorAll('*')) {
+                                    const cs = getComputedStyle(c);
+                                    const txt = (c.textContent || '').trim();
+                                    if (txt.length > 2 || c.tagName === 'A')
+                                        out.push([+(parseFloat(cs.opacity) > 0.5 && cs.visibility === 'visible' && cs.display !== 'none'), txt.slice(0, 30)]);
+                                    if (out.length >= 40) break;
+                                }
+                                return out;
+                            }""")
+
+                        before, sty_before = sample(), style_state()
+                        b2 = h.bounding_box()
+                        page.mouse.move(b2["x"] + b2["width"] / 2, b2["y"] + b2["height"] / 2)
+                        page.wait_for_timeout(500)
+                        after, sty_after = sample(), style_state()
+                        changed = sum(1 for a, a2 in zip(before, after) if a != a2)
+                        revealed = sum(1 for (v1, t1), (v2, t2) in zip(sty_before, sty_after)
+                                       if t1 == t2 and v1 == 0 and v2 == 1)
+                        if changed >= 4 or revealed >= 1:
+                            flagged_sigs.add(sig)
+                            sel = h.evaluate("el => el.tagName.toLowerCase() + (el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\\s+/).slice(0,2).join('.') : '')")
+                            findings.append(finding(url, "Interaction & Controls", "hover-revealed content",
+                                                    "Medium", f"{sel}: hover changes content ({changed}/9 hit-test points changed, {revealed} text/link elements became visible); hover-gated overlay means titles/links are invisible without a mouse, i.e. on all touch devices",
+                                                    f"browser_audit hover sweep on {url}",
+                                                    "essential content visible without hover"))
+                        page.mouse.move(0, 0)
+                except Exception as e:
+                    result.setdefault("hoverErrors", []).append(str(e)[:120])
+
             if do["console"] and errors:
                 result["console"] = errors[:20]
                 findings.append(finding(url, "Interaction & Controls", "console errors on load", "Low",
@@ -169,12 +231,12 @@ def main():
     p = argparse.ArgumentParser(description="Playwright browser audit")
     p.add_argument("--url", action="append", required=True)
     p.add_argument("--artifacts", default="./artifacts")
-    for flag in ("screenshots", "overflow", "tab-order", "gpc", "console"):
+    for flag in ("screenshots", "overflow", "tab-order", "gpc", "console", "hover"):
         p.add_argument(f"--{flag}", action="store_true")
     p.add_argument("--out")
     args = p.parse_args()
 
-    chosen = {k: getattr(args, k) for k in ("screenshots", "overflow", "tab_order", "gpc", "console")}
+    chosen = {k: getattr(args, k) for k in ("screenshots", "overflow", "tab_order", "gpc", "console", "hover")}
     if not any(chosen.values()):
         chosen = {k: True for k in chosen}
 
