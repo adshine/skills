@@ -78,6 +78,15 @@ Hover-reveal detection and console capture also run scripted (`browser_audit.py 
 
 **Intent before pages.** Before the per-page pass, state the site's primary intent in one sentence (bucket 18) and record it at the top of the ledger. Every page's row then carries an intent verdict: advances / serves secondary intent / dead-ends. Close the walkthrough by physically walking each persona journey (home to intent completion) in the browser and logging friction; a site can pass every page check and still lose the visitor between pages.
 
+## Deliverable Export Rules
+
+When exporting the report (PDF or otherwise), the deliverable is itself a designed artifact and gets judged like one:
+
+- **Cover title = the site or company name only** (the subject deserves the display size); "Website Audit Report" goes in the small subtitle/author line, never in the display title. A cover title that wraps past two lines is wrong; shorten it.
+- No redundant lines (never repeat "Website Audit" as both title and byline).
+- Date on the cover is the audit date, not the export date, when they differ.
+- Filename: `<Site>-Audit-Report.pdf`, stable across regenerations.
+
 ## Non-Negotiables
 
 - No finding without a receipt (see [evidence-standards.md](evidence-standards.md)).
