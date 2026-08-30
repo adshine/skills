@@ -94,3 +94,10 @@ Auditors systematically tick each bucket for every scoped page.
 - **Answerability:** Key pages give clear, self-contained answers near the top (extractable facts, definitions, prices, steps) rather than burying substance under marketing prose; headings phrase real user questions where natural.
 - **Monitoring:** Check the Search Console generative-AI performance report where available; spot-check how major AI assistants describe the brand and whether they cite the site.
 - **Anti-checks:** Do NOT recommend `llms.txt` (Google confirmed it is unused; at most a neutral note, never a finding) and do NOT recommend schema-stuffing or content "chunking" as AI-ranking hacks.
+
+### 18. Primary Intent & Journey Coherence
+- **Question:** What is the ONE thing this website exists to make a visitor do, and does every page pull toward it?
+- **Name the intent first:** before auditing pages, state the site's primary intent in one sentence (request a quote, book a call, sign up, buy, apply, donate) and the secondary intents (careers, partners, press). If the intent cannot be determined from the homepage in 10 seconds, that is itself a High finding.
+- **Per-page intent verdict (recorded in the walkthrough ledger for EVERY page):** does this page (a) advance the visitor toward the primary intent with a visible next step, (b) serve a named secondary intent, or (c) dead-end? Pages with no CTA and no onward path are findings. Count clicks from each money-path page to intent completion; more than 3 is friction worth logging.
+- **Persona journeys, walked end to end:** for each key persona (e.g. prospective client, job applicant, partner), start on the homepage and actually walk to intent completion in the browser, clicking what a real visitor would click. Log every point of confusion, dead link, hidden information, or missing reassurance (pricing, proof, contact) along the way. A page can pass every isolated check and still fail the journey.
+- **Proof placement:** the strongest evidence (case studies, testimonials, credentials, guarantees) must sit ON the journey, not buried in pages the journey never visits.

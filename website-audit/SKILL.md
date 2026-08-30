@@ -15,7 +15,7 @@ A comprehensive, evidence-based website audit framework designed to evaluate web
 ## When to Use This Skill
 
 - Performing pre-launch, quarterly, or post-incident website quality audits.
-- Evaluating digital products across **17 check buckets** (Security, Performance, A11y, SEO, UX, Legal, etc.).
+- Evaluating digital products across **18 check buckets** (Security, Performance, A11y, SEO, UX, Legal, etc.).
 - Translating technical bugs and vitals into **revenue loss, conversion drop-off, and legal risks**.
 - Generating structured audit backlogs with verified receipts (screenshots, logs, HAR, curl).
 
@@ -29,11 +29,15 @@ Phase 1: Scope & Cover Sheet
       Template: [00-cover-sheet.md](templates/00-cover-sheet.md)
 
 Phase 2: Systematic Multi-Bucket Evaluation
-  └── Test scoped pages against the 17 Pre-loaded Check Buckets, collecting
-      evidence with real browser runs and analysis scripts (collect with
-      Playwright/requests, analyze with scripts/, judge as the agent).
+  └── Name the site's primary intent FIRST (bucket 18), then test every crawled
+      page against the 18 Pre-loaded Check Buckets: scripts collect, but every
+      page also gets an eyes-on screenshot review, its interactions exercised,
+      and an intent verdict, recorded in the Walkthrough Ledger. The audit may
+      NOT advance to Phase 4 until the ledger has a row (or justified skip) for
+      every page, and each persona journey has been walked end to end.
       Reference: [check-buckets.md](references/check-buckets.md)
       Execution: [execution-playbook.md](references/execution-playbook.md)
+      Ledger: [05-walkthrough-ledger.md](templates/05-walkthrough-ledger.md)
 
 Phase 3: Evidence Capture & Logging (Single Source of Truth)
   └── Log every defect into the Master Findings Table with a stable ID (F-001) and receipt.
@@ -74,7 +78,7 @@ Phase 8 (opt-in, --gate / --recheck): Quality Gate & Sensor Recheck
 
 ## Scope Flags & Domain Aliases
 
-By default, a full 17-bucket audit is performed. When only specific areas are requested, load only the targeted domain playbooks while maintaining the same dual-track report shape:
+By default, a full 18-bucket audit is performed. When only specific areas are requested, load only the targeted domain playbooks while maintaining the same dual-track report shape:
 
 ```bash
 # Run full audit
@@ -94,7 +98,8 @@ By default, a full 17-bucket audit is performed. When only specific areas are re
 ### Scope Flag Alias Mapping:
 | Flag Token | Mapped Check Buckets | Focus Area |
 | :--- | :--- | :--- |
-| `conversion` | Bucket 1 (Findability), Bucket 2 (Conversion Path), Bucket 3 (Forms) | Landing clarity, money routes, CTA clicks, checkout forms |
+| `conversion` | Bucket 1 (Findability), Bucket 2 (Conversion Path), Bucket 3 (Forms), Bucket 18 (Intent & Journey) | Landing clarity, money routes, CTA clicks, checkout forms |
+| `intent` / `journey` | Bucket 18 (Primary Intent & Journey Coherence) | Site's main goal, per-page intent verdicts, persona journeys walked end to end |
 | `ux` | Bucket 5 (Navigation), Bucket 6 (Visual/Layout), Bucket 7 (Interaction), Bucket 8 (States) | Mobile viewports, tap targets, UI states, menus |
 | `performance` | Bucket 10 (Performance & Speed) | Core Web Vitals (LCP/INP/CLS), TTFB, payload size, caching |
 | `accessibility` / `a11y` | Bucket 11 (Accessibility) | WCAG 2.2 AA contrast, screen reader labels, keyboard navigation |
@@ -123,4 +128,5 @@ By default, a full 17-bucket audit is performed. When only specific areas are re
   - Scorecard Dashboard: [`templates/02-scorecard.md`](templates/02-scorecard.md)
   - Business Executive Report: [`templates/03-executive-summary.md`](templates/03-executive-summary.md)
   - Technical Engineering Spec: [`templates/04-technical-spec.md`](templates/04-technical-spec.md)
+  - Walkthrough Ledger (completeness contract): [`templates/05-walkthrough-ledger.md`](templates/05-walkthrough-ledger.md)
   - Jargon Translation Key: [`templates/business-translation-guide.md`](templates/business-translation-guide.md)

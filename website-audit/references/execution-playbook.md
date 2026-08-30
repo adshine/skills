@@ -72,6 +72,10 @@ Scripts cannot see. Broken layouts (empty content bands, collapsed grids, missin
 
 Hover-reveal detection and console capture also run scripted (`browser_audit.py --hover --console`), but the script output is a lead; the screenshot review is the check.
 
+**The walkthrough ledger is the completeness contract.** Fill [05-walkthrough-ledger.md](../templates/05-walkthrough-ledger.md) as you go: one row per crawled content page recording screenshot-viewed, interactions-tested, layout verdict, and intent verdict. The audit MUST NOT advance to severity scoring until every page has a row or an explicit skip entry with a reason. This exists because "the scripts ran" is not the same as "someone looked"; the ledger forces the looking.
+
+**Intent before pages.** Before the per-page pass, state the site's primary intent in one sentence (bucket 18) and record it at the top of the ledger. Every page's row then carries an intent verdict: advances / serves secondary intent / dead-ends. Close the walkthrough by physically walking each persona journey (home to intent completion) in the browser and logging friction; a site can pass every page check and still lose the visitor between pages.
+
 ## Non-Negotiables
 
 - No finding without a receipt (see [evidence-standards.md](evidence-standards.md)).

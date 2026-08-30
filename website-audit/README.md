@@ -8,7 +8,7 @@ A comprehensive website audit skill for AI coding agents (Claude Code, Codex, An
 
 ## What It Evaluates
 
-Evaluates web applications across **17 pre-loaded check buckets** rolled up into **5 Executive Scorecard Pillars**:
+Evaluates web applications across **18 pre-loaded check buckets** rolled up into **5 Executive Scorecard Pillars**:
 
 1. **Find & Convert:** Landing value prop, primary CTAs, signup flows, checkout steps, promo codes, forms & data capture.
 2. **Content & Trust:** Accurate claims plus E-E-A-T credibility signals, pricing truth, copyright, legal disclosures, terms of service, refund policies, multi-jurisdiction privacy compliance (GDPR, 20+ US state laws, GPC opt-out).
@@ -64,7 +64,7 @@ website-audit/
 ├── SKILL.md                          # Master orchestrator & 6-phase workflow
 ├── README.md                         # Documentation & install guide
 ├── references/
-│   ├── check-buckets.md              # 17 pre-loaded check question library
+│   ├── check-buckets.md              # 18 pre-loaded check question library
 │   ├── severity-rubric.md            # 2-axis decision matrix
 │   ├── scorecard-rubric.md           # 5-Pillar mathematical scoring formula
 │   └── evidence-standards.md         # Evidence & receipt standards (screenshots, HAR, logs)

@@ -6,11 +6,11 @@ To eliminate auditor bias, every per-page scorecard score (1.0 to 10.0) is mathe
 
 ## 1. The 5 Core Scorecard Pillars
 
-The **17 detailed audit check buckets** roll up into **5 Executive Scorecard Pillars**:
+The **18 detailed audit check buckets** roll up into **5 Executive Scorecard Pillars**:
 
 | Pillar | Included Audit Check Buckets | Focus Area |
 | :--- | :--- | :--- |
-| **1. Find & Convert** | 1. Findability, 2. Conversion Path, 3. Forms & Data Capture | Landing clarity, CTAs, signups, checkouts, form validation. |
+| **1. Find & Convert** | 1. Findability, 2. Conversion Path, 3. Forms & Data Capture, 18. Primary Intent & Journey | Landing clarity, CTAs, signups, checkouts, form validation, journey coherence toward the site's primary intent. |
 | **2. Content & Trust** | 4. Content Truth & Credibility (E-E-A-T), 9. Cross-Page Consistency, 14. Trust, Privacy & Legal | Accurate claims, credibility signals, pricing, privacy law compliance (GDPR, US state laws, GPC), consistent UI. |
 | **3. Design & Interaction** | 5. Navigation & IA, 6. Visual / Layout, 7. Interaction, 8. States | Layout stability, mobile wrap, working buttons/menus, error/loading states. |
 | **4. Speed & A11y** | 10. Performance & Speed, 11. Accessibility & Legal Compliance | Core Web Vitals (LCP/INP/CLS), payload size, WCAG 2.2 AA contrast/focus, EAA statement. |
