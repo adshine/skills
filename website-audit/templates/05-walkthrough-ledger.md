@@ -16,6 +16,8 @@
 | `/case-studies/` | yes | card hover, card links, pagination | BROKEN at 390px (grid collapses) | dead-ends (no CTA after proof) | F-033, F-040 |
 | `/blog/` | yes | post links, sidebar search, category links | voids where featured images missing | dead-ends (no onward path) | F-035 |
 | `/contact/` | yes | form empty submit, form valid submit (test data), map | clean | IS the intent | F-008 |
+| `/blog/<slug>` (archetype, 38 pages) | representative + 2 spot-checks | post links, share buttons, comments, related posts | clean | dead-ends (no CTA on posts) | F-041 |
+| `/product/<slug>` (archetype, 214 pages) | representative + 2 spot-checks | gallery, variant picker, add to cart, reviews tab | clean | advances | none |
 
 ## Interactions checklist (minimum per page where present)
 

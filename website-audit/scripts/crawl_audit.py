@@ -204,8 +204,28 @@ def main():
                              "found": "in sitemap but never internally linked",
                              "evidence": f"crawl of {len(pages)} pages found no link to it", "expected": "reachable from site navigation"})
 
+    # Archetype clustering: pages sharing a URL pattern almost certainly share a
+    # template, so audits sample per archetype instead of walking every URL.
+    from collections import defaultdict
+    parents = defaultdict(list)
+    for url in pages:
+        path = urlparse(url).path.rstrip("/")
+        segs = [s for s in path.split("/") if s]
+        if len(segs) < 2:
+            continue  # top-level pages are usually distinct templates; never cluster them
+        parents["/" + "/".join(segs[:-1]) + "/<slug>"].append(url)
+    archetypes = {}
+    for pattern, urls in parents.items():
+        if len(urls) >= 3:
+            archetypes[pattern] = {"count": len(urls), "samples": sorted(urls)[:3]}
+    singletons = [u for u in sorted(pages)
+                  if all(u not in parents[p] for p in archetypes)]
+
     result = {"base": base, "pagesCrawled": len(pages), "sitemapUrls": len(sitemap_urls),
               "truncated": bool(queue),
+              "archetypes": archetypes,
+              "singletonPages": singletons,
+              "auditPlanHint": "walk every singleton page; per archetype deep-audit one sample and spot-check the others listed",
               "templateFingerprint": {"themes": sorted(themes), "uploadYears": sorted(upload_years),
                                       "note": "stock theme + old upload years suggests surviving demo content; judge per bucket 6"},
               "pages": pages, "findings": findings}

@@ -24,7 +24,9 @@ Auditors systematically tick each bucket for every scoped page.
 
 ### 5. Navigation & Information Architecture
 - **Question:** Can users reach every essential page from the header/footer without dead ends or circular links?
-- **Checks:** Working dropdowns, mobile hamburger menu open/close, sticky header stability, breadcrumb accuracy, visible 404 recovery links.
+- **Checks:** Working dropdowns, mobile hamburger menu open/close, sticky header stability, visible 404 recovery links.
+- **Breadcrumbs, fully:** click EVERY crumb on a sample of each page type; each must link to a live page (a crumb pointing at a 404 is a High trust finding). Separators must be sensible dividers (>, /, chevrons); stock themes sometimes substitute nonsense icons (thumbs-up hands, pointing fingers) from icon fonts, which reads as broken to visitors. Crumb labels must match page titles in wording and casing.
+- **Iconography sanity:** scan theme icons in nav, lists, and buttons for meaningless or wrong substitutions (an icon-font fallback or theme default that has nothing to do with the content).
 
 ### 6. Visual, Layout & Responsive Design
 - **Question:** Does the layout remain balanced, readable, and free of overlap across standard viewports (390px mobile, 768px tablet, 1440px desktop)?

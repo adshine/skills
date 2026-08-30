@@ -2,6 +2,8 @@
 
 **Rule:** No finding may be entered into the Master Findings Table without a verifiable receipt/evidence.
 
+**One defect, one finding.** A defect living in a shared template (broken breadcrumb on all service pages, missing labels on every product card) is logged ONCE with the archetype pattern as its page (e.g. `/service/<slug>`) and the affected page count in the evidence; never one finding per affected URL. Redundant findings bury the real story and double-punish the score.
+
 **Sensors are the preferred receipt.** Where a deterministic command can prove the defect (see [sensor-library.md](sensor-library.md)), record its failing output as the evidence AND attach the command to the finding in findings.json. A screenshot proves the defect happened once; a sensor proves it is still there and later proves it is fixed. Screenshots remain required for visual/layout findings where no command can judge.
 
 ---
