@@ -9,6 +9,7 @@ Read: [Stop Guessing at UI Quality: Interaction QA Skills for AI Coding Agents](
 
 | Skill | What it does | Non-goals (one line) |
 |-------|--------------|----------------------|
+| [modern-contact-qr](modern-contact-qr/) | Generate rounded, brand-colored contact QR codes as SVG/PNG with independent scan verification. | Not hosted contact pages or generative QR artwork. |
 | [ios-sim-session](ios-sim-session/) | Pin one coding session to one iOS Simulator + an isolated build, so concurrent Claude/Codex/Xcode sessions never clash on the device or DerivedData. | Not a product QA skill. |
 | [nano-banana-skill](nano-banana-skill/) | AI image generation with Nano Banana Pro (Gemini 3 Pro Image), optimized for Expo / React Native. | Not a product QA skill. |
 | [measured-visual-qa](measured-visual-qa/) | Measure settled 2D layout/geometry: DOM rect vs painted px, gutters, rhythm, clipping, optical center, open/closed settled states. | Not motion, hover feel, WebGL/3D, HTTP/DB, or CLI/fs. |
