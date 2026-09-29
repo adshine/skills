@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repair Broken Video"
+  short_description: "Recover unplayable .mov/.mp4 files from a healthy reference clip and fix stutter."
+  default_prompt: "Repair the provided broken video. Diagnose the container, locate a healthy reference clip from the same device, rebuild the index with untrunc, re-encode for correct frame order, and verify playback before handing back."
