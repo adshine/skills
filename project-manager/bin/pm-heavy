@@ -1,0 +1,25 @@
+#!/bin/bash
+# pm-heavy <command...> : run a heavy job (full test suite, e2e, build) one at a
+# time across the WHOLE machine. Waits its turn, runs the command, releases.
+# Twenty workers each launching browsers at once is what crashes a laptop.
+[ $# -gt 0 ] || { echo "usage: pm-heavy <command...>" >&2; exit 2; }
+pm_home="${PM_HOME:-$HOME/.pm}"
+lock="$pm_home/.heavy-lock"; mkdir -p "$pm_home"
+waited=0
+until mkdir "$lock" 2>/dev/null; do
+  holder=$(cat "$lock/pid" 2>/dev/null)
+  if [ -n "$holder" ] && ! kill -0 "$holder" 2>/dev/null; then rm -rf "$lock"; continue; fi   # holder died
+  [ $((waited % 60)) -eq 0 ] && echo "pm-heavy: waiting for another heavy job to finish (${waited}s)..." >&2
+  sleep 5; waited=$((waited+5))
+done
+echo $$ > "$lock/pid"; echo "$*" > "$lock/cmd"
+trap 'rm -rf "$lock"' EXIT INT TERM
+started=$(date +%s)
+"$@"; code=$?
+killed=$(cat "$pm_home/.watch-killed" 2>/dev/null || echo 0)
+if [ $code -ne 0 ] && [ "$killed" -ge "$started" ]; then
+  echo "pm-heavy: this run was cut short by the machine watchdog because memory was critical." >&2
+  echo "pm-heavy: the failures above are NOT evidence about your code. Change nothing because of them. Wait two minutes and run the same command again." >&2
+  exit 75
+fi
+exit $code

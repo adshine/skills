@@ -1,0 +1,18 @@
+#!/bin/bash
+# pm-spawn <name> <kind> <pane-id> [-- agent args...]
+# The ONLY way a manager starts a worker. Refuses unless pm-capacity says OK,
+# serialises with other managers, turns the git guardrail on, starts the agent.
+# Requires Herdr (https://github.com/herdrdev/herdr). Edit the case statement
+# below so each kind gets the flags your agent CLIs expect.
+set -u
+name="${1:?name}"; kind="${2:?kind: pi|codex|grok|opencode|claude}"; pane="${3:?pane id}"; shift 3; [ "${1:-}" = "--" ] && shift
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+pm_home="${PM_HOME:-$HOME/.pm}"
+lock="$pm_home/.spawn-lock"; mkdir -p "$pm_home"
+for _ in $(seq 1 60); do mkdir "$lock" 2>/dev/null && break; [ -n "$(find "$lock" -maxdepth 0 -mmin +2 2>/dev/null)" ] && rmdir "$lock" 2>/dev/null; sleep 1; done
+trap 'rmdir "$lock" 2>/dev/null' EXIT
+verdict="$("$here/pm-capacity" --spawn)"; code=$?
+if [ $code -ne 0 ]; then echo "REFUSED, no worker started. $verdict" >&2; echo "Reuse a worker that has finished, wait, or close idle workers you created." >&2; exit $code; fi
+herdr pane run "$pane" "export PM_GUARD=1 PATH=\"$here:\$PATH\"" >/dev/null 2>&1; sleep 1
+case "$kind" in pi) set -- --no-skills "$@";; codex|grok) set -- --yolo "$@";; opencode) set -- --auto "$@";; esac
+herdr agent start "$name" --kind "$kind" --pane "$pane" -- "$@" && sleep 8   # let it settle before the next spawn is judged

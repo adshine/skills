@@ -1,0 +1,54 @@
+#!/bin/bash
+# pm-capacity [--spawn] [--json] : can this machine take more work right now?
+#   (no flag)  may I put one more EXISTING idle worker to work?
+#   --spawn    may I START one more agent? (also counts how many are open)
+# One verdict for the WHOLE machine, shared by every workspace and manager:
+#   OK   : you may start one more worker, or put one more idle worker to work
+#   BUSY : start nothing new; only hand a ticket to a worker that just finished
+#   STOP : dispatch nothing, close idle workers you created, tell the user
+# What crashed this machine was many agents WORKING at once (tests, browsers,
+# builds), so working agents and memory pressure weigh most; idle ones weigh less.
+# Agent counts come from Herdr when it is installed and read 0 otherwise.
+# Signals are read the macOS way first, then the Linux way, then a safe default.
+# Override limits with PM_MAX_WORKING and PM_MAX_AGENTS; state lives in PM_HOME.
+pm_home="${PM_HOME:-$HOME/.pm}"
+mem_bytes=$(sysctl -n hw.memsize 2>/dev/null || awk '/MemTotal/{print $2*1024}' /proc/meminfo 2>/dev/null); mem_bytes=${mem_bytes:-17179869184}
+ram_gb=$(( mem_bytes / 1073741824 ))
+ncpu=$(sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 8)
+max_working="${PM_MAX_WORKING:-$(( ram_gb / 4 ))}"      # 16 GB -> 4 working at once
+max_agents="${PM_MAX_AGENTS:-$(( ram_gb * 3 / 2 ))}"     # 16 GB -> 24 agents open
+level=$(sysctl -n kern.memorystatus_vm_pressure_level 2>/dev/null || echo 1)   # 1 normal 2 warn 4 critical
+load1=$(sysctl -n vm.loadavg 2>/dev/null | awk '{print $2}'); [ -z "$load1" ] && load1=$(awk '{print $1}' /proc/loadavg 2>/dev/null); load1=${load1:-0}
+free_pct=$(memory_pressure 2>/dev/null | awk -F': ' '/free percentage/{gsub("%","",$2); print $2}')
+[ -z "$free_pct" ] && free_pct=$(awk '/MemTotal/{t=$2} /MemAvailable/{a=$2} END{if(t) printf "%d", a*100/t}' /proc/meminfo 2>/dev/null); free_pct=${free_pct:-50}
+swap_mb=$(sysctl -n vm.swapusage 2>/dev/null | sed -E 's/.*used = ([0-9]+).*/\1/'); swap_mb=${swap_mb:-0}
+disk_gb=$(df -Pk "${PM_DISK_PATH:-$HOME}" 2>/dev/null | tail -1 | awk '{printf "%d", $4/1048576}'); disk_gb=${disk_gb:-99}
+al=$(herdr agent list 2>/dev/null)
+agents=$(echo "$al" | jq '.result.agents | length' 2>/dev/null); agents=${agents:-0}
+working=$(echo "$al" | jq '[.result.agents[] | select(.agent_status=="working")] | length' 2>/dev/null); working=${working:-0}
+browsers=$(ps -axo comm= | grep -c -E 'chrome-headless-shell|Chrome for Testing|Chromium')
+heavy=$([ -d "$pm_home/.heavy-lock" ] && echo 1 || echo 0)
+mode=dispatch; for a in "$@"; do [ "$a" = "--spawn" ] && mode=spawn; done
+# under a memory warning, only half as many may work at once
+limit=$max_working; [ "$level" -ge 4 ] && limit=$(( (max_working + 1) / 2 ))
+v=OK; why=""
+b(){ [ "$v" = OK ] && v=BUSY; why="$why $1;"; }
+s(){ v=STOP; why="$why $1;"; }
+[ "$working" -ge "$limit" ] && b "$working agents already working (limit $limit$([ "$level" -ge 2 ] && echo ", halved while memory pressure is critical"))"
+if [ "$mode" = spawn ]; then
+  [ "$level" -ge 2 ] && b "memory pressure is at warning, reuse an idle worker instead"
+  [ "$agents" -ge "$max_agents" ] && b "$agents agents open (limit $max_agents), reuse or close idle ones"
+fi
+[ "$free_pct" -lt 15 ] && b "memory free ${free_pct}%"
+[ "$swap_mb" -gt $(( ram_gb * 1024 )) ] && b "swap ${swap_mb}M exceeds RAM"
+awk "BEGIN{exit !($load1 > $ncpu*2.5)}" && b "load $load1"
+[ "$browsers" -gt 8 ] && b "$browsers test browsers open"
+[ "$level" -ge 4 ] && s "memory pressure is CRITICAL"
+[ "$free_pct" -lt 5 ] && s "memory free ${free_pct}%"
+[ "$swap_mb" -gt $(( ram_gb * 2048 )) ] && s "swap ${swap_mb}M is over twice RAM"
+[ "$disk_gb" -lt 10 ] && b "only ${disk_gb} GB disk left"; [ "$disk_gb" -lt 4 ] && s "only ${disk_gb} GB disk left for swap"
+awk "BEGIN{exit !($load1 > $ncpu*6)}" && s "load $load1 on $ncpu cpus"
+nums="working $working/$limit, open $agents/$max_agents, pressure level $level, memory free ${free_pct}%, swap ${swap_mb}M, load $load1, test browsers $browsers, heavy job running: $heavy, disk ${disk_gb}G"
+if [[ " $* " == *" --json "* ]]; then printf '{"verdict":"%s","working":%s,"agents":%s,"level":%s,"free_pct":%s,"swap_mb":%s}\n' "$v" "$working" "$agents" "$level" "$free_pct" "$swap_mb"
+else echo "$v:${why:- room for one more.} [$nums]"; fi
+case $v in OK) exit 0;; BUSY) exit 1;; STOP) exit 2;; esac

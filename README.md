@@ -3,6 +3,8 @@
 A collection of agent skills (Claude Code / Codex / any SKILL.md-compatible agent).
 Each subdirectory is a self-contained skill: a `SKILL.md` plus any helper scripts.
 
+If a skill here helps you, please star the repo so others can find it.
+
 Read: [Stop Guessing at UI Quality: Interaction QA Skills for AI Coding Agents](articles/introducing-interaction-qa-skills.md)
 
 ## Skills
@@ -20,6 +22,7 @@ Read: [Stop Guessing at UI Quality: Interaction QA Skills for AI Coding Agents](
 | [full-stack-interaction-qa](full-stack-interaction-qa/) | Correlate UI actions with HTTP, traces, logs, and DB/queue truth under explicit gates. | Not click-feel, static layout, CSS motion, CLI/fs, or 3D; missing backend evidence ≠ Pass. |
 | [website-audit](website-audit/) | Conduct comprehensive website audits across 16 check buckets with dual-track reporting: Plain-English Executive Summary and Deep Engineering Spec. | Not continuous APM / synthetic uptime monitoring. |
 | [repair-broken-video](repair-broken-video/) | Recover an unplayable `.mov`/`.mp4` (missing `moov` atom) from a healthy same-device reference clip, then re-encode so frames play in order without stutter. | Not a product QA skill; not for truly missing frame data. |
+| [project-manager](project-manager/) | Run one agent as project manager over worker agents (subagents, CLI sessions, or terminal panes): tickets, dispatch, independent review, plain-English reports. | Not a builder; never writes product code itself. |
 
 ### Reserved (not shipped)
 
@@ -58,6 +61,7 @@ skills/
   full-stack-interaction-qa/ SKILL.md, agents/, scripts/, references/
   website-audit/             SKILL.md, references/, templates/
   repair-broken-video/       SKILL.md, README.md, agents/, scripts/
+  project-manager/           SKILL.md, README.md, adapters/, bin/
   articles/                  catalog essay
 ```
 

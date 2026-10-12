@@ -1,0 +1,46 @@
+#!/bin/zsh
+# pm-stall-watch <targets-file> [interval-seconds, default 60]
+# Requires Herdr (https://github.com/herdrdev/herdr), zsh, and python3.
+# Run in the background (host background shell). Every interval it checks every
+# worker pane listed in the targets file, on this machine or over SSH, and exits
+# with one line naming the first pane that needs the manager:
+#   - status blocked or missing,
+#   - (once the pane has stopped) a question, permission prompt, cost guard, usage limit, login or API error
+#     on screen (a worker that stops politely with a question shows as "done"),
+#   - idle or done for 10 minutes while its ticket is still open.
+# The exit wakes the manager; handle it, then re-arm in the same turn.
+# Targets file: one line per worker, "host|pane" (host "local" = this machine,
+# otherwise an SSH host with herdr; set PM_REMOTE_PATH if herdr lives elsewhere there). Delete a line when its ticket is closed so a
+# finished worker does not trip the idle check. Lines starting with # are ignored.
+set -u
+file="${1:?targets file}"; every="${2:-60}"
+PATTERN='Do you want to proceed|How do you want to proceed|cost.guard|usage limit|limit reached|Should I |Want me to|Which would you|Shall I|Please run /login|API Error|Not logged in'
+typeset -A idle_since miss
+run() { local h=$1; shift
+  if [[ $h == local ]]; then zsh -c "$*"
+  else ssh -o ConnectTimeout=10 "$h" "export PATH=${PM_REMOTE_PATH:-/opt/homebrew/bin:/usr/local/bin:\$HOME/.local/bin}:\$PATH; $*" </dev/null; fi; }
+while :; do
+  for t in ${(f)"$(grep -v '^\s*#' "$file" | grep -v '^\s*$')"}; do
+    h=${t%%|*}; p=${t#*|}
+    raw=$(run "$h" "herdr agent list 2>/dev/null")
+    # A host we cannot reach is skipped; only alert after 5 misses in a row (about 5 minutes).
+    if [[ -z $raw ]]; then
+      miss[$h]=$(( ${miss[$h]:-0} + 1 ))
+      (( miss[$h] >= 5 )) && { print "ATTENTION $h: unreachable for ${miss[$h]} checks"; exit 0; }
+      continue
+    fi
+    miss[$h]=0
+    st=$(print -r -- "$raw" | python3 -c "import json,sys
+try: print([a['agent_status'] for a in json.load(sys.stdin)['result']['agents'] if (a.get('name') or a['pane_id'])=='$p'][0])
+except Exception: print('missing')")
+    screen=$(run "$h" "herdr agent read '$p' --source visible 2>/dev/null | tail -40")
+    hit=$(print -r -- "$screen" | grep -iE "$PATTERN" | tail -1 | cut -c1-200)
+    [[ -n $hit && $st != working ]] && { print "ATTENTION $h $p ($st): $hit"; exit 0; }
+    [[ $st == blocked || $st == missing ]] && { print "ATTENTION $h $p: status $st"; exit 0; }
+    if [[ $st == idle || $st == done ]]; then
+      (( ${idle_since[$t]:-0} == 0 )) && idle_since[$t]=$SECONDS
+      (( SECONDS - idle_since[$t] > 600 )) && { print "ATTENTION $h $p: $st for 10 minutes with its ticket open"; exit 0; }
+    else idle_since[$t]=0; fi
+  done
+  sleep "$every"
+done

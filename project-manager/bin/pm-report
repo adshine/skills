@@ -1,0 +1,40 @@
+#!/bin/bash
+# pm-report <board-dir> <ticket-id> <STATUS> [one-line note]
+# Run by a WORKER when it finishes, blocks, or passes a MILESTONE the manager is
+# waiting on (then it keeps working). Three steps, in order:
+#   1. check the report file exists
+#   2. drop a uniquely named file in the manager's inbox (the truth; workers
+#      can never overwrite each other because every entry is its own file)
+#   3. ring the manager's pane once, under a lock, so two workers never type
+#      into it at the same moment. The ring only says "look at the inbox".
+set -u
+dir="${1:?board dir}"; id="${2:?ticket id}"; status="${3:?status}"; shift 3; note="$*"
+dir="${dir/#\~/$HOME}"
+case "$status" in DONE|DONE_WITH_CONCERNS|NEEDS_CONTEXT|BLOCKED|MILESTONE) ;; *)
+  echo "status must be DONE, DONE_WITH_CONCERNS, NEEDS_CONTEXT, BLOCKED or MILESTONE" >&2; exit 2 ;; esac
+report="$dir/reports/$id.md"
+if [ ! -s "$report" ]; then echo "write your report to $report first, then run this again" >&2; exit 3; fi
+
+mkdir -p "$dir/inbox/seen"
+who="${HERDR_PANE_ID:-unknown-pane}"
+stamp="$(date +%Y%m%dT%H%M%S)"
+entry="$dir/inbox/$stamp-$id-$status-$$"
+printf '%s %s from %s at %s. Report: %s%s\n' "$id" "$status" "$who" "$(date '+%Y-%m-%d %H:%M:%S')" "$report" "${note:+ Note: $note}" > "$entry.tmp" && mv "$entry.tmp" "$entry"
+echo "inbox: $(basename "$entry")"
+
+manager="$(cat "$dir/manager" 2>/dev/null | head -1)"
+if [ -z "$manager" ] || ! command -v herdr >/dev/null 2>&1; then
+  echo "no manager pane to ring; the inbox entry is enough"; exit 0
+fi
+
+lock="$dir/inbox/.bell"
+for _ in $(seq 1 40); do
+  if mkdir "$lock" 2>/dev/null; then break; fi
+  # break a lock left behind by a crashed ring (older than 30s)
+  if [ -n "$(find "$lock" -maxdepth 0 -mmin +0.5 2>/dev/null)" ]; then rmdir "$lock" 2>/dev/null; fi
+  sleep 1
+done
+herdr agent prompt "$manager" "inbox: $id $status" >/dev/null 2>&1 && echo "rang $manager" || echo "could not ring $manager; the inbox entry is enough"
+sleep 1
+rmdir "$lock" 2>/dev/null
+exit 0

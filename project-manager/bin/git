@@ -1,0 +1,70 @@
+#!/bin/bash
+# project-manager guardrail: a git front door for worker agents.
+# Blocks commands that are irreversible, outward-facing, or that sweep up
+# another worker's changes in a shared tree. Everything else passes through.
+# The manager lifts one rule for one command with PM_ALLOW=<rule>, only when
+# the user has said yes (see review.md).
+
+self_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+
+real_git=""
+IFS=':' read -r -a path_dirs <<< "$PATH"
+for d in "${path_dirs[@]}"; do
+  [ -z "$d" ] && continue
+  [ "$(cd "$d" 2>/dev/null && pwd -P)" = "$self_dir" ] && continue
+  if [ -x "$d/git" ]; then real_git="$d/git"; break; fi
+done
+[ -z "$real_git" ] && real_git=/usr/bin/git
+
+# Find the subcommand, skipping git's global options.
+args=("$@")
+i=0
+while [ $i -lt ${#args[@]} ]; do
+  case "${args[$i]}" in
+    -C|-c|--git-dir|--work-tree|--namespace|--exec-path|--super-prefix|--config-env) i=$((i+2)) ;;
+    -*) i=$((i+1)) ;;
+    *) break ;;
+  esac
+done
+sub="${args[$i]:-}"
+rest=("${args[@]:$((i+1))}")
+
+has() { # has <literal>... : true if any remaining arg equals one of them
+  local a w
+  for a in "${rest[@]}"; do for w in "$@"; do [ "$a" = "$w" ] && return 0; done; done
+  return 1
+}
+short_flag() { # short_flag <letter> : true if a bundled short option holds it (-am, -fd)
+  local a
+  for a in "${rest[@]}"; do
+    case "$a" in --*) ;; -*"$1"*) return 0 ;; esac
+  done
+  return 1
+}
+
+rule="" why=""
+case "$sub" in
+  push)     rule=push;  why="pushing needs the user's yes" ;;
+  reset)    has --hard && { rule=reset-hard; why="it throws away uncommitted work, maybe another worker's"; } ;;
+  clean)    { short_flag f || has --force; } && { rule=clean; why="it deletes untracked files, maybe another worker's"; } ;;
+  branch)   { short_flag D || { has --delete && has --force; }; } && { rule=branch-delete; why="force-deleting a branch can lose commits"; } ;;
+  stash)    case "${rest[0]:-push}" in list|show) ;; *) rule=stash; why="a stash in a shared tree sweeps up other workers' changes" ;; esac ;;
+  add)      { has . -A --all -u --update ':/' || [ ${#rest[@]} -eq 0 ]; } && { rule=add-all; why="stage files by explicit path so you never pick up another worker's changes"; } ;;
+  commit)   { short_flag a || has --all; } && { rule=commit-all; why="commit files by explicit path, not with -a"; } ;;
+  checkout|restore) has . ':/' && { rule=discard-all; why="it discards every uncommitted change in the tree"; } ;;
+esac
+
+if [ -n "$rule" ]; then
+  case ",${PM_ALLOW:-}," in *",$rule,"*) rule="" ;; esac
+fi
+
+if [ -n "$rule" ]; then
+  {
+    echo "BLOCKED by the project manager's guardrail [$rule]: git $*"
+    echo "Why: $why."
+    echo "Do not work around this. If your task truly needs it, stop, say so in your report, and wait."
+  } >&2
+  exit 97
+fi
+
+exec "$real_git" "$@"
