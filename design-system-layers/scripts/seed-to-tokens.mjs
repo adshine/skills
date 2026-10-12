@@ -16,7 +16,7 @@ const args = Object.fromEntries(process.argv.slice(2).map((a, i, all) =>
 
 const seed = args.seed;
 if (!seed || !/^#?[0-9a-fA-F]{6}$/.test(seed)) {
-  console.error('usage: seed-to-tokens --seed #RRGGBB [--variant tonalSpot|neutral|vibrant|expressive|fidelity|content|monochrome] [--prefix brand] [--contrast 0] [--out tokens.json] [--css tokens.css]');
+  console.error('usage: seed-to-tokens --seed #RRGGBB [--variant tonalSpot|neutral|vibrant|expressive|fidelity|content|monochrome] [--prefix brand] [--contrast 0] [--out tokens.json] [--css tokens.css] [--shadcn theme.css]');
   process.exit(2);
 }
 const variants = {
@@ -79,4 +79,40 @@ if (args.css) {
     `@media (prefers-color-scheme: dark) {\n${block('  :root:not([data-theme="light"])', sys.color.dark).replace(/\n/g, '\n  ')}\n}`,
   ].join('\n\n');
   writeFileSync(args.css, css + '\n');
+}
+
+// shadcn/ui theme: maps the generated roles onto shadcn's CSS variable names
+// (:root for light, .dark for dark), plus every role under the brand prefix.
+// Literal values in both blocks, because var() aliases resolve where they are
+// declared and would not follow the .dark override.
+if (args.shadcn) {
+  const map = {
+    background: 'surface', foreground: 'onSurface',
+    card: 'surfaceContainerLowest', 'card-foreground': 'onSurface',
+    popover: 'surfaceContainerLow', 'popover-foreground': 'onSurface',
+    primary: 'primary', 'primary-foreground': 'onPrimary',
+    secondary: 'secondaryContainer', 'secondary-foreground': 'onSecondaryContainer',
+    muted: 'surfaceContainerHigh', 'muted-foreground': 'onSurfaceVariant',
+    accent: 'surfaceContainerHighest', 'accent-foreground': 'onSurface',
+    destructive: 'error', 'destructive-foreground': 'onError', border: 'outlineVariant', input: 'outline', ring: 'primary',
+    'chart-1': 'primary', 'chart-2': 'tertiary', 'chart-3': 'secondary',
+    'chart-4': 'primaryFixedDim', 'chart-5': 'tertiaryContainer',
+    sidebar: 'surfaceContainerLow', 'sidebar-foreground': 'onSurface',
+    'sidebar-primary': 'primary', 'sidebar-primary-foreground': 'onPrimary',
+    'sidebar-accent': 'secondaryContainer', 'sidebar-accent-foreground': 'onSecondaryContainer',
+    'sidebar-border': 'outlineVariant', 'sidebar-ring': 'primary',
+  };
+  const kebab = (s) => s.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+  const block = (sel, r) => {
+    const roleVars = Object.entries(r).filter(([k]) => !k.startsWith('$'))
+      .map(([k, v]) => `  --${prefix}-color-${kebab(k)}: ${v.$value};`);
+    const aliases = Object.entries(map).map(([k, role]) => `  --${k}: ${r[role].$value};`);
+    return `${sel} {\n  /* shadcn roles */\n${aliases.join('\n')}\n\n  /* all generated roles */\n${roleVars.join('\n')}\n}`;
+  };
+  const css = [
+    `/* Generated from seed ${seed}, variant ${variant}, spec ${spec}. Do not edit by hand; rerun seed-to-tokens. */`,
+    block(':root', sys.color.light),
+    block('.dark', sys.color.dark),
+  ].join('\n\n');
+  writeFileSync(args.shadcn, css + '\n');
 }

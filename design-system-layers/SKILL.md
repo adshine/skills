@@ -17,7 +17,7 @@ Users never meet components. They meet patterns. Foundations have the most lever
 
 ## Two modes
 
-- **Deliver a new system fast** (days, not months): follow `references/fast-delivery.md`. In short: a one-hour intake (seed color, typeface, platforms, top 3 to 5 user flows), then generate foundations (`scripts/seed-to-tokens.sh --seed "#RRGGBB"` turns one brand color into contrast-checked light and dark tokens) and write the reasoning beside them, then theme an accessible headless base for about 15 core components instead of building behavior, then write one pattern page per top flow before adding more components. Token naming: `references/token-scheme.md`. Page templates: `references/doc-templates.md`.
+- **Deliver a new system fast** (days, not months): follow `references/fast-delivery.md`. In short: ask **React or plain HTML?** first, plus a short intake (seed color, typeface, platforms, top 3 to 5 user flows). Then start from a premade starter, never an empty folder: `scripts/new-design-system.sh --stack react|html --dest DIR --seed "#RRGGBB" --name "Brand" --font "Font"` copies `templates/react-shadcn` (shadcn/ui, about 20 components) or `templates/html` (plain CSS components), generates contrast-checked light and dark colors into it, and sets font, radius and name. Write the reasoning beside each foundation, do a de-generic pass, then write one pattern page per top flow before adding more components. Token naming: `references/token-scheme.md`. Page templates: `references/doc-templates.md`.
 - **Fix or extend an existing system:** Steps 1 to 3 below, or the audit.
 
 Both modes use the same layer test.

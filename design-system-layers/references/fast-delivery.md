@@ -6,8 +6,9 @@ Order matters. Each stage only depends on the one before it.
 
 ## Stage 0: Intake (an hour, not a workshop)
 
-Collect only what changes the output:
+Collect only what changes the output. **Ask the build stack first**, because it picks the starter:
 
+- **Stack: React or plain HTML?** React (or Next/Vite) gets `templates/react-shadcn` (Vite, React, Tailwind v4, shadcn/ui on Radix, about 20 core components already installed). Plain HTML, WordPress, Webflow, or "not sure, we just need styles" gets `templates/html` (CSS components, native `<dialog>`, no build step). Both read the same theme variable names, so moving from HTML to React later keeps the theme. Native mobile: note it, ship web tokens now, and generate platform themes later.
 - **Brand inputs:** one seed color (plus optional secondary/tertiary if the brand truly has them), typeface(s) and license, logo, any existing site or app to extract from (use `extract-design-system` if one exists).
 - **Product shape:** platforms (web, iOS, Android), framework, who the users are, power users vs occasional (sets density).
 - **Top 3 to 5 user flows:** these become the first patterns. Ask "what do users come here to do?", not "which components do you need?".
@@ -15,9 +16,19 @@ Collect only what changes the output:
 
 Do not ask for anything a later stage can derive.
 
-## Stage 1: Foundations (generate, then write the why)
+## Stage 1: Start from the starter, then write the why
 
-1. **Color:** run `scripts/seed-to-tokens.sh --seed "#RRGGBB" --prefix <brand> --out tokens/color.tokens.json --css src/styles/color.css`. This produces 6 tonal palettes (ref tier) and 49 contrast-checked roles for light and dark (sys tier) from one hex. Variants: `tonalSpot` (default, calm), `vibrant`, `expressive`, `fidelity` (keeps the seed hue exact, good for strict brand colors), `neutral`, `monochrome`. Use `--contrast 0.5` or `1` for a high-contrast theme.
+Never start from an empty folder. One command copies the starter, generates the brand colors into it, sets the font, radius and name, writes `docs/foundations.md` with blanks for the reasoning, and (for React) installs dependencies:
+
+```bash
+scripts/new-design-system.sh --stack react --dest ./glowup-ds --seed "#C2410C" \
+  --name "Glowup" --tagline "Book your glow" --font "DM Sans" --radius 0.75rem
+# or --stack html
+```
+
+Then open the showcase page (React: `pnpm dev`; HTML: open `index.html`) and review it in light and dark before showing the client. Everything below explains what the starter already did and what is still yours to decide.
+
+1. **Color:** the starter runs `scripts/seed-to-tokens.sh --seed "#RRGGBB" --prefix <brand> --out tokens/color.tokens.json --css src/styles/color.css`. This produces 6 tonal palettes (ref tier) and 49 contrast-checked roles for light and dark (sys tier) from one hex. Variants: `tonalSpot` (default, calm), `vibrant`, `expressive`, `fidelity` (keeps the seed hue exact, good for strict brand colors), `neutral`, `monochrome`. Use `--contrast 0.5` or `1` for a high-contrast theme.
    - Alternatives when the stack already uses them: Radix Colors custom generator (12-step scales, each step has a job: 1-2 backgrounds, 3-5 component states, 6-8 borders/focus, 9-10 solids, 11-12 text) for shadcn/Radix projects; Adobe Leonardo (`@adobe/leonardo-contrast-colors`) when the client gives target contrast ratios.
    - Never pick hex values by eye. Pick roles by meaning, never because a value "looks right" (it breaks the other theme).
 2. **Type:** start from a 15-role scale (display, headline, title, body, label; each large/medium/small). Swap the typeface first: an unchanged default face is the fastest way to look generic.
@@ -30,6 +41,7 @@ Contrast floor in every theme: 4.5:1 for text, 3:1 for UI parts and focus rings.
 
 ## Stage 2: Components (borrow behavior, own the look)
 
+- **The starters already contain the core set,** themed from the generated roles. Add more shadcn components with `pnpm dlx shadcn@latest add <name>` inside the React project; after adding, replace any hard-coded color (for example `text-white`) with a role (`text-destructive-foreground`). The React starter ships with that fix already applied to button and badge.
 - **Do not build interactive behavior from scratch.** Use an accessible headless base and theme it:
   - React/web: shadcn/ui (CLI v4, `npx shadcn create`; default base library is Base UI since July 2026, Radix and React Aria also supported; check `components.json` before assuming which). Or `@base-ui/react`, `radix-ui`, `react-aria-components` directly.
   - Native: platform controls first (SwiftUI, Jetpack Compose Material 3 with generated `Color.kt`/`Theme.kt` from Material Theme Builder).

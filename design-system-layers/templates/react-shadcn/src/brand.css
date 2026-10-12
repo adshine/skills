@@ -1,0 +1,10 @@
+/*
+ * Hand-written foundations. Each value needs a reason in docs/foundations.md.
+ * Change these first to avoid the default template look: typeface, radius, density.
+ */
+:root {
+  --brand-font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --brand-font-heading: var(--brand-font-sans);
+  /* Corner scale base; shadcn derives sm..4xl from this. 0.25rem sharp, 0.625rem default, 1rem soft. */
+  --radius: 0.625rem;
+}
