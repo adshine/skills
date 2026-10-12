@@ -1,0 +1,93 @@
+---
+title: Shape
+description: Corner radius comes from one foundation value, and every component steps up or down from it.
+status: stable
+order: 30
+keywords: [radius, corners, rounded, border radius, shape]
+---
+
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+
+## The rule: one value
+
+Every corner in the product is derived from a single token, `--radius`, set in `src/brand.css`. The scale below multiplies it:
+
+| Step | Value |
+| --- | --- |
+| `rounded-sm` | `--radius` x 0.6 |
+| `rounded-md` | `--radius` x 0.8 |
+| `rounded-lg` | `--radius` |
+| `rounded-xl` | `--radius` x 1.4 |
+| `rounded-2xl` | `--radius` x 1.8 |
+| `rounded-3xl` | `--radius` x 2.2 |
+| `rounded-4xl` | `--radius` x 2.6 |
+| `rounded-full` | Fully round (pills and circles) |
+
+Change `--radius` and the whole product changes shape together: `0.25rem` reads sharp and technical, `0.625rem` (the default) reads friendly and neutral, `1rem` reads soft. Never set a corner with a fixed value like `rounded-[6px]`; it will not follow when the brand changes.
+
+```css
+/* src/brand.css */
+:root {
+  --radius: 0.625rem;
+}
+```
+
+## Scale
+
+Larger surfaces get larger corners. The previews below use the live value.
+
+<RadiusScale steps={[
+  { name: "Small", className: "rounded-sm", usage: "Items inside menus, selects and command lists; small tags." },
+  { name: "Medium", className: "rounded-md", usage: "Controls: buttons, inputs, selects, popovers, tooltips." },
+  { name: "Large", className: "rounded-lg", usage: "Alerts, dialogs, tab rails and small panels." },
+  { name: "Extra large", className: "rounded-xl", usage: "Cards and grouped content." },
+  { name: "2XL", className: "rounded-2xl", usage: "Large feature panels and sheets on phones." },
+  { name: "3XL", className: "rounded-3xl", usage: "Hero media and marketing blocks." },
+  { name: "4XL", className: "rounded-4xl", usage: "Very large showcase surfaces. Use sparingly." },
+  { name: "Full", className: "rounded-full", usage: "Avatars, badges, switches, progress bars and pill buttons." },
+]} />
+
+## Nesting corners
+
+When one rounded shape sits inside another, the inner radius should be smaller: inner radius is roughly outer radius minus the padding between them. That is why a `rounded-xl` card holds `rounded-md` controls, and a `rounded-md` select holds `rounded-sm` items.
+
+<DoDont>
+  <Do caption="Inner controls step down from the card, so the corners look parallel.">
+    <div className="w-60 space-y-3 rounded-xl border bg-card p-4 text-left">
+      <p className="text-sm font-medium">Promo code</p>
+      <Input placeholder="SPRING10" />
+      <Button className="w-full">Apply</Button>
+    </div>
+  </Do>
+  <Dont caption="Inner controls rounder than their container look pinched and loose.">
+    <div className="w-60 space-y-3 rounded-sm border bg-card p-4 text-left">
+      <p className="text-sm font-medium">Promo code</p>
+      <Input className="rounded-2xl" placeholder="SPRING10" />
+      <Button className="w-full rounded-2xl">Apply</Button>
+    </div>
+  </Dont>
+</DoDont>
+
+## Round versus pill
+
+Use `rounded-full` for things that are small and self-contained: badges, avatars, toggles and status dots. Keep buttons and inputs on the component default so they line up in forms and toolbars.
+
+<Example
+  title="Full radius for small, self-contained elements"
+  code={`<Badge>Confirmed</Badge>
+<Badge variant="secondary">Pending</Badge>
+<span className="inline-grid size-10 place-items-center rounded-full bg-muted text-sm font-medium">AO</span>`}
+>
+  <Badge>Confirmed</Badge>
+  <Badge variant="secondary">Pending</Badge>
+  <span className="inline-grid size-10 place-items-center rounded-full bg-muted text-sm font-medium">AO</span>
+</Example>
+
+## Guidelines
+
+- Use the component default. Only add a radius class when you build a new surface.
+- Pick the step by the size of the surface, not by taste.
+- Keep one radius per row of controls. A pill button next to a square input looks broken.
+- Square corners (`rounded-none`) are for edges that touch another edge, like joined segments in a button group or full-bleed images.

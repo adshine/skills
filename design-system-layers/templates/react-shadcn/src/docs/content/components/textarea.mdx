@@ -1,0 +1,186 @@
+---
+title: Textarea
+description: A textarea lets people write longer text, like a comment, a note or a description.
+status: stable
+order: 21
+keywords: [textarea, multiline, comment, message, notes, long text]
+---
+
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Textarea with label and helper text"
+  code={`<div className="grid w-full max-w-md gap-2">
+  <Label htmlFor="message">Message</Label>
+  <Textarea id="message" placeholder="Tell us what you need help with" aria-describedby="message-help" />
+  <p id="message-help" className="text-sm text-muted-foreground">Our team replies within one working day.</p>
+</div>`}
+>
+  <div className="grid w-full max-w-md gap-2">
+    <Label htmlFor="ta-hero">Message</Label>
+    <Textarea id="ta-hero" placeholder="Tell us what you need help with" aria-describedby="ta-hero-help" />
+    <p id="ta-hero-help" className="text-sm text-muted-foreground">Our team replies within one working day.</p>
+  </div>
+</Example>
+
+## When to use
+
+- For answers that may run over one line: feedback, notes, descriptions, support messages.
+- When people need to see and edit what they wrote as a whole before sending it.
+
+## When not to use
+
+- **For short, single values.** Use a [text field](/components/input) for names, emails and titles.
+- **For formatted content.** A textarea is plain text only. Use a rich text editor if people need headings, links or lists.
+
+## States
+
+<Example
+  title="Default, disabled and error"
+  code={`<div className="grid gap-2">
+  <Label htmlFor="notes">Notes</Label>
+  <Textarea id="notes" placeholder="Add a note for your team" />
+</div>
+<div className="grid gap-2">
+  <Label htmlFor="archived">Archived note</Label>
+  <Textarea id="archived" defaultValue="This project was closed last quarter." disabled />
+</div>
+<div className="grid gap-2">
+  <Label htmlFor="reason">Reason for cancelling</Label>
+  <Textarea id="reason" aria-invalid="true" aria-describedby="reason-error" />
+  <p id="reason-error" className="text-sm text-destructive">Add a short reason so we can improve.</p>
+</div>`}
+>
+  <div className="mx-auto grid w-full max-w-md gap-6">
+    <div className="grid gap-2">
+      <Label htmlFor="ta-state-notes">Notes</Label>
+      <Textarea id="ta-state-notes" placeholder="Add a note for your team" />
+    </div>
+    <div className="grid gap-2">
+      <Label htmlFor="ta-state-archived">Archived note</Label>
+      <Textarea id="ta-state-archived" defaultValue="This project was closed last quarter." disabled />
+    </div>
+    <div className="grid gap-2">
+      <Label htmlFor="ta-state-reason">Reason for cancelling</Label>
+      <Textarea id="ta-state-reason" aria-invalid="true" aria-describedby="ta-state-reason-error" />
+      <p id="ta-state-reason-error" className="text-sm text-destructive">Add a short reason so we can improve.</p>
+    </div>
+  </div>
+</Example>
+
+The textarea grows with its content (it uses `field-sizing: content`) and starts at a minimum of about three lines. Set a `max-h-*` class with `overflow-y-auto` if the layout needs a ceiling.
+
+## Character limits
+
+If there is a limit, show it before people hit it and count what is left, not what is used.
+
+<Example
+  title="With a character count"
+  code={`<div className="grid w-full max-w-md gap-2">
+  <Label htmlFor="bio">Short bio</Label>
+  <Textarea id="bio" maxLength={160} aria-describedby="bio-count" />
+  <p id="bio-count" className="text-right text-sm text-muted-foreground">160 characters left</p>
+</div>`}
+>
+  <div className="grid w-full max-w-md gap-2">
+    <Label htmlFor="ta-count">Short bio</Label>
+    <Textarea id="ta-count" maxLength={160} aria-describedby="ta-count-help" />
+    <p id="ta-count-help" className="text-right text-sm text-muted-foreground">160 characters left</p>
+  </div>
+</Example>
+
+<DoDont>
+  <Do caption="Size the field for the answer you expect, so people know how much to write.">
+    <div className="grid w-full max-w-64 gap-2">
+      <Label htmlFor="ta-do">Describe the issue</Label>
+      <Textarea id="ta-do" className="min-h-24" />
+    </div>
+  </Do>
+  <Dont caption="A one-line textarea for a long answer hides most of what people type.">
+    <div className="grid w-full max-w-64 gap-2">
+      <Label htmlFor="ta-dont">Describe the issue</Label>
+      <Textarea id="ta-dont" rows={1} className="min-h-9 resize-none" />
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Labels name the content, in sentence case: "Message", "Delivery instructions".
+- Use helper text to say what a good answer includes, for example "Include the page and what you expected to happen".
+- Placeholders can suggest a starting point but must not hold required instructions.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+```
+
+## Props
+
+<PropsTable props={[
+  { name: "rows", type: "number", default: "-", description: "Starting height in lines. The field still grows with content." },
+  { name: "maxLength", type: "number", default: "-", description: "Hard limit on characters. Pair it with a visible count." },
+  { name: "disabled", type: "boolean", default: "false", description: "Prevents editing and dims the field." },
+  { name: "aria-invalid", type: "boolean", default: "false", description: "Marks the value as wrong and applies the destructive border and ring." },
+  { name: "aria-describedby", type: "string", default: "-", description: "IDs of helper, count or error text." },
+  { name: "className", type: "string", default: "-", description: "Extra classes, for example min-h-32 or max-h-64." },
+]} />
+
+`Textarea` renders a native `textarea` element, and all other props pass through to it.
+
+## Live character count
+
+```tsx
+const [value, setValue] = React.useState("")
+const left = 160 - value.length
+
+<Label htmlFor="bio">Short bio</Label>
+<Textarea
+  id="bio"
+  value={value}
+  maxLength={160}
+  onChange={(e) => setValue(e.target.value)}
+  aria-describedby="bio-count"
+/>
+<p id="bio-count" aria-live="polite" className="text-sm text-muted-foreground">
+  {left} characters left
+</p>
+```
+
+## Capping the height
+
+```tsx
+<Textarea className="max-h-64 overflow-y-auto" />
+```
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus into the textarea |
+| <kbd>Enter</kbd> | Adds a new line (it does not submit the form) |
+| <kbd>Shift</kbd> + <kbd>Tab</kbd> | Moves focus to the previous field |
+
+## Checklist
+
+- Every textarea has a visible `Label` linked with `htmlFor` and `id`.
+- Helper text, counts and errors are linked with `aria-describedby`.
+- Live counts use `aria-live="polite"` so they are announced without interrupting typing.
+- Errors set `aria-invalid="true"` and explain the fix in words.
+- If you add a keyboard shortcut to submit, like <kbd>Ctrl</kbd> + <kbd>Enter</kbd>, say so in the helper text.
+- The focus ring uses `--ring` and meets 3:1 contrast against the page.
+
+</DocTab>
+</DocTabs>

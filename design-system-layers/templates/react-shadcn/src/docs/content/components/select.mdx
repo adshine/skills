@@ -1,0 +1,315 @@
+---
+title: Select
+description: A select lets people pick one option from a list that is too long to show all at once.
+status: stable
+order: 22
+keywords: [select, dropdown, picker, combobox, options, menu]
+---
+
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Select with label"
+  code={`<div className="grid gap-2">
+  <Label htmlFor="timezone">Time zone</Label>
+  <Select>
+    <SelectTrigger id="timezone" className="w-64">
+      <SelectValue placeholder="Choose a time zone" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="utc">Coordinated Universal Time</SelectItem>
+      <SelectItem value="gmt">Greenwich Mean Time</SelectItem>
+      <SelectItem value="cet">Central European Time</SelectItem>
+      <SelectItem value="est">Eastern Time</SelectItem>
+      <SelectItem value="pst">Pacific Time</SelectItem>
+    </SelectContent>
+  </Select>
+</div>`}
+>
+  <div className="grid gap-2">
+    <Label htmlFor="sel-hero">Time zone</Label>
+    <Select>
+      <SelectTrigger id="sel-hero" className="w-64">
+        <SelectValue placeholder="Choose a time zone" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="utc">Coordinated Universal Time</SelectItem>
+        <SelectItem value="gmt">Greenwich Mean Time</SelectItem>
+        <SelectItem value="cet">Central European Time</SelectItem>
+        <SelectItem value="est">Eastern Time</SelectItem>
+        <SelectItem value="pst">Pacific Time</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+</Example>
+
+## When to use
+
+- To choose one option from about five to fifteen known choices.
+- When space is tight and the current choice matters more than comparing every option.
+
+## When not to use
+
+- **For two to five options.** Use a [radio group](/components/radio-group) so every choice is visible without opening anything.
+- **For long lists people search through,** like countries or customers. Use a searchable combobox.
+- **For actions.** A select changes a value. To run a command, use a dropdown menu or a [button](/components/button).
+- **For several choices at once.** Use [checkboxes](/components/checkbox).
+
+## Groups, sizes and states
+
+<Example
+  title="Grouped options, small size, disabled and error"
+  code={`<Select defaultValue="weekly">
+  <SelectTrigger aria-label="Report frequency" className="w-48">
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectGroup>
+      <SelectLabel>Regular</SelectLabel>
+      <SelectItem value="daily">Daily</SelectItem>
+      <SelectItem value="weekly">Weekly</SelectItem>
+      <SelectItem value="monthly">Monthly</SelectItem>
+    </SelectGroup>
+    <SelectSeparator />
+    <SelectGroup>
+      <SelectLabel>Other</SelectLabel>
+      <SelectItem value="never">Never</SelectItem>
+      <SelectItem value="custom" disabled>Custom (coming soon)</SelectItem>
+    </SelectGroup>
+  </SelectContent>
+</Select>
+<Select>
+  <SelectTrigger size="sm" aria-label="Sort by" className="w-40">
+    <SelectValue placeholder="Sort by" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="newest">Newest first</SelectItem>
+    <SelectItem value="oldest">Oldest first</SelectItem>
+  </SelectContent>
+</Select>
+<Select disabled>
+  <SelectTrigger aria-label="Region" className="w-40">
+    <SelectValue placeholder="Region" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="eu">Europe</SelectItem>
+  </SelectContent>
+</Select>
+<Select>
+  <SelectTrigger aria-label="Plan" aria-invalid="true" className="w-40">
+    <SelectValue placeholder="Choose a plan" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="basic">Basic</SelectItem>
+    <SelectItem value="team">Team</SelectItem>
+  </SelectContent>
+</Select>`}
+>
+  <Select defaultValue="weekly">
+    <SelectTrigger aria-label="Report frequency" className="w-48">
+      <SelectValue />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectGroup>
+        <SelectLabel>Regular</SelectLabel>
+        <SelectItem value="daily">Daily</SelectItem>
+        <SelectItem value="weekly">Weekly</SelectItem>
+        <SelectItem value="monthly">Monthly</SelectItem>
+      </SelectGroup>
+      <SelectSeparator />
+      <SelectGroup>
+        <SelectLabel>Other</SelectLabel>
+        <SelectItem value="never">Never</SelectItem>
+        <SelectItem value="custom" disabled>Custom (coming soon)</SelectItem>
+      </SelectGroup>
+    </SelectContent>
+  </Select>
+  <Select>
+    <SelectTrigger size="sm" aria-label="Sort by" className="w-40">
+      <SelectValue placeholder="Sort by" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="newest">Newest first</SelectItem>
+      <SelectItem value="oldest">Oldest first</SelectItem>
+    </SelectContent>
+  </Select>
+  <Select disabled>
+    <SelectTrigger aria-label="Region" className="w-40">
+      <SelectValue placeholder="Region" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="eu">Europe</SelectItem>
+    </SelectContent>
+  </Select>
+  <Select>
+    <SelectTrigger aria-label="Plan" aria-invalid="true" className="w-40">
+      <SelectValue placeholder="Choose a plan" />
+    </SelectTrigger>
+    <SelectContent>
+      <SelectItem value="basic">Basic</SelectItem>
+      <SelectItem value="team">Team</SelectItem>
+    </SelectContent>
+  </Select>
+</Example>
+
+Use the `sm` size in toolbars and filter bars. Pair an error state with a visible message, as with a [text field](/components/input).
+
+<DoDont>
+  <Do caption="Three options shown as radios, so people compare them at a glance.">
+    <RadioGroup defaultValue="standard" aria-label="Delivery speed">
+      <div className="flex items-center gap-2">
+        <RadioGroupItem value="standard" id="sel-do-standard" />
+        <Label htmlFor="sel-do-standard">Standard</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <RadioGroupItem value="express" id="sel-do-express" />
+        <Label htmlFor="sel-do-express">Express</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <RadioGroupItem value="pickup" id="sel-do-pickup" />
+        <Label htmlFor="sel-do-pickup">Pick up</Label>
+      </div>
+    </RadioGroup>
+  </Do>
+  <Dont caption="A select for a handful of options adds a click and hides the choices.">
+    <Select>
+      <SelectTrigger aria-label="Delivery speed" className="w-48">
+        <SelectValue placeholder="Delivery speed" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="standard">Standard</SelectItem>
+        <SelectItem value="express">Express</SelectItem>
+        <SelectItem value="pickup">Pick up</SelectItem>
+      </SelectContent>
+    </Select>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Order options in a way people expect: by frequency, by size, or alphabetically when nothing else fits.
+- Keep option labels short and parallel, starting with the word that differs: "Daily", "Weekly", "Monthly".
+- Placeholders read as an instruction: "Choose a plan". If one option is a safe default, preselect it instead.
+- Never put a "Select..." option inside the list as a real value.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+```
+
+## Props
+
+Select wraps the Radix Select primitive. These are the props you will use most.
+
+### Select
+
+<PropsTable props={[
+  { name: "value", type: "string", default: "-", description: "Selected value when controlled." },
+  { name: "defaultValue", type: "string", default: "-", description: "Starting value when uncontrolled." },
+  { name: "onValueChange", type: "(value: string) => void", default: "-", description: "Called when people pick an option." },
+  { name: "disabled", type: "boolean", default: "false", description: "Prevents opening the list." },
+  { name: "required", type: "boolean", default: "false", description: "Marks the value as required for form submission." },
+  { name: "name", type: "string", default: "-", description: "Field name used when the select is inside a native form." },
+]} />
+
+### SelectTrigger
+
+<PropsTable props={[
+  { name: "size", type: '"sm" | "default"', default: '"default"', description: "Height of the trigger: 32 px for sm, 36 px for default." },
+  { name: "id", type: "string", default: "-", description: "Pair with a Label htmlFor so the trigger has an accessible name." },
+  { name: "aria-invalid", type: "boolean", default: "false", description: "Applies the destructive border and ring." },
+  { name: "className", type: "string", default: "-", description: "Set the width here, for example w-64 or w-full." },
+]} />
+
+### SelectContent, SelectItem and SelectValue
+
+<PropsTable props={[
+  { name: "SelectContent position", type: '"item-aligned" | "popper"', default: '"item-aligned"', description: "item-aligned overlaps the trigger like a native select; popper opens below it." },
+  { name: "SelectContent align", type: '"start" | "center" | "end"', default: '"center"', description: "Alignment against the trigger when position is popper." },
+  { name: "SelectItem value", type: "string", default: "-", description: "Required. Must not be an empty string." },
+  { name: "SelectItem disabled", type: "boolean", default: "false", description: "Shows the option but prevents choosing it." },
+  { name: "SelectValue placeholder", type: "ReactNode", default: "-", description: "Text shown when nothing is selected." },
+]} />
+
+`SelectGroup`, `SelectLabel` and `SelectSeparator` organize long lists. `SelectLabel` names a group and is not selectable.
+
+## Controlled with a form
+
+```tsx
+const [plan, setPlan] = React.useState("")
+
+<Label htmlFor="plan">Plan</Label>
+<Select value={plan} onValueChange={setPlan} name="plan" required>
+  <SelectTrigger id="plan" className="w-full" aria-describedby="plan-help">
+    <SelectValue placeholder="Choose a plan" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="basic">Basic</SelectItem>
+    <SelectItem value="team">Team</SelectItem>
+    <SelectItem value="enterprise">Enterprise</SelectItem>
+  </SelectContent>
+</Select>
+<p id="plan-help" className="text-sm text-muted-foreground">You can change this at any time.</p>
+```
+
+## Opening below the trigger
+
+```tsx
+<SelectContent position="popper" align="start">
+  ...
+</SelectContent>
+```
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the trigger |
+| <kbd>Enter</kbd>, <kbd>Space</kbd> or <kbd>Arrow down</kbd> | Opens the list with the selected option focused |
+| <kbd>Arrow up</kbd> or <kbd>Arrow down</kbd> | Moves between options |
+| <kbd>Home</kbd> or <kbd>End</kbd> | Jumps to the first or last option |
+| Typing letters | Jumps to the first option that starts with them |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Picks the focused option and closes the list |
+| <kbd>Esc</kbd> | Closes the list without changing the value |
+
+## Checklist
+
+- The trigger has an accessible name, from a `Label` linked by `id` or from `aria-label`.
+- Radix gives the trigger the `combobox` role and the options the `option` role, and announces the selected value.
+- Focus returns to the trigger when the list closes.
+- Disabled options stay in the list so people can see they exist; explain why if it is not obvious.
+- Errors set `aria-invalid` and are described in visible text linked with `aria-describedby`.
+- The focus ring uses `--ring` and meets 3:1 contrast against the page.
+
+</DocTab>
+</DocTabs>

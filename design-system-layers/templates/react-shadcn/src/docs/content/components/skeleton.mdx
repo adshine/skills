@@ -1,0 +1,195 @@
+---
+title: Skeleton
+description: A skeleton is a gray placeholder in the shape of content that is still loading, so the page does not jump when it arrives.
+status: stable
+order: 55
+keywords: [placeholder, loading, shimmer, ghost, loading state]
+---
+
+import { Skeleton } from "@/components/ui/skeleton"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Card loading"
+  code={`<div className="flex w-full max-w-sm items-center gap-4 rounded-xl border p-4">
+  <Skeleton className="size-12 rounded-full" />
+  <div className="grid flex-1 gap-2">
+    <Skeleton className="h-4 w-3/4" />
+    <Skeleton className="h-4 w-1/2" />
+  </div>
+</div>`}
+>
+  <div className="flex w-full max-w-sm items-center gap-4 rounded-xl border p-4">
+    <Skeleton className="size-12 rounded-full" />
+    <div className="grid flex-1 gap-2">
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+    </div>
+  </div>
+</Example>
+
+## When to use
+
+- While loading content whose shape you know, like cards, lists and tables.
+- On first load of a page or section, so the layout is in place before the data.
+- When loading usually takes between about half a second and a few seconds.
+
+## When not to use
+
+- **For actions people started, like saving.** Show progress in the button that was clicked.
+- **For long tasks with measurable progress.** Use a [progress bar](/components/progress).
+- **When the shape is unknown.** A skeleton that does not match the real layout causes a jump anyway. Use a simple spinner.
+- **For empty states.** If there is no data, say so; do not leave a skeleton showing.
+
+## Shapes
+
+Build skeletons from a few blocks that match the real layout: a circle for avatars, bars for text lines, and a box for images.
+
+<Example
+  title="Media card"
+  code={`<div className="grid w-full max-w-xs gap-3">
+  <Skeleton className="aspect-video w-full rounded-xl" />
+  <Skeleton className="h-4 w-4/5" />
+  <Skeleton className="h-4 w-2/5" />
+</div>`}
+>
+  <div className="grid w-full max-w-xs gap-3">
+    <Skeleton className="aspect-video w-full rounded-xl" />
+    <Skeleton className="h-4 w-4/5" />
+    <Skeleton className="h-4 w-2/5" />
+  </div>
+</Example>
+
+<Example
+  title="List rows"
+  align="stretch"
+  code={`<div className="grid w-full max-w-md gap-4">
+  {[0, 1, 2].map((i) => (
+    <div key={i} className="flex items-center gap-3">
+      <Skeleton className="size-9 rounded-full" />
+      <div className="grid flex-1 gap-1.5">
+        <Skeleton className="h-3.5 w-1/3" />
+        <Skeleton className="h-3 w-2/3" />
+      </div>
+      <Skeleton className="h-8 w-16" />
+    </div>
+  ))}
+</div>`}
+>
+  <div className="mx-auto grid w-full max-w-md gap-4">
+    {[0, 1, 2].map((i) => (
+      <div key={i} className="flex items-center gap-3">
+        <Skeleton className="size-9 rounded-full" />
+        <div className="grid flex-1 gap-1.5">
+          <Skeleton className="h-3.5 w-1/3" />
+          <Skeleton className="h-3 w-2/3" />
+        </div>
+        <Skeleton className="h-8 w-16" />
+      </div>
+    ))}
+  </div>
+</Example>
+
+<DoDont>
+  <Do caption="The skeleton follows the real layout, so nothing moves when content loads.">
+    <div className="flex w-full max-w-56 items-center gap-3">
+      <Skeleton className="size-10 rounded-full" />
+      <div className="grid flex-1 gap-2">
+        <Skeleton className="h-3.5 w-3/4" />
+        <Skeleton className="h-3 w-1/2" />
+      </div>
+    </div>
+  </Do>
+  <Dont caption="One big block hides the structure, and the page jumps when real content appears.">
+    <Skeleton className="h-24 w-full max-w-56" />
+  </Dont>
+</DoDont>
+
+## Guidance
+
+- Match the size and position of the real content as closely as you can.
+- Vary text bar widths a little, so they read as lines of text.
+- Keep it simple: three to five blocks per item is plenty.
+- Show skeletons only for the part that is loading. Keep headings, navigation and buttons real.
+- Swap in real content all at once, not one block at a time.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Skeleton } from "@/components/ui/skeleton"
+```
+
+## Props
+
+<PropsTable props={[
+  { name: "className", type: "string", description: "Sets size and shape, for example h-4 w-1/2 or size-10 rounded-full." },
+]} />
+
+`Skeleton` is a `div` with a pulse animation, rounded corners and the `--accent` background. All other props pass through.
+
+## Loading pattern
+
+Render the skeleton while data loads and swap it for the real component when it arrives. Mark the region busy so screen readers wait:
+
+```tsx
+<section aria-busy={isLoading} aria-live="polite">
+  {isLoading ? (
+    <>
+      <span className="sr-only">Loading projects</span>
+      <ProjectListSkeleton />
+    </>
+  ) : (
+    <ProjectList projects={data} />
+  )}
+</section>
+```
+
+## Reusable skeletons
+
+Keep a skeleton next to the component it stands in for, so they change together:
+
+```tsx
+export function ProjectCardSkeleton() {
+  return (
+    <div className="grid gap-3 rounded-xl border p-4">
+      <Skeleton className="h-4 w-2/3" />
+      <Skeleton className="h-3 w-1/3" />
+    </div>
+  )
+}
+```
+
+## Styling
+
+Skeletons read `--accent`, so they follow light and dark themes. Do not set custom colors; adjust only size, shape and spacing.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Skeletons are decorative and never take focus.
+
+| Key | Action |
+| --- | --- |
+| None | Skeletons are skipped by the keyboard |
+
+## Focus management
+
+- Do not put focusable elements inside a skeleton.
+- When content loads, leave focus where it was. Do not jump to the new content.
+
+## Checklist
+
+- Skeleton blocks have no text, so screen readers ignore them. Add one visually hidden "Loading" message per region instead.
+- The loading region has `aria-busy="true"` while loading, then `false` when content is in place.
+- The pulse animation is gentle and does not flash.
+- Skeleton blocks have enough contrast against the background to be seen, but less than real content.
+
+</DocTab>
+</DocTabs>

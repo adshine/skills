@@ -1,0 +1,303 @@
+---
+title: Date picker
+description: A date picker lets people choose a date from a calendar, either shown on the page or opened from a button.
+status: stable
+order: 56
+keywords: [calendar, date, day picker, date range, schedule]
+---
+
+import * as React from "react"
+import { format } from "date-fns"
+import { CalendarIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
+import { Label } from "@/components/ui/label"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+
+export function DemoCalendar() {
+  const [date, setDate] = React.useState(new Date())
+  return (
+    <div className="grid justify-items-center gap-3">
+      <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-lg border" />
+      <p className="text-sm text-muted-foreground">
+        {date ? "Selected: " + format(date, "EEEE d MMMM yyyy") : "No date selected"}
+      </p>
+    </div>
+  )
+}
+
+export function DemoDatePicker() {
+  const [open, setOpen] = React.useState(false)
+  const [date, setDate] = React.useState()
+  return (
+    <div className="grid w-full max-w-64 gap-2">
+      <Label htmlFor="due-date">Due date</Label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            id="due-date"
+            variant="outline"
+            className={"w-full justify-start font-normal" + (date ? "" : " text-muted-foreground")}
+          >
+            <CalendarIcon />
+            {date ? format(date, "d MMM yyyy") : "Pick a date"}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={date}
+            defaultMonth={date}
+            onSelect={(d) => {
+              setDate(d)
+              setOpen(false)
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+    </div>
+  )
+}
+
+export function DemoRange() {
+  const today = new Date()
+  const [range, setRange] = React.useState({
+    from: today,
+    to: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4),
+  })
+  return (
+    <Calendar
+      mode="range"
+      selected={range}
+      onSelect={setRange}
+      numberOfMonths={2}
+      disabled={{ before: today }}
+      className="rounded-lg border"
+    />
+  )
+}
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Date picker in a popover"
+  code={`const [open, setOpen] = React.useState(false)
+const [date, setDate] = React.useState<Date>()
+
+<div className="grid w-full max-w-64 gap-2">
+  <Label htmlFor="due-date">Due date</Label>
+  <Popover open={open} onOpenChange={setOpen}>
+    <PopoverTrigger asChild>
+      <Button id="due-date" variant="outline" className="w-full justify-start font-normal">
+        <CalendarIcon />
+        {date ? format(date, "d MMM yyyy") : "Pick a date"}
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent className="w-auto p-0" align="start">
+      <Calendar
+        mode="single"
+        selected={date}
+        defaultMonth={date}
+        onSelect={(d) => {
+          setDate(d)
+          setOpen(false)
+        }}
+      />
+    </PopoverContent>
+  </Popover>
+</div>`}
+>
+  <DemoDatePicker />
+</Example>
+
+## When to use
+
+- To pick a date that is likely within a few months of today, like a due date or a booking.
+- When seeing the day of the week or nearby dates helps people choose.
+- To pick a range, like check-in and check-out.
+
+## When not to use
+
+- **For dates far in the past, like a birth date.** Use a text field or three fields for day, month and year. Paging back decades is slow.
+- **When people already know the exact date.** A text field with a clear format is faster to type.
+- **For picking a time.** Pair the date picker with a separate time field.
+
+## Calendar on the page
+
+Show the calendar inline when picking a date is the main task on the screen, like a booking page.
+
+<Example
+  title="Calendar alone"
+  code={`const [date, setDate] = React.useState<Date | undefined>(new Date())
+
+<Calendar mode="single" selected={date} onSelect={setDate} className="rounded-lg border" />`}
+>
+  <DemoCalendar />
+</Example>
+
+## Range and disabled dates
+
+Use `mode="range"` for a start and end date. Disable dates people cannot choose, like past days, instead of rejecting them after.
+
+<Example
+  title="Range with past dates disabled"
+  code={`const today = new Date()
+const [range, setRange] = React.useState<DateRange | undefined>({
+  from: today,
+  to: addDays(today, 4),
+})
+
+<Calendar
+  mode="range"
+  selected={range}
+  onSelect={setRange}
+  numberOfMonths={2}
+  disabled={{ before: today }}
+  className="rounded-lg border"
+/>`}
+>
+  <DemoRange />
+</Example>
+
+## Month and year dropdowns
+
+For dates further away, set `captionLayout="dropdown"` so people can jump to a month and year.
+
+<Example
+  title="Dropdown caption"
+  code={`<Calendar
+  mode="single"
+  captionLayout="dropdown"
+  startMonth={new Date(2020, 0)}
+  endMonth={new Date(2030, 11)}
+  className="rounded-lg border"
+/>`}
+>
+  <Calendar
+    mode="single"
+    captionLayout="dropdown"
+    startMonth={new Date(2020, 0)}
+    endMonth={new Date(2030, 11)}
+    className="rounded-lg border"
+  />
+</Example>
+
+<DoDont>
+  <Do caption="A label and a placeholder that says what to do, with the chosen date written out in full.">
+    <div className="grid w-56 gap-2 text-left">
+      <span className="text-sm font-medium">Due date</span>
+      <Button variant="outline" className="justify-start font-normal"><CalendarIcon /> 14 Nov 2026</Button>
+    </div>
+  </Do>
+  <Dont caption="An all-number date with no label. Is it 11 March or 3 November?">
+    <div className="grid w-56 gap-2 text-left">
+      <Button variant="outline" className="justify-start font-normal"><CalendarIcon /> 03/11/26</Button>
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Always give the field a visible label, like "Due date" or "Start date".
+- Show the chosen date with the month as a word, like "14 Nov 2026", so it cannot be misread.
+- Use a placeholder such as "Pick a date" when nothing is chosen.
+- If some dates are not available, say why near the picker, like "Bookings open up to 60 days ahead".
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format } from "date-fns"
+import type { DateRange } from "react-day-picker"
+```
+
+## Props
+
+`Calendar` wraps `DayPicker` from `react-day-picker` and accepts all of its props. The most used:
+
+<PropsTable props={[
+  { name: "mode", type: '"single" | "multiple" | "range"', description: "Selection type. Leave it out for a calendar that only displays dates." },
+  { name: "selected", type: "Date | Date[] | DateRange", description: "The selected value. Its shape depends on mode." },
+  { name: "onSelect", type: "(value, triggerDate, modifiers, event) => void", description: "Called when the selection changes." },
+  { name: "required", type: "boolean", default: "false", description: "When true, people cannot clear the selection by clicking the selected day." },
+  { name: "disabled", type: "Matcher | Matcher[]", description: "Days that cannot be picked, for example { before: new Date() } or { dayOfWeek: [0, 6] }." },
+  { name: "defaultMonth", type: "Date", description: "The month shown first. Defaults to the current month." },
+  { name: "numberOfMonths", type: "number", default: "1", description: "How many months show side by side. They stack on small screens." },
+  { name: "captionLayout", type: '"label" | "dropdown" | "dropdown-months" | "dropdown-years"', default: '"label"', description: "Show the month as text, or as dropdowns to jump to a month or year." },
+  { name: "startMonth / endMonth", type: "Date", description: "The earliest and latest months people can navigate to. Needed for year dropdowns." },
+  { name: "showOutsideDays", type: "boolean", default: "true", description: "Shows days from the previous and next month in muted text." },
+  { name: "buttonVariant", type: "Button variant", default: '"ghost"', description: "Button style for the previous and next month arrows." },
+  { name: "showWeekNumber", type: "boolean", default: "false", description: "Adds a week number column." },
+]} />
+
+## Date picker composition
+
+A date picker is a `Popover` with a `Button` trigger and a `Calendar` inside. Control the popover so it closes after a date is picked:
+
+```tsx
+const [open, setOpen] = React.useState(false)
+const [date, setDate] = React.useState<Date>()
+
+<Popover open={open} onOpenChange={setOpen}>
+  <PopoverTrigger asChild>
+    <Button variant="outline" className="justify-start font-normal">
+      <CalendarIcon />
+      {date ? format(date, "d MMM yyyy") : "Pick a date"}
+    </Button>
+  </PopoverTrigger>
+  <PopoverContent className="w-auto p-0" align="start">
+    <Calendar
+      mode="single"
+      selected={date}
+      onSelect={(d) => {
+        setDate(d)
+        setOpen(false)
+      }}
+    />
+  </PopoverContent>
+</Popover>
+```
+
+Use `p-0` and `w-auto` on `PopoverContent` so the calendar sets the size. The calendar background turns transparent inside a popover or card automatically.
+
+## Styling
+
+Selected days read `--primary` and `--primary-foreground`. Today and range middles read `--accent`. Outside and disabled days use `--muted-foreground`. Change the day cell size with the `--cell-size` variable, for example `className="[--cell-size:--spacing(10)]"`.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves between the month navigation buttons and the day grid |
+| <kbd>Arrow left</kbd> / <kbd>Arrow right</kbd> | Moves to the previous or next day |
+| <kbd>Arrow up</kbd> / <kbd>Arrow down</kbd> | Moves to the same day in the previous or next week |
+| <kbd>Page up</kbd> / <kbd>Page down</kbd> | Moves to the previous or next month |
+| <kbd>Shift</kbd> + <kbd>Page up</kbd> / <kbd>Page down</kbd> | Moves to the previous or next year |
+| <kbd>Home</kbd> / <kbd>End</kbd> | Moves to the start or end of the week |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Selects the focused day |
+| <kbd>Esc</kbd> | In a date picker, closes the popover and returns focus to the button |
+
+## Focus management
+
+- When the popover opens, focus moves into the calendar, onto the selected day or today.
+- Only one day is in the <kbd>Tab</kbd> order at a time; arrow keys move between days.
+- After a date is picked, the popover closes and focus returns to the trigger button, which now shows the date.
+
+## Checklist
+
+- The day grid is a table with weekday headers, and each day is a button with the full date as its label.
+- The trigger button has a visible label linked to it, and shows the chosen date as text.
+- Selected days are shown by a filled background and announced as selected, not by color alone.
+- Disabled days cannot be picked, and the reason is explained near the picker.
+- For dates people know by heart, also allow typing the date in a text field.
+
+</DocTab>
+</DocTabs>

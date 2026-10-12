@@ -1,0 +1,119 @@
+---
+title: Typography
+description: One typeface and a short scale of text roles, so every screen reads in the same order.
+status: stable
+order: 20
+keywords: [type, fonts, type scale, headings, line length, tabular numbers]
+---
+
+## Principles
+
+- **Roles, not sizes.** Pick the role ("Page title", "Body", "Caption") and use its classes. Do not invent a size for one screen.
+- **Hierarchy comes from size and weight, not color.** Use `text-muted-foreground` only for text that is truly secondary.
+- **Readable first.** Body text is never smaller than 14px on screen, and 16px on phones where people type.
+
+## Typeface
+
+The product uses one family for everything, set once in `src/brand.css`:
+
+| Token | Default | Used by |
+| --- | --- | --- |
+| `--brand-font-sans` | DM Sans, then the system sans | Body text, labels, controls (`font-sans`) |
+| `--brand-font-heading` | Same as sans | Headings (`font-heading`) |
+
+Change the typeface by editing those two tokens. Components never name a font directly, so one edit updates the whole product. If you add a separate heading face, keep the body face for anything people read in long runs.
+
+## Type scale
+
+Sizes, line heights and weights below are measured live from the page, so they always match what ships.
+
+<TypeScale roles={[
+  { name: "Display", className: "font-heading text-4xl font-semibold tracking-tight", usage: "Marketing and empty-state hero lines. At most one per page." },
+  { name: "Page title", className: "font-heading text-3xl font-semibold tracking-tight", usage: "The one h1 on a page, like \"Bookings\" or \"Account settings\"." },
+  { name: "Section title", className: "font-heading text-2xl font-semibold tracking-tight", usage: "h2 that splits a page into sections." },
+  { name: "Subsection", className: "font-heading text-lg font-semibold", usage: "h3, card titles and dialog titles." },
+  { name: "Body", className: "text-base leading-7", usage: "Default reading text and form values on phones." },
+  { name: "Body small", className: "text-sm leading-6", usage: "Dense UI: tables, menus, form labels, helper text on desktop." },
+  { name: "Caption", className: "text-xs text-muted-foreground", usage: "Timestamps, metadata and footnotes. Never for anything people must read to finish a task." },
+  { name: "Label", className: "text-sm font-medium", usage: "Form labels, button text and tab labels." },
+  { name: "Code", className: "font-mono text-sm", usage: "Inline code, IDs and reference numbers people may copy.", sample: "BK-2048-XQ" },
+]} />
+
+## Using the scale in code
+
+```tsx
+<h1 className="font-heading text-3xl font-semibold tracking-tight">Bookings</h1>
+<p className="text-sm text-muted-foreground">12 upcoming this week</p>
+```
+
+Use one heading level after another (h1, then h2, then h3). Pick the level by structure, then apply the matching role. If a heading needs to look smaller than its level, that usually means the page structure is wrong.
+
+## Line length and spacing
+
+- Keep reading text between 45 and 75 characters per line. Use `max-w-prose` (about 65 characters) on long text blocks.
+- Body text uses a line height of about 1.5 to 1.75. Headings are tighter (about 1.2) because they are short.
+- Put more space above a heading than below it, so the heading clearly belongs to the text that follows.
+- Left-align text. Center only short lines, like an empty-state title, and never more than two lines.
+
+<DoDont>
+  <Do caption="Comfortable line length and a clear heading above its text.">
+    <div className="max-w-xs space-y-1 text-left">
+      <p className="font-heading text-lg font-semibold">Cancellation policy</p>
+      <p className="text-sm leading-6 text-muted-foreground">Cancel up to 24 hours before your booking for a full refund. After that, the deposit is kept.</p>
+    </div>
+  </Do>
+  <Dont caption="Long centered paragraph in small muted text is hard to scan and hard to read.">
+    <p className="text-center text-xs text-muted-foreground">Cancel up to 24 hours before your booking for a full refund. After that, the deposit is kept. If you need to change the time instead, you can reschedule from your bookings page at no cost as long as a slot is free.</p>
+  </Dont>
+</DoDont>
+
+## Numbers
+
+Use `tabular-nums` wherever numbers sit in columns or change in place: tables, prices, totals, timers and counters. Every digit then takes the same width, so columns line up and values do not jitter as they update.
+
+<Example
+  title="Tabular numbers in a price list"
+  align="stretch"
+  code={`<dl className="mx-auto w-full max-w-xs space-y-2 text-sm tabular-nums">
+  <div className="flex justify-between"><dt>Consultation</dt><dd>$111.00</dd></div>
+  <div className="flex justify-between"><dt>Follow-up</dt><dd>$48.50</dd></div>
+  <div className="flex justify-between border-t pt-2 font-semibold"><dt>Total</dt><dd>$159.50</dd></div>
+</dl>`}
+>
+  <dl className="mx-auto w-full max-w-xs space-y-2 text-sm tabular-nums">
+    <div className="flex justify-between"><dt>Consultation</dt><dd>$111.00</dd></div>
+    <div className="flex justify-between"><dt>Follow-up</dt><dd>$48.50</dd></div>
+    <div className="flex justify-between border-t pt-2 font-semibold"><dt>Total</dt><dd>$159.50</dd></div>
+  </dl>
+</Example>
+
+- Right-align numbers in table columns so place values line up.
+- Use `font-mono` for codes people copy (booking references, API keys), not for prices.
+- See [Content and voice](/foundations/content) for how to write numbers, dates and currency.
+
+## Emphasis
+
+- Use `font-medium` or `font-semibold` for emphasis. Avoid italics for UI text and never underline anything that is not a link.
+- Do not set whole sentences in capitals. If you need an overline label, use `text-xs font-medium uppercase tracking-wide` and keep it to one or two words.
+
+<DoDont>
+  <Do caption="Weight and size create the hierarchy; the supporting line is muted.">
+    <div className="space-y-1 text-left">
+      <p className="text-sm font-semibold">Haircut and style</p>
+      <p className="text-sm text-muted-foreground">Tue 14 Oct, 10:30</p>
+    </div>
+  </Do>
+  <Dont caption="All caps, mixed weights and color fight each other; nothing reads first.">
+    <div className="space-y-1 text-left">
+      <p className="text-xs font-bold uppercase text-primary">HAIRCUT AND STYLE</p>
+      <p className="text-lg font-light italic">Tue 14 Oct, 10:30</p>
+    </div>
+  </Dont>
+</DoDont>
+
+## Accessibility
+
+- Text must stay usable at 200% browser zoom and when people set a larger default font size. Use `rem`-based classes, never fixed `px` font sizes.
+- Body and label text meets 4.5:1 contrast; large headings (24px and up, or 18.66px bold) meet 3:1. See [Color](/foundations/color).
+- Do not truncate text people need. If you must truncate, show the full text on focus or in a tooltip.
+- Use real heading elements (`h1` to `h6`) so screen reader users can jump between sections.

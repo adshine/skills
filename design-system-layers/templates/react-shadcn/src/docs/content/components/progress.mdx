@@ -1,0 +1,204 @@
+---
+title: Progress
+description: A progress bar shows how much of a task is done, so people know it is working and roughly how long is left.
+status: stable
+order: 54
+keywords: [progress bar, loading, upload, meter, completion]
+---
+
+import * as React from "react"
+import { Button } from "@/components/ui/button"
+import { Progress } from "@/components/ui/progress"
+
+export function DemoUpload() {
+  const [value, setValue] = React.useState(0)
+  const [running, setRunning] = React.useState(false)
+  React.useEffect(() => {
+    if (!running) return
+    const id = setInterval(() => setValue((v) => Math.min(100, v + 10)), 300)
+    return () => clearInterval(id)
+  }, [running])
+  React.useEffect(() => {
+    if (value >= 100) setRunning(false)
+  }, [value])
+  const done = value >= 100
+  return (
+    <div className="grid w-full max-w-sm gap-3">
+      <div className="flex items-center justify-between text-sm">
+        <span id="upload-label" className="font-medium">{done ? "Upload complete" : "Uploading report.pdf"}</span>
+        <span className="text-muted-foreground tabular-nums">{value}%</span>
+      </div>
+      <Progress value={value} aria-labelledby="upload-label" />
+      <div>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={running}
+          onClick={() => {
+            setValue(0)
+            setRunning(true)
+          }}
+        >
+          {done ? "Upload again" : "Start upload"}
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Upload progress"
+  code={`const [value, setValue] = React.useState(0)
+
+<div className="grid w-full max-w-sm gap-3">
+  <div className="flex items-center justify-between text-sm">
+    <span id="upload-label" className="font-medium">Uploading report.pdf</span>
+    <span className="text-muted-foreground tabular-nums">{value}%</span>
+  </div>
+  <Progress value={value} aria-labelledby="upload-label" />
+</div>`}
+>
+  <DemoUpload />
+</Example>
+
+## When to use
+
+- For tasks that take more than a couple of seconds and where you know how much is done, like uploads, imports and exports.
+- To show completion of a known set of steps, like a profile that is 60 percent complete.
+- To show usage against a limit, like storage used.
+
+## When not to use
+
+- **When you cannot measure progress.** Use a spinner in the button, or a [skeleton](/components/skeleton) for loading content.
+- **For waits under about a second.** A bar that flashes and disappears is distracting.
+- **For steps people move through themselves.** Use a stepper that names each step.
+
+## Values
+
+Set `value` from 0 to 100. The bar fills from the left with the `--primary` role on a light primary track.
+
+<Example
+  title="Values"
+  align="stretch"
+  code={`<Progress value={0} aria-label="Not started" />
+<Progress value={33} aria-label="One third complete" />
+<Progress value={66} aria-label="Two thirds complete" />
+<Progress value={100} aria-label="Complete" />`}
+>
+  <div className="mx-auto grid w-full max-w-sm gap-4">
+    <Progress value={0} aria-label="Not started" />
+    <Progress value={33} aria-label="One third complete" />
+    <Progress value={66} aria-label="Two thirds complete" />
+    <Progress value={100} aria-label="Complete" />
+  </div>
+</Example>
+
+## Usage against a limit
+
+<Example
+  title="Storage used"
+  code={`<div className="grid w-full max-w-sm gap-2">
+  <div className="flex justify-between text-sm">
+    <span id="storage-label">Storage</span>
+    <span className="text-muted-foreground">7.2 GB of 10 GB</span>
+  </div>
+  <Progress value={72} aria-labelledby="storage-label" className="h-1.5" />
+</div>`}
+>
+  <div className="grid w-full max-w-sm gap-2">
+    <div className="flex justify-between text-sm">
+      <span id="storage-label">Storage</span>
+      <span className="text-muted-foreground">7.2 GB of 10 GB</span>
+    </div>
+    <Progress value={72} aria-labelledby="storage-label" className="h-1.5" />
+  </div>
+</Example>
+
+<DoDont>
+  <Do caption="A label says what is happening and the number says how far along it is.">
+    <div className="grid w-full max-w-56 gap-2 text-sm">
+      <div className="flex justify-between"><span>Importing contacts</span><span className="text-muted-foreground">45%</span></div>
+      <Progress value={45} aria-label="Importing contacts" />
+    </div>
+  </Do>
+  <Dont caption="A bar with no label leaves people guessing what they are waiting for.">
+    <div className="grid w-full max-w-56 gap-2">
+      <Progress value={45} aria-label="Progress" />
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Label the task with a verb in the present tense: "Uploading 3 files", "Exporting report".
+- Show the percentage or a count ("2 of 5 files") next to the bar.
+- When finished, change the label to the result ("Upload complete") or remove the bar.
+- If the task fails, keep the bar where it stopped and show an error with a retry action.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Progress } from "@/components/ui/progress"
+```
+
+## Props
+
+<PropsTable props={[
+  { name: "value", type: "number | null", description: "How much is done, from 0 to 100. The indicator width is based on this value." },
+  { name: "max", type: "number", default: "100", description: "Upper bound read by assistive technology. Keep it at 100; the bar width assumes a 0 to 100 scale." },
+  { name: "getValueLabel", type: "(value: number, max: number) => string", description: "Text read by screen readers. Defaults to a percentage." },
+  { name: "className", type: "string", description: "Extra classes on the track, for example h-1 or h-3 to change the height." },
+]} />
+
+All other props pass to the Radix Progress root. There is no indeterminate animation in this component; a `null` value shows an empty track.
+
+## Counting steps
+
+Convert a count into a percentage before passing it in:
+
+```tsx
+const value = Math.round((filesDone / filesTotal) * 100)
+
+<Progress
+  value={value}
+  aria-label="Uploading files"
+  getValueLabel={() => filesDone + " of " + filesTotal + " files uploaded"}
+/>
+```
+
+## Styling
+
+The track reads `--primary` at 20 percent opacity and the indicator reads `--primary`. Change height with a class on the root; keep the rounded ends.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Progress bars are not interactive and do not take focus.
+
+| Key | Action |
+| --- | --- |
+| None | Progress is read by screen readers but has no keyboard behavior |
+
+## Focus management
+
+- Focus stays where it is while a task runs. Do not move focus to the bar.
+- When the task finishes, announce the result with a [toast](/components/toast) or a status message, and move focus only if the next step needs it.
+
+## Checklist
+
+- The bar has `role="progressbar"` with `aria-valuenow`, `aria-valuemin` and `aria-valuemax` set from Radix.
+- Every bar has an accessible name with `aria-label` or `aria-labelledby` pointing at its visible label.
+- The percentage is also shown as text, not only by bar length.
+- The indicator against the track meets 3:1 contrast in light and dark.
+- Long tasks do not rely on the bar alone; people can leave the page and come back or get notified when done.
+
+</DocTab>
+</DocTabs>

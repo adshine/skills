@@ -1,0 +1,113 @@
+---
+title: Accessibility
+description: Every component and pattern meets WCAG 2.2 AA, and this page lists what that means in practice.
+status: stable
+order: 60
+keywords: [a11y, wcag, contrast, focus, keyboard, screen reader, aria, target size, testing]
+---
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+## Our commitment
+
+The system targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Components ship meeting it; product teams keep it by using components as documented and by testing their own screens. Accessibility is part of "done", not a later pass.
+
+Accessible design helps more people than it seems: someone using a phone in bright sun, someone with a broken wrist using the keyboard, someone with slow internet, someone reading in a second language.
+
+## Contrast
+
+| What | Minimum ratio |
+| --- | --- |
+| Body text and labels | 4.5:1 |
+| Large text (24px and up, or 18.66px bold) | 3:1 |
+| Icons that carry meaning, input borders, focus rings | 3:1 against what is next to them |
+| Disabled controls and decorative elements | No minimum, but must not look active |
+
+Theme color pairs already meet these in light and dark mode. You keep them by always using a fill with its matching `-foreground` role. See [Color](/foundations/color).
+
+**Do not rely on color alone.** Errors have an icon and text, not just a red border. Links inside text are underlined. Charts use labels or patterns as well as colors.
+
+## Focus
+
+- Every interactive element shows a visible focus ring when reached by keyboard. Components use `focus-visible:ring-[3px] focus-visible:ring-ring/50`; never remove it with `outline-none` alone.
+- Focus is never hidden behind sticky headers or overlays.
+- When a dialog opens, focus moves into it. When it closes, focus returns to the control that opened it. The dialog component does this for you.
+- After a page change or a form error, move focus to something useful: the page heading or the error summary.
+
+<Example
+  title="Press Tab to see focus rings"
+  code={`<Button>Confirm booking</Button>
+<Button variant="outline">Change time</Button>
+<Input className="w-48" aria-label="Promo code" placeholder="Promo code" />`}
+>
+  <Button>Confirm booking</Button>
+  <Button variant="outline">Change time</Button>
+  <Input className="w-48" aria-label="Promo code" placeholder="Promo code" />
+</Example>
+
+## Keyboard
+
+- Everything a mouse can do, the keyboard can do. No hover-only actions.
+- Tab order follows the visual reading order. Do not use a positive `tabIndex`.
+- <kbd>Esc</kbd> closes menus, popovers and dialogs. Arrow keys move inside menus, tabs, radio groups and selects.
+- Long pages with repeated navigation have a "Skip to content" link as the first focusable element.
+- Do not trap focus, except inside an open modal.
+
+## Screen readers
+
+- **Use native elements first.** A `button` for actions, an `a` for navigation, a `label` for every field. Native elements come with the right role and keyboard support for free.
+- **Name every control.** Icon-only buttons need an `aria-label` that says what happens: "Delete booking", not "Trash".
+- **Connect help and errors to the field** with `aria-describedby`, and mark invalid fields with `aria-invalid`.
+- **Announce changes people cannot see**, like "Saved" or "3 results", with a polite live region (`aria-live="polite"`) or a toast.
+- **One `h1` per page**, and headings in order, so people can skim by heading.
+- Images that carry meaning have `alt` text; decorative images use `alt=""`.
+
+<DoDont>
+  <Do caption="Visible label, connected help text, and a clear name for assistive tech.">
+    <div className="w-60 space-y-2 text-left">
+      <Label htmlFor="a11y-do-phone">Phone number</Label>
+      <Input id="a11y-do-phone" type="tel" aria-describedby="a11y-do-phone-help" />
+      <p id="a11y-do-phone-help" className="text-xs text-muted-foreground">We text you a reminder the day before.</p>
+    </div>
+  </Do>
+  <Dont caption="Placeholder used as the label disappears on typing and is not reliably announced.">
+    <div className="w-60 text-left">
+      <Input placeholder="Phone number" />
+    </div>
+  </Dont>
+</DoDont>
+
+## Target size
+
+- Pointer targets are at least 24 by 24px (WCAG 2.2, 2.5.8). Our own rule for touch screens is 44 by 44px. See [Spacing](/foundations/spacing).
+- Anything done by dragging also has a single-tap alternative, like buttons to reorder a list (WCAG 2.2, 2.5.7).
+
+## Forms and authentication
+
+- Do not ask for the same information twice in one flow; prefill it (WCAG 2.2, 3.3.7).
+- Allow password managers and pasting into every field, including codes. No puzzles or memory tests to sign in (WCAG 2.2, 3.3.8).
+- Errors say what went wrong and how to fix it. See [Forms and validation](/patterns/forms-and-validation).
+
+## Motion and time
+
+- Respect "Reduce motion". See [Elevation and motion](/foundations/elevation-and-motion).
+- If a session can time out, warn people and let them extend it.
+- Nothing flashes more than three times per second.
+
+## Testing checklist
+
+Run through this before shipping any new screen.
+
+1. **Keyboard only.** Unplug the mouse. Can you reach and use everything, in a sensible order, and always see where focus is?
+2. **Screen reader.** Use VoiceOver (macOS, iOS) or NVDA (Windows) on the main task. Is every control named, and are changes announced?
+3. **Zoom to 200%** and set the browser width to 320px. Does content reflow without sideways scrolling or overlap?
+4. **Contrast.** Check any new color combination in light and dark mode.
+5. **Automated scan.** Run axe or Lighthouse. Fix every error, but remember automated tools catch only about a third of issues.
+6. **Reduced motion.** Turn it on in system settings and repeat the main task.
+7. **Errors.** Submit forms empty and with bad data. Are errors clear, linked to fields, and announced?
+
+<Callout kind="tip" title="Found a problem in a component?">
+  Fix it once in the component, not on each screen. Open an issue using the steps in [Contributing](/resources/contributing).
+</Callout>

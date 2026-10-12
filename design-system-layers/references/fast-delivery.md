@@ -26,7 +26,7 @@ scripts/new-design-system.sh --stack react --dest ./glowup-ds --seed "#C2410C" \
 # or --stack html
 ```
 
-Then open the showcase page (React: `pnpm dev`; HTML: open `index.html`) and review it in light and dark before showing the client. Everything below explains what the starter already did and what is still yours to decide.
+Then open the documentation site (React: `pnpm dev`; HTML: open `index.html`) and review it in light and dark before showing the client. Everything below explains what the starter already did and what is still yours to decide.
 
 1. **Color:** the starter runs `scripts/seed-to-tokens.sh --seed "#RRGGBB" --prefix <brand> --out tokens/color.tokens.json --css src/styles/color.css`. This produces 6 tonal palettes (ref tier) and 49 contrast-checked roles for light and dark (sys tier) from one hex. Variants: `tonalSpot` (default, calm), `vibrant`, `expressive`, `fidelity` (keeps the seed hue exact, good for strict brand colors), `neutral`, `monochrome`. Use `--contrast 0.5` or `1` for a high-contrast theme.
    - Alternatives when the stack already uses them: Radix Colors custom generator (12-step scales, each step has a job: 1-2 backgrounds, 3-5 component states, 6-8 borders/focus, 9-10 solids, 11-12 text) for shadcn/Radix projects; Adobe Leonardo (`@adobe/leonardo-contrast-colors`) when the client gives target contrast ratios.
@@ -55,6 +55,17 @@ Write one pattern page per top flow from Stage 0, before adding more components.
 
 A pattern may offer more than one solution (GOV.UK's address pattern offers lookup, multiple fields, and a textarea) with when to use each. Use `references/doc-templates.md`.
 
+## Documentation site (what the client opens)
+
+Clients judge a design system by its documentation, the way Material, Carbon, Primer, Polaris and GOV.UK present theirs. The React starter ships that site; your job is the content.
+
+- **Pages are MDX** in `src/docs/content/<section>/<slug>.mdx`, ordered by `order` in frontmatter. Sections: getting-started, foundations, components, patterns, resources. Frontmatter: `title`, `description` (one plain sentence), `status` (stable, beta, draft, deprecated), `order`, `keywords`, `updated`, `changes`.
+- **Blocks** (no import needed): `Example` (live preview, light/dark switch, code to copy; pass the same JSX as `code`), `DoDont`/`Do`/`Dont`, `TokenTable` (reads live values and contrast), `ColorPairs`, `TypeScale`, `RadiusScale`, `SpacingScale`, `PropsTable`, `Anatomy`/`Marker`, `Callout`, `DocTabs`/`DocTab` (Usage, Code, Accessibility), `SectionGrid`.
+- **Component page order:** hero example, when to use, when not to use, variants and states, do/don't, content rules (Usage tab); import, props from the real source, composition (Code tab); keyboard table and checklist (Accessibility tab).
+- **Pattern page:** use `references/doc-templates.md`, embed a working demo from `src/docs/demos/`.
+- **Rewrite for the client:** foundation pages carry the client's reasoning; principles must settle real choices; examples use the client's words where it is cheap. Generic template copy left on foundation pages is a defect.
+- **Ship a link:** `pnpm build` writes a static site to `dist/` (hash routing, relative paths) that works on any static host or opened locally. Show the client the link first; the video or screenshots are extras.
+
 ## Stage 4: Package and govern (lightweight)
 
 - Tokens in DTCG 2025.10 JSON (`.tokens.json`), built to CSS/JS/platform files with Style Dictionary v5 (`style-dictionary`); Tokens Studio syncs them with Figma variables if the team designs in Figma.
@@ -70,6 +81,7 @@ A pattern may offer more than one solution (GOV.UK's address pattern offers look
 - [ ] Each top flow has a pattern page
 - [ ] Tokens build from one source of truth; a changelog exists
 - [ ] Rendered screens of each pattern reviewed by eye in every theme
+- [ ] Documentation site builds, every page reviewed in light and dark, and the client has a link to open
 
 ## Traps
 

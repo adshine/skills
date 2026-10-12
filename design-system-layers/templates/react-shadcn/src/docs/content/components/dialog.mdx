@@ -1,0 +1,344 @@
+---
+title: Dialog
+description: A dialog interrupts the page to ask for a decision or a short piece of input before people carry on.
+status: stable
+order: 40
+keywords: [modal, confirm, prompt, overlay, alert dialog]
+---
+
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { toast } from "sonner"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Confirm dialog"
+  code={`<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="outline">Archive project</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Archive this project?</DialogTitle>
+      <DialogDescription>
+        The project moves to the archive. You can restore it at any time.
+      </DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <DialogClose asChild>
+        <Button variant="outline">Keep project</Button>
+      </DialogClose>
+      <DialogClose asChild>
+        <Button onClick={() => toast.success("Project archived")}>Archive project</Button>
+      </DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>`}
+>
+  <Dialog>
+    <DialogTrigger asChild>
+      <Button variant="outline">Archive project</Button>
+    </DialogTrigger>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Archive this project?</DialogTitle>
+        <DialogDescription>
+          The project moves to the archive. You can restore it at any time.
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">Keep project</Button>
+        </DialogClose>
+        <DialogClose asChild>
+          <Button onClick={() => toast.success("Project archived")}>Archive project</Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+</Example>
+
+## When to use
+
+- To confirm an action that is hard to undo, like deleting or removing access.
+- To collect a small amount of input (one to three fields) without leaving the page.
+- When people must deal with the question before they can carry on.
+
+## When not to use
+
+- **For long forms or multi-step flows.** Use a full page so people can scroll, save and come back.
+- **For information people did not ask for.** Use an inline [alert](/components/alert) or a [toast](/components/toast).
+- **For quick, reversible actions.** Do the action and offer undo in a toast instead of asking first.
+- **For extra detail next to a control.** Use a [popover](/components/popover); it does not block the page.
+
+## Confirm dialogs
+
+A confirm dialog asks one question. The title is the question, the description says what happens, and the buttons repeat the verb. The safe choice sits on the left and closes the dialog.
+
+## Destructive confirm
+
+When the action deletes something or cannot be undone, use the destructive button and say exactly what will be lost.
+
+<Example
+  title="Destructive confirm"
+  code={`<Dialog>
+  <DialogTrigger asChild>
+    <Button variant="destructive">Delete workspace</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Delete this workspace?</DialogTitle>
+      <DialogDescription>
+        All projects, files and members in this workspace will be removed. This cannot be undone.
+      </DialogDescription>
+    </DialogHeader>
+    <DialogFooter>
+      <DialogClose asChild>
+        <Button variant="outline">Cancel</Button>
+      </DialogClose>
+      <DialogClose asChild>
+        <Button variant="destructive" onClick={() => toast("Workspace deleted")}>
+          Delete workspace
+        </Button>
+      </DialogClose>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>`}
+>
+  <Dialog>
+    <DialogTrigger asChild>
+      <Button variant="destructive">Delete workspace</Button>
+    </DialogTrigger>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Delete this workspace?</DialogTitle>
+        <DialogDescription>
+          All projects, files and members in this workspace will be removed. This cannot be undone.
+        </DialogDescription>
+      </DialogHeader>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button variant="outline">Cancel</Button>
+        </DialogClose>
+        <DialogClose asChild>
+          <Button variant="destructive" onClick={() => toast("Workspace deleted")}>
+            Delete workspace
+          </Button>
+        </DialogClose>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+</Example>
+
+## Form dialogs
+
+Keep form dialogs short. Wrap the fields in a `form` so <kbd>Enter</kbd> submits, and label every field.
+
+<Example
+  title="Form dialog"
+  code={`<Dialog>
+  <DialogTrigger asChild>
+    <Button>Rename project</Button>
+  </DialogTrigger>
+  <DialogContent className="sm:max-w-md">
+    <form onSubmit={(e) => { e.preventDefault(); toast.success("Project renamed") }} className="grid gap-4">
+      <DialogHeader>
+        <DialogTitle>Rename project</DialogTitle>
+        <DialogDescription>The new name shows everywhere the project appears.</DialogDescription>
+      </DialogHeader>
+      <div className="grid gap-2">
+        <Label htmlFor="project-name">Project name</Label>
+        <Input id="project-name" defaultValue="Quarterly report" />
+      </div>
+      <DialogFooter>
+        <DialogClose asChild>
+          <Button type="button" variant="outline">Cancel</Button>
+        </DialogClose>
+        <Button type="submit">Save name</Button>
+      </DialogFooter>
+    </form>
+  </DialogContent>
+</Dialog>`}
+>
+  <Dialog>
+    <DialogTrigger asChild>
+      <Button>Rename project</Button>
+    </DialogTrigger>
+    <DialogContent className="sm:max-w-md">
+      <form onSubmit={(e) => { e.preventDefault(); toast.success("Project renamed") }} className="grid gap-4">
+        <DialogHeader>
+          <DialogTitle>Rename project</DialogTitle>
+          <DialogDescription>The new name shows everywhere the project appears.</DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-2">
+          <Label htmlFor="project-name">Project name</Label>
+          <Input id="project-name" defaultValue="Quarterly report" />
+        </div>
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button type="button" variant="outline">Cancel</Button>
+          </DialogClose>
+          <Button type="submit">Save name</Button>
+        </DialogFooter>
+      </form>
+    </DialogContent>
+  </Dialog>
+</Example>
+
+The form example keeps the dialog open after submit so you can try it again. In a product, close it with a controlled `open` state once the save succeeds.
+
+<DoDont>
+  <Do caption="The buttons repeat the verb from the title, so the choice is clear without reading twice.">
+    <div className="grid w-full max-w-xs gap-3 rounded-lg border bg-background p-4 text-left">
+      <p className="text-sm font-semibold">Delete this file?</p>
+      <div className="flex justify-end gap-2">
+        <Button size="sm" variant="outline">Cancel</Button>
+        <Button size="sm" variant="destructive">Delete file</Button>
+      </div>
+    </div>
+  </Do>
+  <Dont caption="Yes and No force people to reread the question to know what each button does.">
+    <div className="grid w-full max-w-xs gap-3 rounded-lg border bg-background p-4 text-left">
+      <p className="text-sm font-semibold">Are you sure?</p>
+      <div className="flex justify-end gap-2">
+        <Button size="sm" variant="outline">No</Button>
+        <Button size="sm">Yes</Button>
+      </div>
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- **Title:** a short question or task in sentence case, like "Delete this file?" or "Invite a teammate".
+- **Description:** one or two sentences on what happens next. Say if it cannot be undone.
+- **Buttons:** verb first, matching the title. Avoid "OK", "Yes" and "Confirm".
+- Do not stack dialogs on top of each other. Finish or close one before opening another.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+```
+
+## Props
+
+`Dialog` (root, from Radix Dialog):
+
+<PropsTable props={[
+  { name: "open", type: "boolean", description: "Controlled open state. Pair with onOpenChange." },
+  { name: "defaultOpen", type: "boolean", default: "false", description: "Open state on first render when uncontrolled." },
+  { name: "onOpenChange", type: "(open: boolean) => void", description: "Called when the dialog opens or closes, including Escape and outside clicks." },
+  { name: "modal", type: "boolean", default: "true", description: "Blocks the rest of the page and traps focus. Keep it on." },
+]} />
+
+`DialogContent`:
+
+<PropsTable props={[
+  { name: "showCloseButton", type: "boolean", default: "true", description: "Shows the close icon button in the top right corner." },
+  { name: "onEscapeKeyDown", type: "(event: KeyboardEvent) => void", description: "Runs when Escape is pressed. Call event.preventDefault() to keep the dialog open." },
+  { name: "onInteractOutside", type: "(event: Event) => void", description: "Runs on a click or focus outside the dialog. Prevent default to keep it open." },
+  { name: "className", type: "string", description: "Extra classes, for example a different max width such as sm:max-w-md." },
+]} />
+
+`DialogFooter`:
+
+<PropsTable props={[
+  { name: "showCloseButton", type: "boolean", default: "false", description: "Adds an outline Close button at the end of the footer." },
+]} />
+
+`DialogTrigger` and `DialogClose` accept `asChild` to render your own `Button`. `DialogHeader`, `DialogTitle` and `DialogDescription` pass other props to their elements.
+
+## Controlled dialog
+
+Control the open state when the dialog should close only after async work finishes:
+
+```tsx
+const [open, setOpen] = React.useState(false)
+
+async function onSubmit(event: React.FormEvent) {
+  event.preventDefault()
+  await saveName()
+  setOpen(false)
+}
+
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogTrigger asChild>
+    <Button>Rename project</Button>
+  </DialogTrigger>
+  <DialogContent>
+    <form onSubmit={onSubmit}>...</form>
+  </DialogContent>
+</Dialog>
+```
+
+## Opening from a menu item
+
+Open a dialog from a [menu](/components/dropdown-menu) by controlling it, so the menu can close first:
+
+```tsx
+const [open, setOpen] = React.useState(false)
+
+<DropdownMenuItem onSelect={() => setOpen(true)}>Delete</DropdownMenuItem>
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent>...</DialogContent>
+</Dialog>
+```
+
+## Styling
+
+The panel uses `bg-background`, `border` and the `--radius` scale. The backdrop is a translucent black overlay. Change width with `className` on `DialogContent`; do not pass raw colors.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | On the trigger, opens the dialog |
+| <kbd>Tab</kbd> | Moves to the next focusable element inside the dialog, looping at the end |
+| <kbd>Shift</kbd> + <kbd>Tab</kbd> | Moves to the previous focusable element, looping at the start |
+| <kbd>Esc</kbd> | Closes the dialog and returns focus to the trigger |
+
+## Focus management
+
+- On open, focus moves to the first focusable element in the dialog. For a destructive confirm, move it to the safe button with `autoFocus` on Cancel.
+- Focus stays inside the dialog while it is open; the page behind is hidden from assistive technology.
+- On close, focus returns to the element that opened the dialog. If that element no longer exists (for example after a delete), move focus somewhere sensible with `onCloseAutoFocus`.
+
+## Checklist
+
+- Every dialog has a `DialogTitle`. It is announced as the dialog name. If it must be hidden, keep it and add `className="sr-only"`.
+- `DialogDescription` is announced with the title. If you leave it out, pass `aria-describedby={undefined}` to `DialogContent`.
+- The close icon has the text "Close" for screen readers.
+- Buttons use clear verbs, so they make sense when read on their own.
+- The dialog fits small screens; long content scrolls inside the page, not off screen.
+
+</DocTab>
+</DocTabs>

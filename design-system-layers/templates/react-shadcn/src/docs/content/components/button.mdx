@@ -1,0 +1,171 @@
+---
+title: Button
+description: Buttons start an action, like saving, booking or confirming. Use one primary button per view for the main thing people came to do.
+status: stable
+order: 10
+keywords: [cta, action, submit, link button]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Destructive variant uses a paired foreground token instead of white.
+---
+
+import { ArrowRightIcon, Loader2Icon, PlusIcon, TrashIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Variants"
+  code={`<Button>Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="ghost">Ghost</Button>
+<Button variant="destructive">Delete</Button>
+<Button variant="link">Link</Button>`}
+>
+  <Button>Primary</Button>
+  <Button variant="secondary">Secondary</Button>
+  <Button variant="outline">Outline</Button>
+  <Button variant="ghost">Ghost</Button>
+  <Button variant="destructive">Delete</Button>
+  <Button variant="link">Link</Button>
+</Example>
+
+## When to use
+
+- To trigger an action on the current page: submit a form, confirm a choice, open a dialog.
+- When the result happens right away or after a short wait, not when it takes people somewhere else.
+
+## When not to use
+
+- **To go to another page.** Use a link. Links say "this takes you somewhere"; buttons say "this does something".
+- **For several equal options.** Use a radio group or tabs so people can see all choices at once.
+
+## Choosing a variant
+
+| Variant | Use for | Limit |
+| --- | --- | --- |
+| Primary | The one main action in a view | One per view or card |
+| Secondary | Supporting actions next to a primary | Any |
+| Outline | Neutral actions that should stay quiet | Any |
+| Ghost | Actions in toolbars, menus and dense areas | Needs a clear label or icon tooltip |
+| Destructive | Actions that delete or cancel something | Always confirm if it cannot be undone |
+| Link | Low-emphasis actions inside text | Not for navigation |
+
+<DoDont>
+  <Do caption="One primary action, with supporting actions in quieter styles.">
+    <Button>Confirm booking</Button>
+    <Button variant="outline">Change time</Button>
+  </Do>
+  <Dont caption="Several primary buttons compete, so nothing reads as the main action.">
+    <Button>Confirm</Button>
+    <Button>Change</Button>
+    <Button>Save</Button>
+  </Dont>
+</DoDont>
+
+## Labels
+
+Start with a verb and say what will happen: "Book slot", "Pay deposit", "Cancel booking". Avoid "OK", "Submit" and "Click here". Keep labels to one to three words, in sentence case.
+
+<DoDont>
+  <Do caption="Specific verb, so people know what happens next.">
+    <Button>Pay ₦5,000 deposit</Button>
+  </Do>
+  <Dont caption="Vague label that hides the consequence.">
+    <Button>Submit</Button>
+  </Dont>
+</DoDont>
+
+## Sizes and icons
+
+<Example
+  title="Sizes, icons and loading"
+  code={`<Button size="sm">Small</Button>
+<Button>Default</Button>
+<Button size="lg">Large</Button>
+<Button><PlusIcon /> Add service</Button>
+<Button variant="outline">Next <ArrowRightIcon /></Button>
+<Button size="icon" variant="outline" aria-label="Delete"><TrashIcon /></Button>
+<Button disabled><Loader2Icon className="animate-spin" /> Saving</Button>`}
+>
+  <Button size="sm">Small</Button>
+  <Button>Default</Button>
+  <Button size="lg">Large</Button>
+  <Button><PlusIcon /> Add service</Button>
+  <Button variant="outline">Next <ArrowRightIcon /></Button>
+  <Button size="icon" variant="outline" aria-label="Delete"><TrashIcon /></Button>
+  <Button disabled><Loader2Icon className="animate-spin" /> Saving</Button>
+</Example>
+
+Put icons before the label for actions ("Add") and after it for direction ("Next"). Icon-only buttons need an `aria-label` and a tooltip.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Button } from "@/components/ui/button"
+```
+
+## Props
+
+<PropsTable props={[
+  { name: "variant", type: '"default" | "secondary" | "outline" | "ghost" | "destructive" | "link"', default: '"default"', description: "Visual weight. Use one default (primary) per view." },
+  { name: "size", type: '"sm" | "default" | "lg" | "icon"', default: '"default"', description: "Height and padding. Icon size is square and needs aria-label." },
+  { name: "asChild", type: "boolean", default: "false", description: "Render the child element (for example a router Link) with button styles." },
+  { name: "disabled", type: "boolean", default: "false", description: "Prevents interaction. Prefer explaining why an action is unavailable." },
+]} />
+
+All other props pass through to the native `button` element.
+
+## As a link
+
+When something must look like a button but navigates, render a link inside with `asChild`:
+
+```tsx
+<Button asChild>
+  <a href="/bookings">View bookings</a>
+</Button>
+```
+
+## Loading state
+
+Disable the button and keep the label meaningful while work is in progress, so people do not tap twice:
+
+```tsx
+<Button disabled={saving}>
+  {saving && <Loader2Icon className="animate-spin" />}
+  {saving ? "Saving" : "Save changes"}
+</Button>
+```
+
+## Styling
+
+Buttons read only theme roles: `--primary` and `--primary-foreground` for the primary variant, `--destructive` and `--destructive-foreground` for destructive. Never pass raw colors through `className`; add a variant instead.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the button |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Activates the button |
+
+## Checklist
+
+- Uses a native `button` element, so it is announced as a button and works with the keyboard by default.
+- The focus ring uses `--ring` and meets 3:1 contrast against the page.
+- Text on every variant meets 4.5:1 contrast in light and dark. See [Color](/foundations/color).
+- Icon-only buttons have an `aria-label` that says what happens, like "Delete booking".
+- Disabled buttons are skipped by assistive technology; if people need to know why something is unavailable, say so in nearby text.
+- Minimum target size is 44 by 44 px on touch screens.
+
+</DocTab>
+</DocTabs>

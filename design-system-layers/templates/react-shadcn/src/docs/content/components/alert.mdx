@@ -1,0 +1,206 @@
+---
+title: Alert
+description: An alert is a message box on the page that tells people about something important that affects what they are doing.
+status: stable
+order: 52
+keywords: [callout, banner, notice, inline message, error message, warning]
+---
+
+import { AlertCircleIcon, CheckCircle2Icon, InfoIcon } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Default alert"
+  align="stretch"
+  code={`<Alert>
+  <InfoIcon />
+  <AlertTitle>Scheduled maintenance on Saturday</AlertTitle>
+  <AlertDescription>
+    The service will be unavailable from 02:00 to 04:00 UTC. Save your work before then.
+  </AlertDescription>
+</Alert>`}
+>
+  <Alert className="mx-auto max-w-lg">
+    <InfoIcon />
+    <AlertTitle>Scheduled maintenance on Saturday</AlertTitle>
+    <AlertDescription>
+      The service will be unavailable from 02:00 to 04:00 UTC. Save your work before then.
+    </AlertDescription>
+  </Alert>
+</Example>
+
+## When to use
+
+- To explain a problem that stops a form or page from working, like a failed payment.
+- To warn about something that will affect people soon, like a plan expiring.
+- To share status that should stay visible until it changes.
+
+## When not to use
+
+- **To confirm a quick action.** Use a [toast](/components/toast) that goes away by itself.
+- **For an error on one field.** Show it under the field.
+- **When people must decide before going on.** Use a [dialog](/components/dialog).
+- **For tips and marketing.** Alerts lose meaning when used for everything.
+
+## Variants
+
+| Variant | Use for |
+| --- | --- |
+| Default | Information and neutral status |
+| Destructive | Errors and problems people need to fix |
+
+<Example
+  title="Destructive"
+  align="stretch"
+  code={`<Alert variant="destructive">
+  <AlertCircleIcon />
+  <AlertTitle>Payment failed</AlertTitle>
+  <AlertDescription>
+    <p>Your card was declined. Update your payment details to keep your plan active.</p>
+    <Button size="sm" variant="outline" className="mt-2">Update payment details</Button>
+  </AlertDescription>
+</Alert>`}
+>
+  <Alert variant="destructive" className="mx-auto max-w-lg">
+    <AlertCircleIcon />
+    <AlertTitle>Payment failed</AlertTitle>
+    <AlertDescription>
+      <p>Your card was declined. Update your payment details to keep your plan active.</p>
+      <Button size="sm" variant="outline" className="mt-2">Update payment details</Button>
+    </AlertDescription>
+  </Alert>
+</Example>
+
+## Without an icon or description
+
+The icon is optional; the layout adjusts when it is missing. A title alone works for short messages.
+
+<Example
+  title="Title only, and no icon"
+  align="stretch"
+  code={`<Alert>
+  <CheckCircle2Icon />
+  <AlertTitle>Your changes are saved and live</AlertTitle>
+</Alert>
+<Alert>
+  <AlertTitle>Read only</AlertTitle>
+  <AlertDescription>You can view this project but not edit it.</AlertDescription>
+</Alert>`}
+>
+  <div className="mx-auto grid w-full max-w-lg gap-3">
+    <Alert>
+      <CheckCircle2Icon />
+      <AlertTitle>Your changes are saved and live</AlertTitle>
+    </Alert>
+    <Alert>
+      <AlertTitle>Read only</AlertTitle>
+      <AlertDescription>You can view this project but not edit it.</AlertDescription>
+    </Alert>
+  </div>
+</Example>
+
+<DoDont>
+  <Do caption="Say what happened and what to do next.">
+    <Alert variant="destructive" className="max-w-xs">
+      <AlertCircleIcon />
+      <AlertTitle>Upload failed</AlertTitle>
+      <AlertDescription>The file is over 25 MB. Choose a smaller file.</AlertDescription>
+    </Alert>
+  </Do>
+  <Dont caption="A vague error gives people nothing to act on.">
+    <Alert variant="destructive" className="max-w-xs">
+      <AlertCircleIcon />
+      <AlertTitle>Error</AlertTitle>
+      <AlertDescription>Something went wrong.</AlertDescription>
+    </Alert>
+  </Dont>
+</DoDont>
+
+## Content
+
+- **Title:** the main point in a few words, in sentence case. The title is clamped to one line.
+- **Description:** one or two sentences. Say what happened, why if it helps, and what to do.
+- Add one action button or link when there is a clear next step.
+- Place the alert near what it refers to: top of the form for form errors, top of the page for page status.
+- Show one alert at a time in an area. Several stacked alerts get ignored.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+```
+
+## Props
+
+`Alert`:
+
+<PropsTable props={[
+  { name: "variant", type: '"default" | "destructive"', default: '"default"', description: "Destructive colors the text and icon with the --destructive role." },
+  { name: "role", type: "string", default: '"alert"', description: "Set to status for messages that are not urgent, so screen readers do not interrupt." },
+  { name: "className", type: "string", description: "Extra classes, for example a max width." },
+]} />
+
+`AlertTitle` and `AlertDescription` are `div` elements and pass other props through. All other `Alert` props pass to its `div`.
+
+## Composition
+
+Put an icon as the first child. The grid places it in its own column and lines up the title and description beside it:
+
+```tsx
+<Alert>
+  <InfoIcon />
+  <AlertTitle>Title</AlertTitle>
+  <AlertDescription>Description</AlertDescription>
+</Alert>
+```
+
+## Showing an alert after an error
+
+Render the alert when an error appears, and move focus to it if the error came from a submit:
+
+```tsx
+{error && (
+  <Alert variant="destructive" ref={errorRef} tabIndex={-1}>
+    <AlertCircleIcon />
+    <AlertTitle>Could not save changes</AlertTitle>
+    <AlertDescription>{error}</AlertDescription>
+  </Alert>
+)}
+```
+
+## Styling
+
+Alerts sit on `--card` with a `--border` outline. The destructive variant changes text and icon to `--destructive`. Do not add custom background colors; add a variant if a new kind is needed.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Alerts are not interactive. Buttons and links inside them follow their own keyboard rules.
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves to any button or link inside the alert |
+
+## Focus management
+
+- An alert never takes focus on its own.
+- After a failed form submit, move focus to the alert (with `tabIndex={-1}`) so keyboard and screen reader users land on the problem.
+
+## Checklist
+
+- `Alert` has `role="alert"` by default, so it is announced as soon as it appears. Use `role="status"` for calm, non urgent updates.
+- Do not render many alerts with `role="alert"` on page load; screen readers may read them all at once or not at all.
+- The meaning is in the words, not only the color or icon. Icons are decorative.
+- Text in both variants meets 4.5:1 contrast on the card background.
+
+</DocTab>
+</DocTabs>

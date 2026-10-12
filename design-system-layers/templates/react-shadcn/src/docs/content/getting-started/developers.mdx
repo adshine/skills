@@ -1,0 +1,36 @@
+---
+title: For developers
+description: Install, theme and use the components in a React app.
+order: 2
+---
+
+## Stack
+
+React with Vite, Tailwind CSS v4 and shadcn/ui components built on accessible Radix primitives. Components are copied into the project, so you own and can read every line.
+
+## Run the docs locally
+
+```bash
+pnpm install
+pnpm dev
+```
+
+## Where things live
+
+| Path | What |
+| --- | --- |
+| `src/theme.css` | Generated color roles for light and dark. Do not edit by hand. |
+| `src/brand.css` | Typeface, corner radius and other hand-written foundations. |
+| `src/components/ui/` | The components. |
+| `src/docs/content/` | These docs, one MDX file per page. |
+| `tokens/color.tokens.json` | The same colors in the W3C design tokens format. |
+
+## Rules
+
+1. Use theme roles (`bg-primary`, `text-muted-foreground`), never hex values or Tailwind palette colors like `bg-orange-600`.
+2. Add a component with `pnpm dlx shadcn@latest add <name>`, then replace any hard-coded color it ships with a role.
+3. If a prop only serves one screen, it belongs in a pattern, not the component.
+
+## Dark mode
+
+Add the `dark` class to any ancestor. The theme provider handles this for the whole app; examples in these docs can flip on their own with the moon button.

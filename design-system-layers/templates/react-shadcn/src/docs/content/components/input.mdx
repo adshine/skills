@@ -1,0 +1,211 @@
+---
+title: Text field
+description: Text fields let people type a short piece of information, like a name, email address or search term.
+status: stable
+order: 20
+keywords: [input, text input, form field, email, search, label, helper text, error]
+---
+
+import { MailIcon, SearchIcon } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Text field with label and helper text"
+  code={`<div className="grid w-full max-w-sm gap-2">
+  <Label htmlFor="email">Email address</Label>
+  <Input id="email" type="email" placeholder="name@example.com" aria-describedby="email-help" />
+  <p id="email-help" className="text-sm text-muted-foreground">We send receipts to this address.</p>
+</div>`}
+>
+  <div className="grid w-full max-w-sm gap-2">
+    <Label htmlFor="tf-hero-email">Email address</Label>
+    <Input id="tf-hero-email" type="email" placeholder="name@example.com" aria-describedby="tf-hero-email-help" />
+    <p id="tf-hero-email-help" className="text-sm text-muted-foreground">We send receipts to this address.</p>
+  </div>
+</Example>
+
+## When to use
+
+- To collect a single line of free text: a name, an email address, a phone number, a search term.
+- When the answer is short and you cannot predict it well enough to offer a list.
+
+## When not to use
+
+- **For long answers.** Use a [textarea](/components/textarea) for comments, notes and descriptions.
+- **When there are a few known answers.** Use a [select](/components/select) or a [radio group](/components/radio-group) so people choose instead of type.
+- **For yes or no questions.** Use a [checkbox](/components/checkbox) or a [switch](/components/switch).
+
+## States
+
+<Example
+  title="Default, filled, disabled and error"
+  align="stretch"
+  code={`<div className="grid gap-2">
+  <Label htmlFor="name">Full name</Label>
+  <Input id="name" placeholder="Jordan Lee" />
+</div>
+<div className="grid gap-2">
+  <Label htmlFor="company">Company</Label>
+  <Input id="company" defaultValue="Northwind" />
+</div>
+<div className="grid gap-2">
+  <Label htmlFor="account-id">Account ID</Label>
+  <Input id="account-id" defaultValue="ACC-20419" disabled />
+</div>
+<div className="grid gap-2">
+  <Label htmlFor="work-email">Work email</Label>
+  <Input id="work-email" type="email" defaultValue="jordan@" aria-invalid="true" aria-describedby="work-email-error" />
+  <p id="work-email-error" className="text-sm text-destructive">Enter an email address like name@example.com.</p>
+</div>`}
+>
+  <div className="mx-auto grid w-full max-w-sm gap-6">
+    <div className="grid gap-2">
+      <Label htmlFor="tf-state-name">Full name</Label>
+      <Input id="tf-state-name" placeholder="Jordan Lee" />
+    </div>
+    <div className="grid gap-2">
+      <Label htmlFor="tf-state-company">Company</Label>
+      <Input id="tf-state-company" defaultValue="Northwind" />
+    </div>
+    <div className="grid gap-2">
+      <Label htmlFor="tf-state-account">Account ID</Label>
+      <Input id="tf-state-account" defaultValue="ACC-20419" disabled />
+    </div>
+    <div className="grid gap-2">
+      <Label htmlFor="tf-state-email">Work email</Label>
+      <Input id="tf-state-email" type="email" defaultValue="jordan@" aria-invalid="true" aria-describedby="tf-state-email-error" />
+      <p id="tf-state-email-error" className="text-sm text-destructive">Enter an email address like name@example.com.</p>
+    </div>
+  </div>
+</Example>
+
+The error style comes from `aria-invalid`, so the visual state and what screen readers announce always match. Show errors after people leave the field or submit the form, not while they are still typing.
+
+## With an icon
+
+<Example
+  title="Leading icon"
+  code={`<div className="grid w-full max-w-sm gap-2">
+  <Label htmlFor="search">Search projects</Label>
+  <div className="relative">
+    <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+    <Input id="search" type="search" placeholder="Project name" className="pl-9" />
+  </div>
+</div>`}
+>
+  <div className="grid w-full max-w-sm gap-2">
+    <Label htmlFor="tf-icon-search">Search projects</Label>
+    <div className="relative">
+      <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Input id="tf-icon-search" type="search" placeholder="Project name" className="pl-9" />
+    </div>
+  </div>
+</Example>
+
+Icons are decoration. They help people scan a form but never replace the label.
+
+<DoDont>
+  <Do caption="A visible label above the field, with an example in the placeholder.">
+    <div className="grid w-full max-w-56 gap-2">
+      <Label htmlFor="tf-do-email">Email address</Label>
+      <Input id="tf-do-email" placeholder="name@example.com" />
+    </div>
+  </Do>
+  <Dont caption="A placeholder used as the only label disappears as soon as people type.">
+    <div className="relative w-full max-w-56">
+      <MailIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Input aria-label="Email address" placeholder="Email address" className="pl-9" />
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- **Labels** are short nouns in sentence case: "Email address", not "Please enter your email address".
+- **Placeholders** show an example of the format, not instructions. Anything people must know goes in helper text.
+- **Helper text** sits under the field and explains format or why you need the information.
+- **Error messages** say what to do next: "Enter a date after today", not "Invalid input".
+- Use the right `type` (`email`, `tel`, `url`, `search`, `number`) so phones show the right keyboard.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+```
+
+## Props
+
+<PropsTable props={[
+  { name: "type", type: "string", default: '"text"', description: "Native input type. Pick the most specific one, like email or tel." },
+  { name: "disabled", type: "boolean", default: "false", description: "Prevents editing and dims the field. The value is not submitted." },
+  { name: "aria-invalid", type: "boolean", default: "false", description: "Marks the value as wrong and switches to the destructive border and ring." },
+  { name: "aria-describedby", type: "string", default: "-", description: "IDs of helper or error text so screen readers read it with the label." },
+  { name: "className", type: "string", default: "-", description: "Extra classes for layout, such as left padding when adding an icon." },
+]} />
+
+`Input` renders a native `input` element, and all other props pass through to it. `Label` wraps the Radix label primitive and accepts `htmlFor`.
+
+## Field with helper and error text
+
+Connect the label with `htmlFor` and `id`, and the message with `aria-describedby`. Swap helper text for the error when the value is wrong:
+
+```tsx
+<div className="grid gap-2">
+  <Label htmlFor="email">Email address</Label>
+  <Input
+    id="email"
+    type="email"
+    aria-invalid={!!error}
+    aria-describedby="email-message"
+  />
+  <p id="email-message" className={error ? "text-sm text-destructive" : "text-sm text-muted-foreground"}>
+    {error ?? "We send receipts to this address."}
+  </p>
+</div>
+```
+
+## With an icon
+
+Position the icon absolutely inside a relative wrapper and pad the input so text never sits under it:
+
+```tsx
+<div className="relative">
+  <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+  <Input type="search" aria-label="Search projects" className="pl-9" />
+</div>
+```
+
+## Styling
+
+Text fields read `--input` for the border, `--ring` for focus and `--destructive` for errors. Keep width set by the layout (the field fills its container) and do not override colors through `className`.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus into the field |
+| <kbd>Shift</kbd> + <kbd>Tab</kbd> | Moves focus to the previous field |
+| <kbd>Enter</kbd> | Submits the form the field belongs to |
+
+## Checklist
+
+- Every field has a visible `Label` tied to it with `htmlFor` and `id`. Fields without a visible label, like search, have an `aria-label`.
+- Helper and error text are linked with `aria-describedby`, so they are read along with the label.
+- Errors set `aria-invalid="true"` and are described in words, never by color alone.
+- The focus ring uses `--ring` and meets 3:1 contrast against the page.
+- Placeholder text is not the only label and is not used for required information.
+- Use `autoComplete` values like `email` and `name` so browsers and password managers can fill the field.
+
+</DocTab>
+</DocTabs>

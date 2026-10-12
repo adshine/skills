@@ -1,0 +1,235 @@
+---
+title: Tabs
+description: Tabs split related content into views on the same page, so people can switch between them without losing their place.
+status: stable
+order: 50
+keywords: [tab bar, segmented, views, panels, switcher]
+---
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Default tabs"
+  align="start"
+  code={`<Tabs defaultValue="overview" className="w-full max-w-md">
+  <TabsList>
+    <TabsTrigger value="overview">Overview</TabsTrigger>
+    <TabsTrigger value="activity">Activity</TabsTrigger>
+    <TabsTrigger value="settings">Settings</TabsTrigger>
+  </TabsList>
+  <TabsContent value="overview" className="rounded-lg border p-4 text-sm">
+    A summary of the project, its owner and its current status.
+  </TabsContent>
+  <TabsContent value="activity" className="rounded-lg border p-4 text-sm">
+    Recent changes, comments and uploads, newest first.
+  </TabsContent>
+  <TabsContent value="settings" className="rounded-lg border p-4 text-sm">
+    Name, visibility and who can edit this project.
+  </TabsContent>
+</Tabs>`}
+>
+  <Tabs defaultValue="overview" className="w-full max-w-md">
+    <TabsList>
+      <TabsTrigger value="overview">Overview</TabsTrigger>
+      <TabsTrigger value="activity">Activity</TabsTrigger>
+      <TabsTrigger value="settings">Settings</TabsTrigger>
+    </TabsList>
+    <TabsContent value="overview" className="rounded-lg border p-4 text-sm">
+      A summary of the project, its owner and its current status.
+    </TabsContent>
+    <TabsContent value="activity" className="rounded-lg border p-4 text-sm">
+      Recent changes, comments and uploads, newest first.
+    </TabsContent>
+    <TabsContent value="settings" className="rounded-lg border p-4 text-sm">
+      Name, visibility and who can edit this project.
+    </TabsContent>
+  </Tabs>
+</Example>
+
+## When to use
+
+- To split one topic into a few views at the same level, like Overview, Activity and Settings.
+- When people only need one view at a time and do not need to compare them side by side.
+- To switch a small area between two to five modes, like Monthly and Yearly pricing.
+
+## When not to use
+
+- **For steps in a process.** Use a stepper or separate pages, so order is clear.
+- **When people need to compare content.** Show it side by side or in a [table](/components/table).
+- **To move between unrelated pages.** Use the main navigation.
+- **For one or two short sections.** Show them both, or use an [accordion](/components/accordion) on narrow screens.
+
+## Variants
+
+The default variant sits on a muted track. The line variant draws an underline under the active tab and suits page-level sections.
+
+<Example
+  title="Line variant"
+  align="start"
+  code={`<Tabs defaultValue="all" className="w-full max-w-md">
+  <TabsList variant="line">
+    <TabsTrigger value="all">All</TabsTrigger>
+    <TabsTrigger value="open">Open</TabsTrigger>
+    <TabsTrigger value="closed">Closed</TabsTrigger>
+  </TabsList>
+  <TabsContent value="all" className="pt-2 text-sm text-muted-foreground">24 requests</TabsContent>
+  <TabsContent value="open" className="pt-2 text-sm text-muted-foreground">9 open requests</TabsContent>
+  <TabsContent value="closed" className="pt-2 text-sm text-muted-foreground">15 closed requests</TabsContent>
+</Tabs>`}
+>
+  <Tabs defaultValue="all" className="w-full max-w-md">
+    <TabsList variant="line">
+      <TabsTrigger value="all">All</TabsTrigger>
+      <TabsTrigger value="open">Open</TabsTrigger>
+      <TabsTrigger value="closed">Closed</TabsTrigger>
+    </TabsList>
+    <TabsContent value="all" className="pt-2 text-sm text-muted-foreground">24 requests</TabsContent>
+    <TabsContent value="open" className="pt-2 text-sm text-muted-foreground">9 open requests</TabsContent>
+    <TabsContent value="closed" className="pt-2 text-sm text-muted-foreground">15 closed requests</TabsContent>
+  </Tabs>
+</Example>
+
+## Vertical and disabled
+
+Vertical tabs suit settings pages with many sections. A disabled tab shows a view that exists but is not available yet.
+
+<Example
+  title="Vertical, with a disabled tab"
+  align="start"
+  code={`<Tabs defaultValue="profile" orientation="vertical" className="w-full max-w-md">
+  <TabsList>
+    <TabsTrigger value="profile">Profile</TabsTrigger>
+    <TabsTrigger value="notifications">Notifications</TabsTrigger>
+    <TabsTrigger value="billing" disabled>Billing</TabsTrigger>
+  </TabsList>
+  <TabsContent value="profile" className="rounded-lg border p-4 text-sm">Your name, photo and contact details.</TabsContent>
+  <TabsContent value="notifications" className="rounded-lg border p-4 text-sm">Choose which emails you receive.</TabsContent>
+  <TabsContent value="billing" className="rounded-lg border p-4 text-sm">Plan and invoices.</TabsContent>
+</Tabs>`}
+>
+  <Tabs defaultValue="profile" orientation="vertical" className="w-full max-w-md">
+    <TabsList>
+      <TabsTrigger value="profile">Profile</TabsTrigger>
+      <TabsTrigger value="notifications">Notifications</TabsTrigger>
+      <TabsTrigger value="billing" disabled>Billing</TabsTrigger>
+    </TabsList>
+    <TabsContent value="profile" className="rounded-lg border p-4 text-sm">Your name, photo and contact details.</TabsContent>
+    <TabsContent value="notifications" className="rounded-lg border p-4 text-sm">Choose which emails you receive.</TabsContent>
+    <TabsContent value="billing" className="rounded-lg border p-4 text-sm">Plan and invoices.</TabsContent>
+  </Tabs>
+</Example>
+
+<DoDont>
+  <Do caption="Short, parallel labels for views of the same thing.">
+    <Tabs defaultValue="a">
+      <TabsList>
+        <TabsTrigger value="a">Details</TabsTrigger>
+        <TabsTrigger value="b">Files</TabsTrigger>
+        <TabsTrigger value="c">History</TabsTrigger>
+      </TabsList>
+    </Tabs>
+  </Do>
+  <Dont caption="Tabs used as steps. People cannot tell order or what is required.">
+    <Tabs defaultValue="a">
+      <TabsList>
+        <TabsTrigger value="a">1. Account</TabsTrigger>
+        <TabsTrigger value="b">2. Payment</TabsTrigger>
+        <TabsTrigger value="c">3. Review</TabsTrigger>
+      </TabsList>
+    </Tabs>
+  </Dont>
+</DoDont>
+
+## Content
+
+- One or two words per label, in sentence case, using nouns: "Overview", "Files".
+- Keep labels parallel in form and similar in length.
+- Two to five tabs. More than that is hard to scan; consider a select or a sidebar.
+- Open the most useful tab first, not always the first in the list.
+- Do not hide required inputs in a tab people may never open.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+```
+
+## Props
+
+`Tabs` (root, from Radix Tabs):
+
+<PropsTable props={[
+  { name: "defaultValue", type: "string", description: "The tab open on first render when uncontrolled." },
+  { name: "value", type: "string", description: "Controlled active tab. Pair with onValueChange." },
+  { name: "onValueChange", type: "(value: string) => void", description: "Called when the active tab changes." },
+  { name: "orientation", type: '"horizontal" | "vertical"', default: '"horizontal"', description: "Layout and arrow key direction. Vertical stacks the list beside the content." },
+  { name: "activationMode", type: '"automatic" | "manual"', default: '"automatic"', description: "Automatic switches on arrow keys. Manual waits for Enter or Space; use it when a panel is slow to load." },
+]} />
+
+`TabsList`:
+
+<PropsTable props={[
+  { name: "variant", type: '"default" | "line"', default: '"default"', description: "Default draws a muted track. Line draws an underline under the active tab." },
+  { name: "loop", type: "boolean", default: "true", description: "Arrow keys wrap from the last tab to the first." },
+]} />
+
+`TabsTrigger`:
+
+<PropsTable props={[
+  { name: "value", type: "string", description: "Required. Matches the value of a TabsContent." },
+  { name: "disabled", type: "boolean", default: "false", description: "Cannot be selected and is skipped by arrow keys." },
+]} />
+
+`TabsContent` needs a `value` matching its trigger. Add `forceMount` to keep a hidden panel in the page, for example to keep form state.
+
+## Syncing with the URL
+
+Control the tabs so a link can open a specific view:
+
+```tsx
+const [params, setParams] = useSearchParams()
+const tab = params.get("tab") ?? "overview"
+
+<Tabs value={tab} onValueChange={(v) => setParams({ tab: v })}>
+  ...
+</Tabs>
+```
+
+## Styling
+
+The track reads `--muted`; the active tab reads `--background` and `--foreground`, with `--input` borders in dark mode. The line variant uses `--foreground` for the underline.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the active tab, then into the open panel |
+| <kbd>Arrow left</kbd> / <kbd>Arrow right</kbd> | Moves between tabs in a horizontal list |
+| <kbd>Arrow up</kbd> / <kbd>Arrow down</kbd> | Moves between tabs in a vertical list |
+| <kbd>Home</kbd> / <kbd>End</kbd> | Moves to the first or last tab |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Opens the focused tab when `activationMode` is manual |
+
+## Focus management
+
+- Only the active tab is in the <kbd>Tab</kbd> order. Arrow keys move between tabs.
+- With automatic activation, moving focus also switches the panel.
+- The open panel is focusable, so keyboard users can reach content even when it has no links or inputs.
+
+## Checklist
+
+- The list uses `role="tablist"`, each trigger `role="tab"` with `aria-selected`, and each panel `role="tabpanel"` linked to its tab.
+- The active tab is shown by more than color: a raised surface in the default variant and an underline in the line variant.
+- Focus rings use `--ring` and are visible on every tab.
+- Labels make sense when read alone, without the panel.
+
+</DocTab>
+</DocTabs>

@@ -1,0 +1,214 @@
+---
+title: Checkbox
+description: A checkbox lets people turn a single option on or off, or pick any number of options from a list.
+status: stable
+order: 23
+keywords: [checkbox, check, tick, multi select, agree, terms, indeterminate]
+---
+
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Checkbox with label"
+  code={`<div className="flex items-center gap-2">
+  <Checkbox id="terms" />
+  <Label htmlFor="terms">I agree to the terms of service</Label>
+</div>`}
+>
+  <div className="flex items-center gap-2">
+    <Checkbox id="cb-hero" />
+    <Label htmlFor="cb-hero">I agree to the terms of service</Label>
+  </div>
+</Example>
+
+## When to use
+
+- To pick any number of options from a list, including none.
+- For a single opt-in that takes effect when the form is submitted, like agreeing to terms.
+
+## When not to use
+
+- **For one choice from several.** Use a [radio group](/components/radio-group).
+- **For a setting that applies right away.** Use a [switch](/components/switch).
+- **For long lists.** Over about ten options, consider a searchable multi-select.
+
+## Groups
+
+Group related checkboxes under a shared label with `fieldset` and `legend`, stacked one per line.
+
+<Example
+  title="Checkbox group"
+  code={`<fieldset className="grid gap-3">
+  <legend className="mb-3 text-sm font-medium">Email me about</legend>
+  <div className="flex items-center gap-2">
+    <Checkbox id="updates" defaultChecked />
+    <Label htmlFor="updates">Product updates</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <Checkbox id="tips" />
+    <Label htmlFor="tips">Tips and guides</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <Checkbox id="billing" defaultChecked disabled />
+    <Label htmlFor="billing">Billing notices (required)</Label>
+  </div>
+</fieldset>`}
+>
+  <fieldset className="grid gap-3">
+    <legend className="mb-3 text-sm font-medium">Email me about</legend>
+    <div className="flex items-center gap-2">
+      <Checkbox id="cb-group-updates" defaultChecked />
+      <Label htmlFor="cb-group-updates">Product updates</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <Checkbox id="cb-group-tips" />
+      <Label htmlFor="cb-group-tips">Tips and guides</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <Checkbox id="cb-group-billing" defaultChecked disabled />
+      <Label htmlFor="cb-group-billing">Billing notices (required)</Label>
+    </div>
+  </fieldset>
+</Example>
+
+## States
+
+<Example
+  title="Unchecked, checked, indeterminate, disabled and error"
+  code={`<Checkbox aria-label="Unchecked" />
+<Checkbox aria-label="Checked" defaultChecked />
+<Checkbox aria-label="Some selected" checked="indeterminate" />
+<Checkbox aria-label="Disabled" disabled />
+<Checkbox aria-label="Required" aria-invalid="true" />`}
+>
+  <Checkbox aria-label="Unchecked" />
+  <Checkbox aria-label="Checked" defaultChecked />
+  <Checkbox aria-label="Some selected" checked="indeterminate" />
+  <Checkbox aria-label="Disabled" disabled />
+  <Checkbox aria-label="Required" aria-invalid="true" />
+</Example>
+
+Use the indeterminate state only on a parent checkbox whose children are partly selected, like "Select all" in a table. It shows a minus sign, and screen readers announce it as "mixed".
+
+## With a description
+
+<Example
+  title="Label with supporting text"
+  code={`<div className="flex items-start gap-3">
+  <Checkbox id="backup" className="mt-0.5" aria-describedby="backup-help" />
+  <div className="grid gap-1.5">
+    <Label htmlFor="backup">Back up files nightly</Label>
+    <p id="backup-help" className="text-sm text-muted-foreground">Copies are kept for 30 days.</p>
+  </div>
+</div>`}
+>
+  <div className="flex items-start gap-3">
+    <Checkbox id="cb-desc" className="mt-0.5" aria-describedby="cb-desc-help" />
+    <div className="grid gap-1.5">
+      <Label htmlFor="cb-desc">Back up files nightly</Label>
+      <p id="cb-desc-help" className="text-sm text-muted-foreground">Copies are kept for 30 days.</p>
+    </div>
+  </div>
+</Example>
+
+<DoDont>
+  <Do caption="Positive wording: checked means yes.">
+    <div className="flex items-center gap-2">
+      <Checkbox id="cb-do" />
+      <Label htmlFor="cb-do">Send me a weekly summary</Label>
+    </div>
+  </Do>
+  <Dont caption="Negative wording makes people think twice about what checked means.">
+    <div className="flex items-center gap-2">
+      <Checkbox id="cb-dont" />
+      <Label htmlFor="cb-dont">Do not stop sending summaries</Label>
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Write labels so that checked means "yes": "Remember this device", not "Do not remember this device".
+- Keep labels short and in sentence case, with no punctuation at the end.
+- Make the label clickable (the `Label` does this) so the target is bigger than the box.
+- Never preselect a checkbox that signs people up for marketing or payment.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
+```
+
+## Props
+
+Checkbox wraps the Radix Checkbox primitive and renders a `button` with `role="checkbox"`.
+
+<PropsTable props={[
+  { name: "checked", type: 'boolean | "indeterminate"', default: "-", description: "Checked state when controlled." },
+  { name: "defaultChecked", type: 'boolean | "indeterminate"', default: "-", description: "Starting state when uncontrolled." },
+  { name: "onCheckedChange", type: '(checked: boolean | "indeterminate") => void', default: "-", description: "Called when the state changes." },
+  { name: "disabled", type: "boolean", default: "false", description: "Prevents toggling and dims the box and its peer label." },
+  { name: "required", type: "boolean", default: "false", description: "Must be checked before the form submits." },
+  { name: "name", type: "string", default: "-", description: "Field name used in native form submission." },
+  { name: "value", type: "string", default: '"on"', description: "Value submitted with the form when checked." },
+  { name: "aria-invalid", type: "boolean", default: "false", description: "Applies the destructive border and ring." },
+]} />
+
+## Controlled
+
+```tsx
+const [agreed, setAgreed] = React.useState(false)
+
+<div className="flex items-center gap-2">
+  <Checkbox
+    id="terms"
+    checked={agreed}
+    onCheckedChange={(v) => setAgreed(v === true)}
+  />
+  <Label htmlFor="terms">I agree to the terms of service</Label>
+</div>
+<Button disabled={!agreed}>Create account</Button>
+```
+
+## Select all
+
+```tsx
+const all = items.every((i) => selected.includes(i.id))
+const some = items.some((i) => selected.includes(i.id))
+
+<Checkbox
+  aria-label="Select all rows"
+  checked={all ? true : some ? "indeterminate" : false}
+  onCheckedChange={(v) => setSelected(v === true ? items.map((i) => i.id) : [])}
+/>
+```
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the checkbox |
+| <kbd>Space</kbd> | Checks or unchecks it |
+
+## Checklist
+
+- Every checkbox has a label linked with `htmlFor` and `id`, or an `aria-label` when there is no visible text, like in a table row.
+- Groups use `fieldset` and `legend` so the question is read before each option.
+- The indeterminate state is announced as "mixed" by screen readers.
+- The checked state is shown by a check mark, not by color alone.
+- Errors set `aria-invalid` and are explained in visible text.
+- The clickable area (box plus label) is at least 44 by 44 px on touch screens.
+
+</DocTab>
+</DocTabs>

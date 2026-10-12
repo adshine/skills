@@ -1,0 +1,199 @@
+---
+title: Switch
+description: A switch turns a single setting on or off, and the change takes effect right away.
+status: stable
+order: 25
+keywords: [switch, toggle, on off, setting, preference]
+---
+
+import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Switch with label"
+  code={`<div className="flex items-center gap-3">
+  <Switch id="notifications" defaultChecked />
+  <Label htmlFor="notifications">Push notifications</Label>
+</div>`}
+>
+  <div className="flex items-center gap-3">
+    <Switch id="sw-hero" defaultChecked />
+    <Label htmlFor="sw-hero">Push notifications</Label>
+  </div>
+</Example>
+
+## When to use
+
+- For settings that apply the moment they change, with no save button: notifications, dark mode, auto-renew.
+- When the setting has two clear states, on and off.
+
+## When not to use
+
+- **Inside a form that is submitted later.** Use a [checkbox](/components/checkbox).
+- **For choices that are not on or off,** like "Monthly or yearly". Use a [radio group](/components/radio-group).
+- **For actions.** "Turn on now" that runs a process is a [button](/components/button).
+
+## Switch or checkbox
+
+| | Switch | Checkbox |
+| --- | --- | --- |
+| Takes effect | Immediately | When the form is submitted |
+| Typical place | Settings pages and lists | Forms, filters and tables |
+| Several options | Each is independent | Can be grouped under one question |
+| Label reads as | A setting: "Email alerts" | A statement: "I agree to the terms" |
+
+<DoDont>
+  <Do caption="A settings row that saves as soon as it is switched.">
+    <div className="flex w-full max-w-64 items-center justify-between gap-4">
+      <Label htmlFor="sw-do">Auto-renew plan</Label>
+      <Switch id="sw-do" defaultChecked />
+    </div>
+  </Do>
+  <Dont caption="A switch for consent in a form people still need to submit. Use a checkbox.">
+    <div className="flex items-center gap-3">
+      <Switch id="sw-dont" />
+      <Label htmlFor="sw-dont">I agree to the terms</Label>
+    </div>
+  </Dont>
+</DoDont>
+
+## Settings list
+
+In a list of settings, put the label on the left and the switch on the right, with a short description when the label needs it.
+
+<Example
+  title="Settings rows"
+  code={`<div className="grid w-full max-w-md divide-y rounded-xl border">
+  <div className="flex items-center justify-between gap-4 p-4">
+    <div className="grid gap-1">
+      <Label htmlFor="email-alerts">Email alerts</Label>
+      <p id="email-alerts-help" className="text-sm text-muted-foreground">Get an email when someone mentions you.</p>
+    </div>
+    <Switch id="email-alerts" defaultChecked aria-describedby="email-alerts-help" />
+  </div>
+  <div className="flex items-center justify-between gap-4 p-4">
+    <div className="grid gap-1">
+      <Label htmlFor="weekly">Weekly digest</Label>
+      <p id="weekly-help" className="text-sm text-muted-foreground">A summary of activity every Monday.</p>
+    </div>
+    <Switch id="weekly" aria-describedby="weekly-help" />
+  </div>
+</div>`}
+>
+  <div className="grid w-full max-w-md divide-y rounded-xl border">
+    <div className="flex items-center justify-between gap-4 p-4">
+      <div className="grid gap-1">
+        <Label htmlFor="sw-list-alerts">Email alerts</Label>
+        <p id="sw-list-alerts-help" className="text-sm text-muted-foreground">Get an email when someone mentions you.</p>
+      </div>
+      <Switch id="sw-list-alerts" defaultChecked aria-describedby="sw-list-alerts-help" />
+    </div>
+    <div className="flex items-center justify-between gap-4 p-4">
+      <div className="grid gap-1">
+        <Label htmlFor="sw-list-weekly">Weekly digest</Label>
+        <p id="sw-list-weekly-help" className="text-sm text-muted-foreground">A summary of activity every Monday.</p>
+      </div>
+      <Switch id="sw-list-weekly" aria-describedby="sw-list-weekly-help" />
+    </div>
+  </div>
+</Example>
+
+## Sizes and states
+
+<Example
+  title="Default, small, off, on and disabled"
+  code={`<Switch aria-label="Off" />
+<Switch aria-label="On" defaultChecked />
+<Switch size="sm" aria-label="Small off" />
+<Switch size="sm" aria-label="Small on" defaultChecked />
+<Switch aria-label="Disabled off" disabled />
+<Switch aria-label="Disabled on" defaultChecked disabled />`}
+>
+  <Switch aria-label="Off" />
+  <Switch aria-label="On" defaultChecked />
+  <Switch size="sm" aria-label="Small off" />
+  <Switch size="sm" aria-label="Small on" defaultChecked />
+  <Switch aria-label="Disabled off" disabled />
+  <Switch aria-label="Disabled on" defaultChecked disabled />
+</Example>
+
+Use `sm` in dense lists and tables. Use the default size everywhere else.
+
+## Content
+
+- Label the setting, not the action: "Email alerts", not "Turn on email alerts".
+- Do not change the label when the state changes; the switch already shows on or off.
+- If switching takes time or can fail, show progress and roll back with a message when it fails.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+```
+
+## Props
+
+Switch wraps the Radix Switch primitive and renders a `button` with `role="switch"`.
+
+<PropsTable props={[
+  { name: "size", type: '"sm" | "default"', default: '"default"', description: "Track size. sm is for dense lists and tables." },
+  { name: "checked", type: "boolean", default: "-", description: "On state when controlled." },
+  { name: "defaultChecked", type: "boolean", default: "-", description: "Starting state when uncontrolled." },
+  { name: "onCheckedChange", type: "(checked: boolean) => void", default: "-", description: "Called when people toggle it. Apply the setting here." },
+  { name: "disabled", type: "boolean", default: "false", description: "Prevents toggling and dims the switch and its peer label." },
+  { name: "required", type: "boolean", default: "false", description: "Must be on before a native form submits." },
+  { name: "name", type: "string", default: "-", description: "Field name used in native form submission." },
+  { name: "value", type: "string", default: '"on"', description: "Value submitted when on." },
+]} />
+
+## Saving right away
+
+Update the UI first, then save, and roll back if the save fails:
+
+```tsx
+const [on, setOn] = React.useState(settings.emailAlerts)
+
+async function handleChange(next: boolean) {
+  setOn(next)
+  try {
+    await saveSetting("emailAlerts", next)
+  } catch {
+    setOn(!next)
+    toast.error("Could not update email alerts. Try again.")
+  }
+}
+
+<div className="flex items-center justify-between gap-4">
+  <Label htmlFor="email-alerts">Email alerts</Label>
+  <Switch id="email-alerts" checked={on} onCheckedChange={handleChange} />
+</div>
+```
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the switch |
+| <kbd>Space</kbd> or <kbd>Enter</kbd> | Turns it on or off |
+
+## Checklist
+
+- Every switch has a name, from a `Label` linked with `htmlFor` and `id`, or an `aria-label`.
+- It is announced as a switch with its state ("on" or "off"), because Radix sets `role="switch"` and `aria-checked`.
+- The thumb position shows the state, not color alone.
+- Descriptions are linked with `aria-describedby`.
+- Errors when saving are announced, for example with a toast or a live region, and the switch returns to its last saved state.
+- The clickable area (switch plus label) is at least 44 by 44 px on touch screens.
+
+</DocTab>
+</DocTabs>

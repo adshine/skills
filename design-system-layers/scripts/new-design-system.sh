@@ -2,7 +2,8 @@
 # Start a client design system from a premade starter instead of from scratch.
 #   new-design-system.sh --stack react|html --dest DIR --seed "#RRGGBB" \
 #     [--name "Brand"] [--tagline "..."] [--font "DM Sans"] [--variant fidelity] [--radius 0.625rem]
-# react: Vite + React + Tailwind v4 + shadcn/ui (Radix), ~20 core components installed.
+# react: Vite + React + Tailwind v4 + shadcn/ui (Radix) with a full documentation site
+#        (foundations, components, patterns, search) built from MDX in src/docs/content.
 # html:  plain HTML/CSS components with the same theme variable names.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -55,8 +56,13 @@ if tpl == "html":
     h = h.replace('data-brand-name>Brand<', f'data-brand-name>{name}<').replace('data-brand-tagline>Design system starter<', f'data-brand-tagline>{tagline}<').replace('<title>Brand design system', f'<title>{name} design system')
 else:
     h = re.sub(r'<title>[^<]*</title>', f'<title>{name} design system</title>', h)
-    cfg = d / "src/brand.config.ts"
-    cfg.write_text(cfg.read_text().replace('name: "Brand"', f'name: {name!r}'.replace("'", '"')).replace('tagline: "Design system starter"', f'tagline: {tagline!r}'.replace("'", '"')))
+    import json
+    cfg = d / "src/docs/site.config.ts"
+    c = cfg.read_text()
+    c = c.replace('name: "Brand"', f'name: {json.dumps(name)}')
+    c = c.replace('tagline: "Design system"', f'tagline: {json.dumps(tagline)}')
+    c = c.replace("building Brand products", f"building {name} products")
+    cfg.write_text(c)
 idx.write_text(h)
 PY
 
@@ -87,7 +93,7 @@ MD
 
 if [ "$STACK" = "react" ]; then
   (cd "$DEST" && pnpm install >/dev/null 2>&1 || { echo "pnpm install failed; run it in $DEST" >&2; exit 1; })
-  echo "Ready: cd $DEST && pnpm dev"
+  echo "Ready: cd $DEST && pnpm dev   (docs site; pnpm build writes a static site to dist/)"
 else
   echo "Ready: open $DEST/index.html"
 fi

@@ -1,0 +1,267 @@
+---
+title: Popover
+description: A popover opens a small panel next to a button for extra detail or quick settings, without leaving the page.
+status: stable
+order: 42
+keywords: [flyout, panel, overlay, inline settings, filter]
+---
+
+import { InfoIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Quick settings"
+  code={`<Popover>
+  <PopoverTrigger asChild>
+    <Button variant="outline">Set dimensions</Button>
+  </PopoverTrigger>
+  <PopoverContent className="grid gap-4">
+    <PopoverHeader>
+      <PopoverTitle>Dimensions</PopoverTitle>
+      <PopoverDescription>Set the size of the image in pixels.</PopoverDescription>
+    </PopoverHeader>
+    <div className="grid grid-cols-3 items-center gap-3">
+      <Label htmlFor="pop-width">Width</Label>
+      <Input id="pop-width" defaultValue="1200" className="col-span-2 h-8" />
+      <Label htmlFor="pop-height">Height</Label>
+      <Input id="pop-height" defaultValue="800" className="col-span-2 h-8" />
+    </div>
+  </PopoverContent>
+</Popover>`}
+>
+  <Popover>
+    <PopoverTrigger asChild>
+      <Button variant="outline">Set dimensions</Button>
+    </PopoverTrigger>
+    <PopoverContent className="grid gap-4">
+      <PopoverHeader>
+        <PopoverTitle>Dimensions</PopoverTitle>
+        <PopoverDescription>Set the size of the image in pixels.</PopoverDescription>
+      </PopoverHeader>
+      <div className="grid grid-cols-3 items-center gap-3">
+        <Label htmlFor="pop-width">Width</Label>
+        <Input id="pop-width" defaultValue="1200" className="col-span-2 h-8" />
+        <Label htmlFor="pop-height">Height</Label>
+        <Input id="pop-height" defaultValue="800" className="col-span-2 h-8" />
+      </div>
+    </PopoverContent>
+  </Popover>
+</Example>
+
+## When to use
+
+- To show a few related settings or filters next to the control they affect.
+- To explain a term or number with more than a sentence, including a link.
+- To host a picker, like the [date picker](/components/calendar), that should not take over the page.
+
+## When not to use
+
+- **For a one-line hint on hover.** Use a [tooltip](/components/tooltip).
+- **For a list of actions.** Use a [menu](/components/dropdown-menu); it has the right keyboard behavior.
+- **When people must answer before going on.** Use a [dialog](/components/dialog).
+- **For long forms.** If it needs scrolling, it belongs on a page or in a dialog.
+
+## Information popover
+
+A small icon button can open a short explanation. Unlike a tooltip, it stays open until people close it and can hold links.
+
+<Example
+  title="Explain a term"
+  code={`<div className="flex items-center gap-1.5 text-sm">
+  Usage limit
+  <Popover>
+    <PopoverTrigger asChild>
+      <Button variant="ghost" size="icon" className="size-7" aria-label="About usage limit">
+        <InfoIcon />
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent side="top" className="text-sm">
+      <PopoverHeader>
+        <PopoverTitle>Usage limit</PopoverTitle>
+        <PopoverDescription>
+          The number of requests your plan allows each month. It resets on the first day of the month.
+        </PopoverDescription>
+      </PopoverHeader>
+    </PopoverContent>
+  </Popover>
+</div>`}
+>
+  <div className="flex items-center gap-1.5 text-sm">
+    Usage limit
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="size-7" aria-label="About usage limit">
+          <InfoIcon />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent side="top" className="text-sm">
+        <PopoverHeader>
+          <PopoverTitle>Usage limit</PopoverTitle>
+          <PopoverDescription>
+            The number of requests your plan allows each month. It resets on the first day of the month.
+          </PopoverDescription>
+        </PopoverHeader>
+      </PopoverContent>
+    </Popover>
+  </div>
+</Example>
+
+## Placement
+
+Popovers open below the trigger by default and flip when there is not enough room. Use `side` and `align` to pick a starting point.
+
+<Example
+  title="Side and align"
+  code={`<Popover>
+  <PopoverTrigger asChild><Button variant="outline">Top</Button></PopoverTrigger>
+  <PopoverContent side="top" className="w-56 text-sm">Opens above the trigger.</PopoverContent>
+</Popover>
+<Popover>
+  <PopoverTrigger asChild><Button variant="outline">Right</Button></PopoverTrigger>
+  <PopoverContent side="right" className="w-56 text-sm">Opens to the right.</PopoverContent>
+</Popover>
+<Popover>
+  <PopoverTrigger asChild><Button variant="outline">Bottom, start</Button></PopoverTrigger>
+  <PopoverContent align="start" className="w-56 text-sm">Lines up with the left edge.</PopoverContent>
+</Popover>`}
+>
+  <Popover>
+    <PopoverTrigger asChild><Button variant="outline">Top</Button></PopoverTrigger>
+    <PopoverContent side="top" className="w-56 text-sm">Opens above the trigger.</PopoverContent>
+  </Popover>
+  <Popover>
+    <PopoverTrigger asChild><Button variant="outline">Right</Button></PopoverTrigger>
+    <PopoverContent side="right" className="w-56 text-sm">Opens to the right.</PopoverContent>
+  </Popover>
+  <Popover>
+    <PopoverTrigger asChild><Button variant="outline">Bottom, start</Button></PopoverTrigger>
+    <PopoverContent align="start" className="w-56 text-sm">Lines up with the left edge.</PopoverContent>
+  </Popover>
+</Example>
+
+<DoDont>
+  <Do caption="A few settings that change the thing right next to the trigger.">
+    <div className="grid w-56 gap-2 rounded-md border bg-popover p-4 text-sm text-popover-foreground shadow-md">
+      <p className="font-medium">Filter by status</p>
+      <p className="text-muted-foreground">Open, In review</p>
+    </div>
+  </Do>
+  <Dont caption="A full form crammed into a popover. Use a dialog or a page instead.">
+    <div className="grid w-56 gap-1.5 rounded-md border bg-popover p-4 text-xs text-popover-foreground shadow-md">
+      <p className="font-medium">New customer</p>
+      <div className="h-6 rounded border" />
+      <div className="h-6 rounded border" />
+      <div className="h-6 rounded border" />
+      <div className="h-6 rounded border" />
+      <div className="h-6 rounded border" />
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Lead with a short title that matches the trigger label.
+- Keep it to what fits without scrolling: a few fields, a short explanation or a picker.
+- Apply changes as people make them, or add one clear button such as "Apply filters".
+- Do not open a popover from inside another popover.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+```
+
+## Props
+
+`Popover` (root, from Radix Popover):
+
+<PropsTable props={[
+  { name: "open", type: "boolean", description: "Controlled open state. Pair with onOpenChange." },
+  { name: "defaultOpen", type: "boolean", default: "false", description: "Open state on first render when uncontrolled." },
+  { name: "onOpenChange", type: "(open: boolean) => void", description: "Called when the popover opens or closes." },
+  { name: "modal", type: "boolean", default: "false", description: "When true, traps focus and blocks the page behind. Leave off for light panels." },
+]} />
+
+`PopoverContent`:
+
+<PropsTable props={[
+  { name: "side", type: '"top" | "right" | "bottom" | "left"', default: '"bottom"', description: "Preferred side. Flips when there is not enough room." },
+  { name: "align", type: '"start" | "center" | "end"', default: '"center"', description: "Alignment against the trigger." },
+  { name: "sideOffset", type: "number", default: "4", description: "Gap in pixels between trigger and panel." },
+  { name: "className", type: "string", description: "Extra classes. The default width is w-72; override it here." },
+]} />
+
+`PopoverHeader` is a `div`, `PopoverTitle` is a `div` with medium weight and `PopoverDescription` is a `p` in muted text. `PopoverAnchor` positions the panel against a different element than the trigger.
+
+## Closing after an action
+
+Control the popover when a button inside should close it:
+
+```tsx
+const [open, setOpen] = React.useState(false)
+
+<Popover open={open} onOpenChange={setOpen}>
+  <PopoverTrigger asChild>
+    <Button variant="outline">Filters</Button>
+  </PopoverTrigger>
+  <PopoverContent>
+    ...
+    <Button onClick={() => { applyFilters(); setOpen(false) }}>Apply filters</Button>
+  </PopoverContent>
+</Popover>
+```
+
+## Styling
+
+The panel reads `--popover` and `--popover-foreground` with a `border` and medium shadow. Change width or padding with `className`; do not pass raw colors.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | On the trigger, opens or closes the popover |
+| <kbd>Tab</kbd> | Moves through focusable elements inside the popover |
+| <kbd>Esc</kbd> | Closes the popover and returns focus to the trigger |
+
+## Focus management
+
+- Opening the popover moves focus to the first focusable element inside, or to the panel itself.
+- Closing with <kbd>Esc</kbd> or a click outside returns focus to the trigger.
+- Focus is not trapped by default, so <kbd>Tab</kbd> past the last element moves on through the page. Set `modal` if people must stay inside.
+
+## Checklist
+
+- The trigger is a button with a visible label, or an `aria-label` if icon-only. It announces whether the popover is expanded.
+- The panel has a visible title so its purpose is clear when focus lands in it.
+- Every input inside has a label.
+- Nothing important lives only in the popover; people who never open it can still finish their task.
+
+</DocTab>
+</DocTabs>

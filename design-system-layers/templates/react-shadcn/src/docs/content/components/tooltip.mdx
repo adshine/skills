@@ -1,0 +1,249 @@
+---
+title: Tooltip
+description: A tooltip shows a short label when people hover over or focus a control, most often to name an icon button.
+status: stable
+order: 43
+keywords: [hint, hover, label, title, icon label]
+---
+
+import { BoldIcon, ItalicIcon, PlusIcon, UnderlineIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Icon button with a tooltip"
+  code={`<Tooltip>
+  <TooltipTrigger asChild>
+    <Button variant="outline" size="icon" aria-label="Add item">
+      <PlusIcon />
+    </Button>
+  </TooltipTrigger>
+  <TooltipContent>Add item</TooltipContent>
+</Tooltip>`}
+>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="outline" size="icon" aria-label="Add item">
+        <PlusIcon />
+      </Button>
+    </TooltipTrigger>
+    <TooltipContent>Add item</TooltipContent>
+  </Tooltip>
+</Example>
+
+## When to use
+
+- To name an icon-only button, so people know what it does before they click.
+- To show a keyboard shortcut for a control.
+- To reveal the full text of something that is cut off.
+
+## When not to use
+
+- **For information people need to finish a task.** Put it on the page as helper text.
+- **For anything interactive, like links or buttons.** Tooltips disappear when the pointer leaves. Use a [popover](/components/popover).
+- **On touch-only screens.** There is no hover. Make sure the control is clear without it.
+- **To repeat a visible label.** If the button already says "Save", a tooltip saying "Save" adds noise.
+
+## Toolbar
+
+Tooltips work best in toolbars where icons sit close together. Hover across the buttons below: once one tooltip is open, the next opens right away.
+
+<Example
+  title="Toolbar"
+  code={`<div className="flex gap-1 rounded-lg border p-1">
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="ghost" size="icon" aria-label="Bold"><BoldIcon /></Button>
+    </TooltipTrigger>
+    <TooltipContent>Bold <span className="opacity-70">Ctrl B</span></TooltipContent>
+  </Tooltip>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="ghost" size="icon" aria-label="Italic"><ItalicIcon /></Button>
+    </TooltipTrigger>
+    <TooltipContent>Italic <span className="opacity-70">Ctrl I</span></TooltipContent>
+  </Tooltip>
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <Button variant="ghost" size="icon" aria-label="Underline"><UnderlineIcon /></Button>
+    </TooltipTrigger>
+    <TooltipContent>Underline <span className="opacity-70">Ctrl U</span></TooltipContent>
+  </Tooltip>
+</div>`}
+>
+  <div className="flex gap-1 rounded-lg border p-1">
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label="Bold"><BoldIcon /></Button>
+      </TooltipTrigger>
+      <TooltipContent>Bold <span className="opacity-70">Ctrl B</span></TooltipContent>
+    </Tooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label="Italic"><ItalicIcon /></Button>
+      </TooltipTrigger>
+      <TooltipContent>Italic <span className="opacity-70">Ctrl I</span></TooltipContent>
+    </Tooltip>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label="Underline"><UnderlineIcon /></Button>
+      </TooltipTrigger>
+      <TooltipContent>Underline <span className="opacity-70">Ctrl U</span></TooltipContent>
+    </Tooltip>
+  </div>
+</Example>
+
+## Placement
+
+Tooltips open above the trigger by default and flip if there is no room. Use `side` when the default would cover something important.
+
+<Example
+  title="Sides"
+  code={`<Tooltip>
+  <TooltipTrigger asChild><Button variant="outline">Top</Button></TooltipTrigger>
+  <TooltipContent side="top">Opens above</TooltipContent>
+</Tooltip>
+<Tooltip>
+  <TooltipTrigger asChild><Button variant="outline">Right</Button></TooltipTrigger>
+  <TooltipContent side="right">Opens to the right</TooltipContent>
+</Tooltip>
+<Tooltip>
+  <TooltipTrigger asChild><Button variant="outline">Bottom</Button></TooltipTrigger>
+  <TooltipContent side="bottom">Opens below</TooltipContent>
+</Tooltip>
+<Tooltip>
+  <TooltipTrigger asChild><Button variant="outline">Left</Button></TooltipTrigger>
+  <TooltipContent side="left">Opens to the left</TooltipContent>
+</Tooltip>`}
+>
+  <Tooltip>
+    <TooltipTrigger asChild><Button variant="outline">Top</Button></TooltipTrigger>
+    <TooltipContent side="top">Opens above</TooltipContent>
+  </Tooltip>
+  <Tooltip>
+    <TooltipTrigger asChild><Button variant="outline">Right</Button></TooltipTrigger>
+    <TooltipContent side="right">Opens to the right</TooltipContent>
+  </Tooltip>
+  <Tooltip>
+    <TooltipTrigger asChild><Button variant="outline">Bottom</Button></TooltipTrigger>
+    <TooltipContent side="bottom">Opens below</TooltipContent>
+  </Tooltip>
+  <Tooltip>
+    <TooltipTrigger asChild><Button variant="outline">Left</Button></TooltipTrigger>
+    <TooltipContent side="left">Opens to the left</TooltipContent>
+  </Tooltip>
+</Example>
+
+<DoDont>
+  <Do caption="A short label that names the action.">
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="outline" size="icon" aria-label="Add item"><PlusIcon /></Button>
+      </TooltipTrigger>
+      <TooltipContent>Add item</TooltipContent>
+    </Tooltip>
+  </Do>
+  <Dont caption="A paragraph with a link people cannot reach. Use a popover or helper text.">
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button variant="outline" size="icon" aria-label="Add item"><PlusIcon /></Button>
+      </TooltipTrigger>
+      <TooltipContent className="max-w-56">Adds a new item to this list. Items can be reordered later. See the help center to learn more.</TooltipContent>
+    </Tooltip>
+  </Dont>
+</DoDont>
+
+## Content
+
+- One short phrase, ideally under five words, in sentence case and with no full stop.
+- For icon buttons, match the `aria-label` exactly.
+- Add a shortcut after the label in quieter text, like "Bold Ctrl B".
+- Never put the only copy of important information in a tooltip.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+```
+
+`TooltipProvider` is already mounted once around the whole app in `App.tsx`. You do not need to add it per tooltip.
+
+## Props
+
+`TooltipProvider`:
+
+<PropsTable props={[
+  { name: "delayDuration", type: "number", default: "0", description: "Milliseconds before a tooltip opens on hover. This wrapper sets 0; Radix itself defaults to 700." },
+  { name: "skipDelayDuration", type: "number", default: "300", description: "How long after one tooltip closes the next opens without delay." },
+]} />
+
+`Tooltip` (root):
+
+<PropsTable props={[
+  { name: "open", type: "boolean", description: "Controlled open state. Pair with onOpenChange." },
+  { name: "defaultOpen", type: "boolean", default: "false", description: "Open state on first render when uncontrolled." },
+  { name: "onOpenChange", type: "(open: boolean) => void", description: "Called when the tooltip opens or closes." },
+  { name: "delayDuration", type: "number", description: "Overrides the provider delay for this tooltip." },
+]} />
+
+`TooltipContent`:
+
+<PropsTable props={[
+  { name: "side", type: '"top" | "right" | "bottom" | "left"', default: '"top"', description: "Preferred side. Flips when there is not enough room." },
+  { name: "align", type: '"start" | "center" | "end"', default: '"center"', description: "Alignment against the trigger." },
+  { name: "sideOffset", type: "number", default: "0", description: "Gap in pixels. The arrow already adds space, so 0 is usually right." },
+]} />
+
+`TooltipTrigger` accepts `asChild`. Always use it with a focusable element such as `Button`, so keyboard users can open the tooltip.
+
+## Disabled triggers
+
+Disabled buttons do not fire pointer or focus events, so the tooltip never shows. Wrap the button in a focusable `span`:
+
+```tsx
+<Tooltip>
+  <TooltipTrigger asChild>
+    <span tabIndex={0}>
+      <Button disabled>Publish</Button>
+    </span>
+  </TooltipTrigger>
+  <TooltipContent>Add a title before publishing</TooltipContent>
+</Tooltip>
+```
+
+## Styling
+
+Tooltips invert the theme: `bg-foreground` with `text-background`, so they stand out in both light and dark. Set a `max-w-*` class on `TooltipContent` if text might wrap.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Focusing the trigger opens the tooltip |
+| <kbd>Esc</kbd> | Closes the tooltip without moving focus |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Activates the trigger as normal and closes the tooltip |
+
+## Focus management
+
+- Focus never moves into a tooltip. It stays on the trigger.
+- The tooltip opens on keyboard focus as well as on hover, and closes when focus leaves.
+
+## Checklist
+
+- The tooltip text is linked to the trigger with `aria-describedby`, so screen readers announce it after the label.
+- Icon-only triggers still have an `aria-label`. The tooltip is a visual aid, not the accessible name.
+- Tooltip content is plain text. No links, buttons or inputs.
+- Text and background use the inverted foreground and background roles and meet 4.5:1 contrast.
+- The control makes sense on touch screens where tooltips do not appear.
+
+</DocTab>
+</DocTabs>

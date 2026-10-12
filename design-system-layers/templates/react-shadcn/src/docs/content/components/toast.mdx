@@ -1,0 +1,254 @@
+---
+title: Toast
+description: A toast is a brief message in the corner of the screen that confirms something happened, then goes away on its own.
+status: stable
+order: 44
+keywords: [sonner, snackbar, notification, flash message, feedback]
+---
+
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Basic toast"
+  code={`<Button
+  variant="outline"
+  onClick={() =>
+    toast("Changes saved", {
+      description: "Your profile is up to date.",
+    })
+  }
+>
+  Save changes
+</Button>`}
+>
+  <Button
+    variant="outline"
+    onClick={() =>
+      toast("Changes saved", {
+        description: "Your profile is up to date.",
+      })
+    }
+  >
+    Save changes
+  </Button>
+</Example>
+
+## When to use
+
+- To confirm an action people just took, like "Message sent" or "File uploaded".
+- To offer a quick undo after a reversible action.
+- To report the result of background work that finishes while people do something else.
+
+## When not to use
+
+- **For form errors.** Show them inline next to the field, so people can see and fix them.
+- **For anything people must read or act on.** Toasts vanish. Use an inline [alert](/components/alert) or a [dialog](/components/dialog).
+- **For long messages.** If it needs more than a short sentence, it belongs on the page.
+- **For every click.** If the change is already visible on screen, a toast only adds noise.
+
+## Toast or inline message
+
+| Situation | Use |
+| --- | --- |
+| An action worked and the result is not visible | Toast |
+| A reversible action, like archive or remove from list | Toast with an Undo action |
+| A field is wrong or missing | Inline error under the field |
+| A problem blocks the whole page or form | Inline [alert](/components/alert) at the top |
+| A status people need to keep seeing, like a trial ending | Inline alert or banner |
+| An action that cannot be undone | Confirm in a [dialog](/components/dialog) first, then a toast |
+
+<DoDont>
+  <Do caption="Form problems stay on the page, next to where people can fix them.">
+    <Alert variant="destructive" className="max-w-xs">
+      <AlertTitle>Card declined</AlertTitle>
+      <AlertDescription>Check the card number and try again.</AlertDescription>
+    </Alert>
+  </Do>
+  <Dont caption="A toast for an error people must fix disappears before they can act on it.">
+    <Button variant="outline" onClick={() => toast.error("Card declined")}>Pay now</Button>
+  </Dont>
+</DoDont>
+
+## Types
+
+Each type adds an icon. Use success and error sparingly; most confirmations work as a plain toast.
+
+<Example
+  title="Types"
+  code={`<Button variant="outline" onClick={() => toast("Draft saved")}>Default</Button>
+<Button variant="outline" onClick={() => toast.success("Invite sent")}>Success</Button>
+<Button variant="outline" onClick={() => toast.info("A new version is available")}>Info</Button>
+<Button variant="outline" onClick={() => toast.warning("Storage almost full")}>Warning</Button>
+<Button variant="outline" onClick={() => toast.error("Upload failed. Try again.")}>Error</Button>`}
+>
+  <Button variant="outline" onClick={() => toast("Draft saved")}>Default</Button>
+  <Button variant="outline" onClick={() => toast.success("Invite sent")}>Success</Button>
+  <Button variant="outline" onClick={() => toast.info("A new version is available")}>Info</Button>
+  <Button variant="outline" onClick={() => toast.warning("Storage almost full")}>Warning</Button>
+  <Button variant="outline" onClick={() => toast.error("Upload failed. Try again.")}>Error</Button>
+</Example>
+
+## Undo action
+
+Add one action button for undo or a quick follow-up. Keep the label to one or two words.
+
+<Example
+  title="With an undo action"
+  code={`<Button
+  variant="outline"
+  onClick={() =>
+    toast("Conversation archived", {
+      action: { label: "Undo", onClick: () => toast("Conversation restored") },
+    })
+  }
+>
+  Archive
+</Button>`}
+>
+  <Button
+    variant="outline"
+    onClick={() =>
+      toast("Conversation archived", {
+        action: { label: "Undo", onClick: () => toast("Conversation restored") },
+      })
+    }
+  >
+    Archive
+  </Button>
+</Example>
+
+## Loading and promise
+
+For work that takes a moment, show a loading toast that turns into the result.
+
+<Example
+  title="Promise toast"
+  code={`<Button
+  variant="outline"
+  onClick={() =>
+    toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
+      loading: "Exporting report",
+      success: "Report exported",
+      error: "Export failed",
+    })
+  }
+>
+  Export report
+</Button>`}
+>
+  <Button
+    variant="outline"
+    onClick={() =>
+      toast.promise(new Promise((resolve) => setTimeout(resolve, 1500)), {
+        loading: "Exporting report",
+        success: "Report exported",
+        error: "Export failed",
+      })
+    }
+  >
+    Export report
+  </Button>
+</Example>
+
+## Content
+
+- Say what happened in the past tense: "Invite sent", "File deleted".
+- One short line. Add a description only if it helps, and keep it to one sentence.
+- Errors say what to do next: "Upload failed. Try again."
+- At most one action. Never put a destructive action in a toast.
+- Do not say "Successfully". "Saved" is enough.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { toast } from "sonner"
+```
+
+The `Toaster` from `@/components/ui/sonner` is mounted once in `App.tsx`. Call `toast` from anywhere; do not add another `Toaster`.
+
+## Functions
+
+<PropsTable props={[
+  { name: "toast(message, options?)", type: "string | number", description: "Shows a default toast and returns its id." },
+  { name: "toast.success / info / warning / error", type: "string | number", description: "Same as toast, with the matching icon." },
+  { name: "toast.loading(message)", type: "string | number", description: "Shows a spinner toast that stays until you update or dismiss it." },
+  { name: "toast.promise(promise, messages)", type: "object", description: "Shows loading, then success or error when the promise settles. messages takes loading, success and error." },
+  { name: "toast.dismiss(id?)", type: "void", description: "Closes one toast by id, or all toasts when called with no id." },
+]} />
+
+## Options
+
+<PropsTable props={[
+  { name: "description", type: "ReactNode", description: "A second line in muted text." },
+  { name: "action", type: "{ label: ReactNode; onClick: (event) => void }", description: "One button on the toast, for undo or a quick follow-up." },
+  { name: "cancel", type: "{ label: ReactNode; onClick: (event) => void }", description: "A secondary button that also closes the toast." },
+  { name: "duration", type: "number", default: "4000", description: "Milliseconds before the toast closes. Use Infinity to keep it open." },
+  { name: "id", type: "string | number", description: "Reuse an id to update an existing toast instead of adding a new one." },
+  { name: "dismissible", type: "boolean", default: "true", description: "Whether people can swipe or close the toast." },
+]} />
+
+## Toaster props
+
+The `Toaster` wrapper takes every Sonner `Toaster` prop. It sets the theme from `next-themes`, custom icons and theme role colors. Common props:
+
+<PropsTable props={[
+  { name: "position", type: '"top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right"', default: '"bottom-right"', description: "Where toasts appear on screen." },
+  { name: "richColors", type: "boolean", default: "false", description: "Colored backgrounds per type. Off here, so toasts stay on the popover role." },
+  { name: "closeButton", type: "boolean", default: "false", description: "Shows a close button on every toast." },
+  { name: "visibleToasts", type: "number", default: "3", description: "How many toasts show at once before older ones stack." },
+]} />
+
+## Updating a toast
+
+Reuse the id to turn a loading toast into a result:
+
+```tsx
+const id = toast.loading("Uploading file")
+try {
+  await upload(file)
+  toast.success("File uploaded", { id })
+} catch {
+  toast.error("Upload failed. Try again.", { id })
+}
+```
+
+## Styling
+
+The wrapper maps Sonner to `--popover`, `--popover-foreground`, `--border` and `--radius`, so toasts follow light and dark themes. Do not pass colors per toast.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Alt</kbd> + <kbd>T</kbd> | Moves focus to the toast area |
+| <kbd>Tab</kbd> | Moves between action buttons on visible toasts |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Activates the focused action |
+| <kbd>Esc</kbd> | Collapses the expanded toast stack while focus is inside it |
+
+## Focus management
+
+- Showing a toast never moves focus. People keep working where they are.
+- Toasts pause their timer while hovered or focused, so there is time to reach the action.
+- Any action in a toast must also be possible somewhere else, because toasts can close before people reach them.
+
+## Checklist
+
+- The toast area is a live region, so screen readers announce new messages without moving focus.
+- Messages make sense on their own, without the icon or color.
+- Default duration (4 seconds) is long enough for one short line. Raise `duration` for anything longer, or use an inline message.
+- Undo is offered by a button in the toast and, where possible, another route like the item's menu.
+- Errors that block progress are shown inline, not only in a toast.
+
+</DocTab>
+</DocTabs>

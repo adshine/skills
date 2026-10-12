@@ -1,0 +1,248 @@
+---
+title: Radio group
+description: A radio group lets people pick exactly one option from a short list where every choice is visible.
+status: stable
+order: 24
+keywords: [radio, radio button, option, single choice, choose one]
+---
+
+import { Label } from "@/components/ui/label"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Radio group with legend"
+  code={`<fieldset className="grid gap-3">
+  <legend className="mb-3 text-sm font-medium">Billing cycle</legend>
+  <RadioGroup defaultValue="monthly">
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="monthly" id="monthly" />
+      <Label htmlFor="monthly">Monthly</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="yearly" id="yearly" />
+      <Label htmlFor="yearly">Yearly</Label>
+    </div>
+  </RadioGroup>
+</fieldset>`}
+>
+  <fieldset className="grid gap-3">
+    <legend className="mb-3 text-sm font-medium">Billing cycle</legend>
+    <RadioGroup defaultValue="monthly">
+      <div className="flex items-center gap-2">
+        <RadioGroupItem value="monthly" id="rg-hero-monthly" />
+        <Label htmlFor="rg-hero-monthly">Monthly</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <RadioGroupItem value="yearly" id="rg-hero-yearly" />
+        <Label htmlFor="rg-hero-yearly">Yearly</Label>
+      </div>
+    </RadioGroup>
+  </fieldset>
+</Example>
+
+## When to use
+
+- To choose exactly one option from two to about five.
+- When comparing the options side by side helps people decide.
+
+## When not to use
+
+- **For more than about five options.** Use a [select](/components/select).
+- **When people can choose several.** Use [checkboxes](/components/checkbox).
+- **For a single on or off setting.** Use a [switch](/components/switch) or a single checkbox.
+
+## With descriptions
+
+Add a short line under each option when the labels alone do not explain the difference.
+
+<Example
+  title="Options with supporting text"
+  code={`<RadioGroup defaultValue="team" aria-label="Plan">
+  <div className="flex items-start gap-3">
+    <RadioGroupItem value="basic" id="basic" className="mt-0.5" aria-describedby="basic-help" />
+    <div className="grid gap-1.5">
+      <Label htmlFor="basic">Basic</Label>
+      <p id="basic-help" className="text-sm text-muted-foreground">For one person. Up to 3 projects.</p>
+    </div>
+  </div>
+  <div className="flex items-start gap-3">
+    <RadioGroupItem value="team" id="team" className="mt-0.5" aria-describedby="team-help" />
+    <div className="grid gap-1.5">
+      <Label htmlFor="team">Team</Label>
+      <p id="team-help" className="text-sm text-muted-foreground">Up to 20 people. Unlimited projects.</p>
+    </div>
+  </div>
+  <div className="flex items-start gap-3">
+    <RadioGroupItem value="enterprise" id="enterprise" className="mt-0.5" disabled aria-describedby="enterprise-help" />
+    <div className="grid gap-1.5">
+      <Label htmlFor="enterprise">Enterprise</Label>
+      <p id="enterprise-help" className="text-sm text-muted-foreground">Contact sales to enable.</p>
+    </div>
+  </div>
+</RadioGroup>`}
+>
+  <RadioGroup defaultValue="team" aria-label="Plan">
+    <div className="flex items-start gap-3">
+      <RadioGroupItem value="basic" id="rg-desc-basic" className="mt-0.5" aria-describedby="rg-desc-basic-help" />
+      <div className="grid gap-1.5">
+        <Label htmlFor="rg-desc-basic">Basic</Label>
+        <p id="rg-desc-basic-help" className="text-sm text-muted-foreground">For one person. Up to 3 projects.</p>
+      </div>
+    </div>
+    <div className="flex items-start gap-3">
+      <RadioGroupItem value="team" id="rg-desc-team" className="mt-0.5" aria-describedby="rg-desc-team-help" />
+      <div className="grid gap-1.5">
+        <Label htmlFor="rg-desc-team">Team</Label>
+        <p id="rg-desc-team-help" className="text-sm text-muted-foreground">Up to 20 people. Unlimited projects.</p>
+      </div>
+    </div>
+    <div className="flex items-start gap-3">
+      <RadioGroupItem value="enterprise" id="rg-desc-enterprise" className="mt-0.5" disabled aria-describedby="rg-desc-enterprise-help" />
+      <div className="grid gap-1.5">
+        <Label htmlFor="rg-desc-enterprise">Enterprise</Label>
+        <p id="rg-desc-enterprise-help" className="text-sm text-muted-foreground">Contact sales to enable.</p>
+      </div>
+    </div>
+  </RadioGroup>
+</Example>
+
+## Layout
+
+Stack options vertically by default; it is easier to scan. A horizontal row works for two or three very short options.
+
+<Example
+  title="Horizontal"
+  code={`<RadioGroup defaultValue="list" aria-label="View" className="flex gap-6">
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="list" id="list" />
+    <Label htmlFor="list">List</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="grid" id="grid" />
+    <Label htmlFor="grid">Grid</Label>
+  </div>
+</RadioGroup>`}
+>
+  <RadioGroup defaultValue="list" aria-label="View" className="flex gap-6">
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="list" id="rg-row-list" />
+      <Label htmlFor="rg-row-list">List</Label>
+    </div>
+    <div className="flex items-center gap-2">
+      <RadioGroupItem value="grid" id="rg-row-grid" />
+      <Label htmlFor="rg-row-grid">Grid</Label>
+    </div>
+  </RadioGroup>
+</Example>
+
+<DoDont>
+  <Do caption="A sensible default is selected, so people can move on if it fits.">
+    <RadioGroup defaultValue="email" aria-label="Contact method">
+      <div className="flex items-center gap-2">
+        <RadioGroupItem value="email" id="rg-do-email" />
+        <Label htmlFor="rg-do-email">Email</Label>
+      </div>
+      <div className="flex items-center gap-2">
+        <RadioGroupItem value="phone" id="rg-do-phone" />
+        <Label htmlFor="rg-do-phone">Phone</Label>
+      </div>
+    </RadioGroup>
+  </Do>
+  <Dont caption="A single radio cannot be unselected. Use a checkbox for one option.">
+    <RadioGroup aria-label="Newsletter">
+      <div className="flex items-center gap-2">
+        <RadioGroupItem value="yes" id="rg-dont-yes" />
+        <Label htmlFor="rg-dont-yes">Subscribe to the newsletter</Label>
+      </div>
+    </RadioGroup>
+  </Dont>
+</DoDont>
+
+## Content
+
+- The legend asks the question; the options answer it: "Billing cycle" then "Monthly", "Yearly".
+- Keep options parallel in grammar and length, in sentence case, with no trailing punctuation.
+- Order options logically: smallest to largest, most to least common, or a natural sequence.
+- Preselect a safe default when there is one. Leave all unselected only when choosing is the point, like a survey answer.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+```
+
+## Props
+
+Radio group wraps the Radix Radio Group primitive.
+
+### RadioGroup
+
+<PropsTable props={[
+  { name: "value", type: "string", default: "-", description: "Selected value when controlled." },
+  { name: "defaultValue", type: "string", default: "-", description: "Starting value when uncontrolled." },
+  { name: "onValueChange", type: "(value: string) => void", default: "-", description: "Called when the selection changes." },
+  { name: "orientation", type: '"horizontal" | "vertical"', default: "-", description: "Which arrow keys move between options. Set it to match the layout." },
+  { name: "disabled", type: "boolean", default: "false", description: "Disables every option." },
+  { name: "required", type: "boolean", default: "false", description: "A choice is needed before the form submits." },
+  { name: "name", type: "string", default: "-", description: "Field name used in native form submission." },
+  { name: "loop", type: "boolean", default: "true", description: "Arrow keys wrap from the last option to the first." },
+  { name: "className", type: "string", default: '"grid gap-3"', description: "Layout. Use flex gap-6 for a horizontal row." },
+]} />
+
+### RadioGroupItem
+
+<PropsTable props={[
+  { name: "value", type: "string", default: "-", description: "Required. The value this option sets." },
+  { name: "id", type: "string", default: "-", description: "Pair with a Label htmlFor so the option has a name." },
+  { name: "disabled", type: "boolean", default: "false", description: "Disables this option only." },
+  { name: "aria-invalid", type: "boolean", default: "false", description: "Applies the destructive border and ring." },
+]} />
+
+## Controlled
+
+```tsx
+const [cycle, setCycle] = React.useState("monthly")
+
+<RadioGroup value={cycle} onValueChange={setCycle} aria-label="Billing cycle">
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="monthly" id="monthly" />
+    <Label htmlFor="monthly">Monthly</Label>
+  </div>
+  <div className="flex items-center gap-2">
+    <RadioGroupItem value="yearly" id="yearly" />
+    <Label htmlFor="yearly">Yearly</Label>
+  </div>
+</RadioGroup>
+```
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus into the group, onto the selected option (or the first one) |
+| <kbd>Arrow down</kbd> or <kbd>Arrow right</kbd> | Moves to and selects the next option |
+| <kbd>Arrow up</kbd> or <kbd>Arrow left</kbd> | Moves to and selects the previous option |
+| <kbd>Space</kbd> | Selects the focused option if it is not selected |
+| <kbd>Shift</kbd> + <kbd>Tab</kbd> | Leaves the group |
+
+## Checklist
+
+- The group has a name: wrap it in `fieldset` with a `legend`, or pass `aria-label` or `aria-labelledby`.
+- Each option has a `Label` linked with `htmlFor` and `id`.
+- The group is one tab stop; arrow keys move within it. Radix handles this roving focus.
+- The selected option is shown by a filled dot, not by color alone.
+- Disabled options are skipped by arrow keys; explain nearby why they are unavailable.
+- The clickable area (dot plus label) is at least 44 by 44 px on touch screens.
+
+</DocTab>
+</DocTabs>

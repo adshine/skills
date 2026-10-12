@@ -1,0 +1,356 @@
+---
+title: Forms and validation
+description: How to lay out a form, mark fields, check answers and show errors so people finish on the first try.
+status: stable
+order: 10
+keywords: [form, validation, errors, error summary, required, optional, input, submit, inline validation]
+---
+
+import * as React from "react"
+import { AlertCircleIcon, CheckCircle2Icon, Loader2Icon } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+export const FIELDS = [
+  { id: "bf-name", key: "name", label: "Full name" },
+  { id: "bf-email", key: "email", label: "Email" },
+  { id: "bf-service", key: "service", label: "Service" },
+  { id: "bf-terms", key: "terms", label: "Cancellation policy" },
+]
+
+export function validate(v) {
+  const e = {}
+  if (!v.name.trim()) e.name = "Enter your full name."
+  if (!v.email.trim()) e.email = "Enter your email address so we can send the confirmation."
+  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.email)) e.email = "Enter an email address like name@example.com."
+  if (!v.service) e.service = "Choose a service."
+  if (!v.terms) e.terms = "Agree to the cancellation policy to continue."
+  return e
+}
+
+export function BookingForm() {
+  const [values, setValues] = React.useState({ name: "", email: "", phone: "", service: "", terms: false })
+  const [touched, setTouched] = React.useState({})
+  const [submitted, setSubmitted] = React.useState(false)
+  const [status, setStatus] = React.useState("idle")
+  const summaryRef = React.useRef(null)
+  const errors = validate(values)
+  const show = (k) => (submitted || touched[k]) && errors[k]
+  const shownErrors = FIELDS.filter((f) => submitted && errors[f.key])
+
+  const set = (k, val) => setValues((v) => ({ ...v, [k]: val }))
+  const blur = (k) => setTouched((t) => ({ ...t, [k]: true }))
+
+  function onSubmit(event) {
+    event.preventDefault()
+    setSubmitted(true)
+    if (Object.keys(errors).length > 0) {
+      requestAnimationFrame(() => summaryRef.current && summaryRef.current.focus())
+      return
+    }
+    setStatus("submitting")
+    setTimeout(() => setStatus("done"), 1200)
+  }
+
+  function reset() {
+    setValues({ name: "", email: "", phone: "", service: "", terms: false })
+    setTouched({})
+    setSubmitted(false)
+    setStatus("idle")
+  }
+
+  if (status === "done") {
+    return (
+      <div className="w-full max-w-md space-y-4">
+        <Alert>
+          <CheckCircle2Icon />
+          <AlertTitle>Booking requested</AlertTitle>
+          <AlertDescription>We've sent the details to {values.email}.</AlertDescription>
+        </Alert>
+        <Button variant="outline" onClick={reset}>Start again</Button>
+      </div>
+    )
+  }
+
+  return (
+    <form noValidate onSubmit={onSubmit} className="w-full max-w-md space-y-6 text-left">
+      {shownErrors.length > 0 && (
+        <div ref={summaryRef} tabIndex={-1} className="outline-none">
+          <Alert variant="destructive">
+            <AlertCircleIcon />
+            <AlertTitle>Fix {shownErrors.length} {shownErrors.length === 1 ? "problem" : "problems"} to continue</AlertTitle>
+            <AlertDescription>
+              <ul className="list-disc space-y-1 pl-4">
+                {shownErrors.map((f) => (
+                  <li key={f.key}>
+                    <a className="underline underline-offset-4" href={"#" + f.id} onClick={(e) => { e.preventDefault(); document.getElementById(f.id)?.focus() }}>
+                      {errors[f.key]}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </AlertDescription>
+          </Alert>
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <Label htmlFor="bf-name">Full name</Label>
+        <Input id="bf-name" autoComplete="name" value={values.name} onChange={(e) => set("name", e.target.value)} onBlur={() => blur("name")} aria-invalid={!!show("name")} aria-describedby={show("name") ? "bf-name-error" : undefined} />
+        {show("name") && <p id="bf-name-error" className="flex items-center gap-1.5 text-sm text-destructive"><AlertCircleIcon className="size-4 shrink-0" />{errors.name}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="bf-email">Email</Label>
+        <Input id="bf-email" type="email" autoComplete="email" value={values.email} onChange={(e) => set("email", e.target.value)} onBlur={() => blur("email")} aria-invalid={!!show("email")} aria-describedby={show("email") ? "bf-email-help bf-email-error" : "bf-email-help"} />
+        <p id="bf-email-help" className="text-sm text-muted-foreground">We send your confirmation here.</p>
+        {show("email") && <p id="bf-email-error" className="flex items-center gap-1.5 text-sm text-destructive"><AlertCircleIcon className="size-4 shrink-0" />{errors.email}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="bf-phone">Phone number <span className="font-normal text-muted-foreground">(optional)</span></Label>
+        <Input id="bf-phone" type="tel" autoComplete="tel" value={values.phone} onChange={(e) => set("phone", e.target.value)} aria-describedby="bf-phone-help" />
+        <p id="bf-phone-help" className="text-sm text-muted-foreground">For a text reminder the day before.</p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="bf-service">Service</Label>
+        <Select value={values.service} onValueChange={(val) => { set("service", val); blur("service") }}>
+          <SelectTrigger id="bf-service" className="w-full" aria-invalid={!!show("service")} aria-describedby={show("service") ? "bf-service-error" : undefined} onBlur={() => blur("service")}>
+            <SelectValue placeholder="Choose a service" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="consultation">Consultation, 30 min</SelectItem>
+            <SelectItem value="standard">Standard visit, 60 min</SelectItem>
+            <SelectItem value="extended">Extended visit, 90 min</SelectItem>
+          </SelectContent>
+        </Select>
+        {show("service") && <p id="bf-service-error" className="flex items-center gap-1.5 text-sm text-destructive"><AlertCircleIcon className="size-4 shrink-0" />{errors.service}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <div className="flex items-start gap-3">
+          <Checkbox id="bf-terms" className="mt-0.5" checked={values.terms} onCheckedChange={(c) => { set("terms", c === true); blur("terms") }} aria-invalid={!!show("terms")} aria-describedby={show("terms") ? "bf-terms-error" : undefined} />
+          <Label htmlFor="bf-terms" className="leading-snug font-normal">I agree to the cancellation policy: free cancellation up to 24 hours before.</Label>
+        </div>
+        {show("terms") && <p id="bf-terms-error" className="flex items-center gap-1.5 text-sm text-destructive"><AlertCircleIcon className="size-4 shrink-0" />{errors.terms}</p>}
+      </div>
+
+      <Button type="submit" disabled={status === "submitting"}>
+        {status === "submitting" && <Loader2Icon className="animate-spin" />}
+        {status === "submitting" ? "Requesting booking" : "Request booking"}
+      </Button>
+    </form>
+  )
+}
+
+export const formCode = `function validate(v) {
+  const e = {}
+  if (!v.name.trim()) e.name = "Enter your full name."
+  if (!v.email.trim()) e.email = "Enter your email address so we can send the confirmation."
+  else if (!isEmail(v.email)) e.email = "Enter an email address like name@example.com."
+  if (!v.service) e.service = "Choose a service."
+  if (!v.terms) e.terms = "Agree to the cancellation policy to continue."
+  return e
+}
+
+// Show a field's error after it loses focus, or after a submit attempt.
+const show = (k) => (submitted || touched[k]) && errors[k]
+
+<form noValidate onSubmit={onSubmit} className="w-full max-w-md space-y-6">
+  {submitted && hasErrors && (
+    <div ref={summaryRef} tabIndex={-1}>
+      <Alert variant="destructive">
+        <AlertCircleIcon />
+        <AlertTitle>Fix 2 problems to continue</AlertTitle>
+        <AlertDescription>
+          <ul>{/* one link per error, each focusing its field */}</ul>
+        </AlertDescription>
+      </Alert>
+    </div>
+  )}
+
+  <div className="space-y-2">
+    <Label htmlFor="bf-email">Email</Label>
+    <Input
+      id="bf-email"
+      type="email"
+      autoComplete="email"
+      aria-invalid={!!show("email")}
+      aria-describedby="bf-email-help bf-email-error"
+      onBlur={() => blur("email")}
+    />
+    <p id="bf-email-help" className="text-sm text-muted-foreground">We send your confirmation here.</p>
+    {show("email") && (
+      <p id="bf-email-error" className="flex items-center gap-1.5 text-sm text-destructive">
+        <AlertCircleIcon className="size-4 shrink-0" />{errors.email}
+      </p>
+    )}
+  </div>
+
+  <div className="space-y-2">
+    <Label htmlFor="bf-phone">
+      Phone number <span className="font-normal text-muted-foreground">(optional)</span>
+    </Label>
+    <Input id="bf-phone" type="tel" autoComplete="tel" />
+  </div>
+
+  <div className="space-y-2">
+    <Label htmlFor="bf-service">Service</Label>
+    <Select value={values.service} onValueChange={(val) => set("service", val)}>
+      <SelectTrigger id="bf-service" className="w-full" aria-invalid={!!show("service")}>
+        <SelectValue placeholder="Choose a service" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="consultation">Consultation, 30 min</SelectItem>
+        <SelectItem value="standard">Standard visit, 60 min</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div className="flex items-start gap-3">
+    <Checkbox id="bf-terms" checked={values.terms} onCheckedChange={(c) => set("terms", c === true)} />
+    <Label htmlFor="bf-terms" className="font-normal">I agree to the cancellation policy.</Label>
+  </div>
+
+  <Button type="submit" disabled={submitting}>
+    {submitting && <Loader2Icon className="animate-spin" />}
+    {submitting ? "Requesting booking" : "Request booking"}
+  </Button>
+</form>`
+
+## The problem
+
+People fill in forms to get something they want: a booking, an order, an account. Every unclear label, surprise rule or vague error costs time and trust, and some people give up. A good form asks only what it needs, explains each question, and when something is wrong, says exactly where and how to fix it.
+
+## When to use
+
+- When you need information from people to complete a task: sign up, check out, book, update details.
+- When answers need checking before they are saved.
+
+## When not to use
+
+- **For a single setting.** Use a switch that saves right away, with no submit button.
+- **For filtering or searching.** Results should update as people type or choose, with no submit and no validation errors.
+- **For long, multi-topic flows.** Split them into steps, each with its own short form and a clear progress indicator.
+
+## Options
+
+| Option | Use when |
+| --- | --- |
+| Single-page form | Up to about 8 fields on one topic. The default. |
+| Multi-step form | Several topics or more than about 8 fields, like checkout (details, delivery, payment). Validate each step before moving on. |
+| Inline edit | Changing one value on a detail page, like a display name. Save and cancel next to the field. |
+| Form in a dialog | Short, focused tasks that should not leave the page, like "Add a note". Keep it to 1 to 4 fields. |
+
+## Live example
+
+Try submitting it empty, then fix fields one at a time. Errors appear when you leave a field or submit, and clear as soon as the answer is valid.
+
+<Example title="Booking form with inline validation and error summary" align="stretch" code={formCode}>
+  <div className="mx-auto w-full max-w-md">
+    <BookingForm />
+  </div>
+</Example>
+
+## How it works
+
+### Layout
+
+- **One column.** Fields stack top to bottom in the order people think about them. Two columns only for short, related pairs like first and last name, and only on wide screens.
+- **Labels above fields**, never to the left on narrow screens, and never inside as a placeholder.
+- **Field width hints at the answer.** A postcode field is shorter than an address field.
+- **Group related fields** under a short heading, with 32px between groups and 24px between fields. See [Spacing](/foundations/spacing).
+- **One primary button**, at the end of the form, aligned with the fields. "Cancel" or "Back" goes beside it in a quieter style.
+
+### Labels and help text
+
+- Every field has a visible `Label` connected with `htmlFor`. The label is short and says what to enter: "Email", "Phone number".
+- Put extra guidance in help text below the field and connect it with `aria-describedby`. Say why you need it if it is not obvious: "For a text reminder the day before."
+- Do not use placeholder text for instructions. It disappears on typing and often fails contrast.
+
+### Required and optional
+
+Ask only for what you need, so most fields are required. Mark the **exceptions**: add "(optional)" to the label of optional fields. Do not mark required fields with an asterisk; if every field had one, it would mean nothing.
+
+If most fields in a form are optional, flip the rule and say at the top which ones are required.
+
+### Validation timing
+
+| When | What to check | Why |
+| --- | --- | --- |
+| While typing | Nothing, except clearing an error once the answer becomes valid | Showing errors mid-word is rude and distracting |
+| When a field loses focus | That field's format and required rule, only if the person typed something or the form was already submitted | Gives early feedback without nagging |
+| On submit | Every field | Catches anything people skipped |
+| On the server | Everything again, plus things only the server knows (an email already in use, a slot just taken) | Client checks can be bypassed and go stale |
+
+Do not disable the submit button until the form is valid. People cannot tell what is missing; let them submit and show what to fix.
+
+### Error messages
+
+Each error sits right below its field, in `text-destructive` with an icon (so it is not color alone), and is connected with `aria-describedby`. Set `aria-invalid` on the field so it gets the error border and is announced as invalid.
+
+Use the error formula from [Content and voice](/foundations/content): what is wrong, then how to fix it.
+
+<DoDont>
+  <Do caption="Specific, says how to fix it, sits under the field.">
+    <div className="w-64 space-y-2 text-left">
+      <Label htmlFor="fv-do-date">Date of birth</Label>
+      <Input id="fv-do-date" defaultValue="31/02/1990" aria-invalid="true" aria-describedby="fv-do-date-error" />
+      <p id="fv-do-date-error" className="flex items-center gap-1.5 text-sm text-destructive">
+        <AlertCircleIcon className="size-4 shrink-0" />
+        February has 28 or 29 days. Check the day.
+      </p>
+    </div>
+  </Do>
+  <Dont caption="Generic message at the top, far from the field, with no fix.">
+    <div className="w-64 space-y-2 text-left">
+      <p className="text-sm text-destructive">Form contains errors.</p>
+      <Label htmlFor="fv-dont-date">Date of birth</Label>
+      <Input id="fv-dont-date" defaultValue="31/02/1990" />
+    </div>
+  </Dont>
+</DoDont>
+
+### Error summary
+
+When a submit fails, show a summary at the top of the form using a destructive `Alert`:
+
+- The title counts the problems: "Fix 2 problems to continue".
+- Each item repeats the field's error and links to the field, so selecting it moves focus there.
+- Move keyboard focus to the summary, so screen reader users hear it right away.
+- Keep the inline errors too. The summary helps people find problems; the inline error helps them fix each one.
+
+For forms with only one or two fields, the summary is optional; move focus to the first invalid field instead.
+
+### Submit states
+
+| State | What people see |
+| --- | --- |
+| Ready | Button with a specific verb: "Request booking" |
+| Submitting | Button disabled, spinner, label in progress: "Requesting booking". Fields stay filled. |
+| Success | Confirmation that says what happened and what comes next, or go to the next page |
+| Server error | Destructive alert at the top with what went wrong and what to do. Keep everything they typed. |
+
+Never clear a form after a failed submit. Re-entering everything is the fastest way to lose people.
+
+## Accessibility
+
+- Every field has a visible, connected label. Groups of radios or checkboxes sit in a `fieldset` with a `legend`.
+- Use `autoComplete` values (`name`, `email`, `tel`, `street-address`) so browsers and password managers can fill fields.
+- Use the right `type` (`email`, `tel`, `number` only for real quantities) so phones show the right keyboard.
+- Add `noValidate` to the form and use our messages instead of the browser's, which are inconsistent and hard to style.
+- Errors are linked with `aria-describedby`, fields use `aria-invalid`, and focus moves to the summary on a failed submit.
+- Do not set time limits on filling a form. If a session can expire, warn people first and keep their answers.
+- Do not ask for the same thing twice in one flow (WCAG 2.2, 3.3.7), and allow pasting into every field.
+
+## Related
+
+- [Content and voice](/foundations/content) for writing labels and error messages
+- [Accessibility](/foundations/accessibility) for the full testing checklist
+- [Empty, loading and error states](/patterns/empty-loading-error-states) for what to show when saving fails
+- [Button](/components/button) for submit labels and loading state

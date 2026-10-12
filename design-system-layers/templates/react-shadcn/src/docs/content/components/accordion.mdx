@@ -1,0 +1,199 @@
+---
+title: Accordion
+description: An accordion stacks sections under headings that people can open and close, so long content stays easy to scan.
+status: stable
+order: 51
+keywords: [collapse, expand, disclosure, faq, collapsible]
+---
+
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Single open section"
+  align="stretch"
+  code={`<Accordion type="single" collapsible defaultValue="item-1" className="mx-auto w-full max-w-lg">
+  <AccordionItem value="item-1">
+    <AccordionTrigger>How do I change my plan?</AccordionTrigger>
+    <AccordionContent>
+      Go to Settings, then Billing, and choose a new plan. The change starts on your next billing date.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="item-2">
+    <AccordionTrigger>Can I invite people outside my team?</AccordionTrigger>
+    <AccordionContent>
+      Yes. Guests can view and comment on projects you share with them, but cannot create new ones.
+    </AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="item-3">
+    <AccordionTrigger>How do I export my data?</AccordionTrigger>
+    <AccordionContent>
+      Open the project, choose Export from the menu and pick CSV or PDF.
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>`}
+>
+  <Accordion type="single" collapsible defaultValue="item-1" className="mx-auto w-full max-w-lg">
+    <AccordionItem value="item-1">
+      <AccordionTrigger>How do I change my plan?</AccordionTrigger>
+      <AccordionContent>
+        Go to Settings, then Billing, and choose a new plan. The change starts on your next billing date.
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="item-2">
+      <AccordionTrigger>Can I invite people outside my team?</AccordionTrigger>
+      <AccordionContent>
+        Yes. Guests can view and comment on projects you share with them, but cannot create new ones.
+      </AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="item-3">
+      <AccordionTrigger>How do I export my data?</AccordionTrigger>
+      <AccordionContent>
+        Open the project, choose Export from the menu and pick CSV or PDF.
+      </AccordionContent>
+    </AccordionItem>
+  </Accordion>
+</Example>
+
+## When to use
+
+- For frequently asked questions and help content where people look for one answer.
+- To shorten long pages on small screens, like product details or terms.
+- To group optional settings people rarely change.
+
+## When not to use
+
+- **For content most people need.** Show it. Hiding it adds a click for everyone.
+- **To switch between views of the same thing.** Use [tabs](/components/tabs).
+- **For a single short section.** A link like "Show details" is lighter.
+- **For required form fields.** People may miss them inside a closed section.
+
+## Single or multiple
+
+With `type="single"` only one section is open at a time; add `collapsible` so people can close it again. With `type="multiple"` people can open several at once, which suits comparing answers.
+
+<Example
+  title="Multiple open sections"
+  align="stretch"
+  code={`<Accordion type="multiple" defaultValue={["shipping"]} className="mx-auto w-full max-w-lg">
+  <AccordionItem value="shipping">
+    <AccordionTrigger>Shipping</AccordionTrigger>
+    <AccordionContent>Orders ship within two working days.</AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="returns">
+    <AccordionTrigger>Returns</AccordionTrigger>
+    <AccordionContent>Return unused items within 30 days for a full refund.</AccordionContent>
+  </AccordionItem>
+  <AccordionItem value="warranty" disabled>
+    <AccordionTrigger>Warranty (not available for this item)</AccordionTrigger>
+    <AccordionContent>No warranty applies.</AccordionContent>
+  </AccordionItem>
+</Accordion>`}
+>
+  <Accordion type="multiple" defaultValue={["shipping"]} className="mx-auto w-full max-w-lg">
+    <AccordionItem value="shipping">
+      <AccordionTrigger>Shipping</AccordionTrigger>
+      <AccordionContent>Orders ship within two working days.</AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="returns">
+      <AccordionTrigger>Returns</AccordionTrigger>
+      <AccordionContent>Return unused items within 30 days for a full refund.</AccordionContent>
+    </AccordionItem>
+    <AccordionItem value="warranty" disabled>
+      <AccordionTrigger>Warranty (not available for this item)</AccordionTrigger>
+      <AccordionContent>No warranty applies.</AccordionContent>
+    </AccordionItem>
+  </Accordion>
+</Example>
+
+<DoDont>
+  <Do caption="Headings say what is inside, so people can find the right section without opening each one.">
+    <div className="w-full max-w-xs divide-y text-left text-sm">
+      <p className="py-3 font-medium">How do I reset my password?</p>
+      <p className="py-3 font-medium">Can I change my email address?</p>
+    </div>
+  </Do>
+  <Dont caption="Vague headings force people to open every section to find anything.">
+    <div className="w-full max-w-xs divide-y text-left text-sm">
+      <p className="py-3 font-medium">More info</p>
+      <p className="py-3 font-medium">Other</p>
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Headings are specific: a question, or a noun phrase like "Shipping and delivery".
+- Sentence case, no full stop unless the heading is a question.
+- Keep each panel short. If a panel needs headings of its own, it should be a page.
+- Order sections by how often people need them.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+```
+
+## Props
+
+`Accordion` (root, from Radix Accordion):
+
+<PropsTable props={[
+  { name: "type", type: '"single" | "multiple"', description: "Required. Single allows one open section; multiple allows any number." },
+  { name: "collapsible", type: "boolean", default: "false", description: "Single type only. Lets people close the open section." },
+  { name: "defaultValue", type: "string | string[]", description: "Open sections on first render. A string for single, an array for multiple." },
+  { name: "value", type: "string | string[]", description: "Controlled open sections. Pair with onValueChange." },
+  { name: "onValueChange", type: "(value: string | string[]) => void", description: "Called when sections open or close." },
+  { name: "disabled", type: "boolean", default: "false", description: "Disables every section." },
+  { name: "orientation", type: '"vertical" | "horizontal"', default: '"vertical"', description: "Sets which arrow keys move between headings." },
+]} />
+
+`AccordionItem`:
+
+<PropsTable props={[
+  { name: "value", type: "string", description: "Required. A unique id for the section." },
+  { name: "disabled", type: "boolean", default: "false", description: "The section cannot be opened or closed." },
+]} />
+
+`AccordionTrigger` renders the heading button with a chevron that turns when open. `AccordionContent` animates open and closed; its `className` applies to the inner padding wrapper.
+
+## Heading level
+
+Each trigger sits inside a Radix `Header`, which renders an `h3`. Place accordions under an `h2` section heading so the page outline stays in order.
+
+## Styling
+
+Sections are split with `border-b` from the `--border` role. The chevron uses `--muted-foreground`, and the open and close motion uses the `accordion-down` and `accordion-up` animations.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves to the next heading or focusable element inside an open panel |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Opens or closes the focused section |
+| <kbd>Arrow down</kbd> / <kbd>Arrow up</kbd> | Moves to the next or previous heading |
+| <kbd>Home</kbd> / <kbd>End</kbd> | Moves to the first or last heading |
+
+## Focus management
+
+- Opening a section keeps focus on its heading. Content is next in the <kbd>Tab</kbd> order.
+- Closed panels are removed from the page, so nothing hidden can receive focus.
+
+## Checklist
+
+- Each trigger is a button inside a heading, with `aria-expanded` and `aria-controls` set.
+- Each panel has `role="region"` and is labelled by its heading.
+- Open state is shown by the chevron direction and the visible panel, not by color alone.
+- Focus rings use `--ring` and are visible on every heading.
+- The open and close motion is short and only changes height, so content below moves down rather than sideways.
+
+</DocTab>
+</DocTabs>

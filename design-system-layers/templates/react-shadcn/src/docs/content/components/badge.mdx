@@ -1,0 +1,151 @@
+---
+title: Badge
+description: A badge is a small label that shows the status, category or count of something.
+status: stable
+order: 31
+keywords: [badge, tag, chip, pill, label, status, count]
+---
+
+import { CheckIcon, ClockIcon, XIcon } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Variants"
+  code={`<Badge>New</Badge>
+<Badge variant="secondary">Draft</Badge>
+<Badge variant="outline">Archived</Badge>
+<Badge variant="destructive">Overdue</Badge>
+<Badge variant="ghost">Internal</Badge>
+<Badge variant="link" asChild><a href="#">Docs</a></Badge>`}
+>
+  <Badge>New</Badge>
+  <Badge variant="secondary">Draft</Badge>
+  <Badge variant="outline">Archived</Badge>
+  <Badge variant="destructive">Overdue</Badge>
+  <Badge variant="ghost">Internal</Badge>
+  <Badge variant="link" asChild><a href="#badge-link">Docs</a></Badge>
+</Example>
+
+## When to use
+
+- To show the status of an item at a glance: "Paid", "Pending", "Overdue".
+- To tag an item with a short category or attribute: "Beta", "Admin".
+- To show a small count next to a label, like unread items.
+
+## When not to use
+
+- **For actions.** Badges are labels. Use a [button](/components/button) for anything people click to do something.
+- **For long text or sentences.** Use an alert or helper text.
+- **On every item in a list.** If everything has a badge, nothing stands out. Badge the exceptions.
+
+## Choosing a variant
+
+| Variant | Use for |
+| --- | --- |
+| Default | New or highlighted items that need attention |
+| Secondary | Neutral status and categories, the most common choice |
+| Outline | Quiet tags and metadata |
+| Destructive | Problems people should act on: failed, overdue, blocked |
+| Ghost | Very low emphasis labels inside dense layouts |
+| Link | A tag that navigates to a filtered view; render it as a link with `asChild` |
+
+## With icons
+
+<Example
+  title="Status badges with icons"
+  code={`<Badge variant="secondary"><CheckIcon /> Paid</Badge>
+<Badge variant="outline"><ClockIcon /> Pending</Badge>
+<Badge variant="destructive"><XIcon /> Failed</Badge>`}
+>
+  <Badge variant="secondary"><CheckIcon /> Paid</Badge>
+  <Badge variant="outline"><ClockIcon /> Pending</Badge>
+  <Badge variant="destructive"><XIcon /> Failed</Badge>
+</Example>
+
+Icons are sized automatically to 12 px. Use them so status does not depend on color alone.
+
+<DoDont>
+  <Do caption="One or two words, with an icon so meaning does not rely on color.">
+    <Badge variant="destructive"><XIcon /> Failed</Badge>
+  </Do>
+  <Dont caption="A sentence in a badge is hard to scan and gets cut off.">
+    <Badge variant="destructive">Payment failed because the card expired</Badge>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Use one or two words in sentence case: "In review", not "IN REVIEW".
+- Use the same word for the same status everywhere in the product.
+- For counts, show "99+" once the number gets too long to read at a glance.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import { Badge } from "@/components/ui/badge"
+```
+
+## Props
+
+<PropsTable props={[
+  { name: "variant", type: '"default" | "secondary" | "destructive" | "outline" | "ghost" | "link"', default: '"default"', description: "Visual weight and meaning." },
+  { name: "asChild", type: "boolean", default: "false", description: "Render the child element, for example a link, with badge styles. Hover styles apply only to links." },
+  { name: "className", type: "string", default: "-", description: "Extra layout classes. Do not pass colors." },
+]} />
+
+All other props pass through to the `span` element. `badgeVariants` is also exported if you need badge styles on another element.
+
+## As a link
+
+```tsx
+<Badge variant="outline" asChild>
+  <a href="/projects?tag=design">Design</a>
+</Badge>
+```
+
+## Mapping status to variant
+
+Keep the mapping in one place so the same status always looks the same:
+
+```tsx
+const statusVariant = {
+  paid: "secondary",
+  pending: "outline",
+  failed: "destructive",
+} as const
+
+<Badge variant={statusVariant[invoice.status]}>{label}</Badge>
+```
+
+## Styling
+
+Badges read theme roles only: `--primary`, `--secondary`, `--destructive` and `--border`. To add a new status color, add a variant to `badgeVariants` that uses a theme role.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Badges are not focusable unless rendered as a link with `asChild`.
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to a link badge |
+| <kbd>Enter</kbd> | Follows a link badge |
+
+## Checklist
+
+- Badge text is real text, so screen readers read it with the item it labels.
+- Status is never shown by color alone; the word (and ideally an icon) carries the meaning.
+- Count badges have context for screen readers, for example `aria-label="3 unread messages"` or hidden text, not just "3".
+- Text on every variant meets 4.5:1 contrast in light and dark. See [Color](/foundations/color).
+- Badges that change while people are on the page, like a status update, are announced through a live region if the change matters.
+
+</DocTab>
+</DocTabs>

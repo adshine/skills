@@ -1,0 +1,129 @@
+---
+title: Elevation and motion
+description: Borders separate, shadows lift, and motion explains change quickly and quietly.
+status: stable
+order: 50
+keywords: [shadow, elevation, border, overlay, z-index, animation, transition, easing, duration, reduced motion]
+---
+
+import * as React from "react"
+import { Button } from "@/components/ui/button"
+
+export function MotionDemo() {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <div className="flex w-full max-w-xs flex-col items-stretch gap-3">
+      <Button variant="outline" aria-expanded={open} aria-controls="motion-demo-panel" onClick={() => setOpen((o) => !o)}>
+        {open ? "Hide details" : "Show details"}
+      </Button>
+      <div
+        id="motion-demo-panel"
+        className={"rounded-xl border bg-card p-4 text-sm shadow-md transition duration-200 ease-out motion-reduce:transition-none " + (open ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0")}
+        aria-hidden={!open}
+      >
+        Free cancellation until 24 hours before your booking.
+      </div>
+    </div>
+  )
+}
+
+## Borders before shadows
+
+Most surfaces sit flat on the page and are separated by a 1px `border` line. Shadows are reserved for things that float above the page, so a shadow always means "this is on top and will go away".
+
+| Level | Treatment | Used by |
+| --- | --- | --- |
+| 0. Page | `bg-background`, no border | The page itself |
+| 1. Surface | `border` with `bg-card`, optional `shadow-xs` or `shadow-sm` | Cards, inputs, buttons, tables |
+| 2. Floating | `border` with `bg-popover` and `shadow-md` | Menus, selects, popovers, tooltips |
+| 3. Modal | `border` with `shadow-lg`, over a dimmed backdrop | Dialogs and sheets |
+
+<Example
+  title="The three raised levels"
+  code={`<div className="w-40 rounded-xl border bg-card p-4 text-sm text-card-foreground shadow-sm">Surface</div>
+<div className="w-40 rounded-md border bg-popover p-4 text-sm text-popover-foreground shadow-md">Floating</div>
+<div className="w-40 rounded-lg border bg-background p-4 text-sm shadow-lg">Modal</div>`}
+>
+  <div className="w-40 rounded-xl border bg-card p-4 text-sm text-card-foreground shadow-sm">Surface</div>
+  <div className="w-40 rounded-md border bg-popover p-4 text-sm text-popover-foreground shadow-md">Floating</div>
+  <div className="w-40 rounded-lg border bg-background p-4 text-sm shadow-lg">Modal</div>
+</Example>
+
+In dark mode shadows are hard to see, so the border does the work. That is why every raised level keeps its border.
+
+<DoDont>
+  <Do caption="Cards in a list use a border; nothing competes for attention.">
+    <div className="w-56 space-y-2">
+      <div className="rounded-xl border bg-card p-3 text-left text-sm">Order 1042</div>
+      <div className="rounded-xl border bg-card p-3 text-left text-sm">Order 1043</div>
+    </div>
+  </Do>
+  <Dont caption="Heavy shadows on static cards make everything look like it floats, so real overlays stop standing out.">
+    <div className="w-56 space-y-2">
+      <div className="rounded-xl bg-card p-3 text-left text-sm shadow-xl">Order 1042</div>
+      <div className="rounded-xl bg-card p-3 text-left text-sm shadow-xl">Order 1043</div>
+    </div>
+  </Dont>
+</DoDont>
+
+## Overlays
+
+- **One modal at a time.** Do not open a dialog from a dialog. Replace the content or use a step inside the same dialog.
+- **Dim the page behind a modal** with the dialog's built-in backdrop. It tells people the page is paused.
+- **Popovers and menus do not dim the page.** They close on <kbd>Esc</kbd>, on outside click and when focus leaves them.
+- **Toasts float above everything** but never block an action. Do not put the only copy of important information in a toast.
+- Let the components manage stacking order. Do not add `z-` classes by hand to win a stacking fight; that usually means an overlay is inside the wrong container.
+
+## Motion principles
+
+- **Motion explains change.** Use it to show where something came from or went, not to decorate.
+- **Fast and quiet.** Most UI motion finishes in under 250ms. People should never wait for an animation.
+- **Interruptible.** If someone acts mid-animation, respond right away.
+
+## Durations
+
+| Duration | Class | Use for |
+| --- | --- | --- |
+| 100 to 150ms | `duration-100`, `duration-150` | Hover, press and color changes, checkbox ticks |
+| 200ms | `duration-200` | Menus, popovers, tooltips, accordions, dialogs opening |
+| 300ms | `duration-300` | Sheets and larger panels sliding in |
+| Over 400ms | Avoid | Only for one-off moments like a first-run welcome |
+
+Exits are slightly faster than entrances. Things leave about 25% quicker than they arrived, so the next view is not held up.
+
+## Easing
+
+| Easing | Class | Use for |
+| --- | --- | --- |
+| Ease out | `ease-out` | Things entering or opening. Starts fast, settles gently. |
+| Ease in | `ease-in` | Things leaving. Use only on exits. |
+| Ease in and out | `ease-in-out` | Things moving from one place on screen to another. |
+| Linear | `ease-linear` | Progress bars and spinners only. |
+
+<Example
+  title="A panel that fades and moves 4px, 200ms ease out, off when reduced motion is on"
+  code={`<div className="... transition duration-200 ease-out motion-reduce:transition-none">
+  Free cancellation until 24 hours before your booking.
+</div>`}
+>
+  <MotionDemo />
+</Example>
+
+Animate only `opacity` and `transform` where possible. Animating size, margins or position causes layout work and stutters on slower phones.
+
+## Reduced motion
+
+Some people get dizzy or sick from movement, and set "Reduce motion" in their system settings. Respect it everywhere:
+
+- Add `motion-reduce:transition-none` or `motion-reduce:animate-none` to anything that moves or scales.
+- Keep the state change itself: the panel still opens, it just appears without sliding.
+- Opacity fades and color changes are fine to keep, since they do not create a sense of movement.
+- Never auto-play motion that lasts more than 5 seconds without a way to pause it.
+
+```tsx
+<div className="transition-transform duration-300 ease-out motion-reduce:transition-none">
+  ...
+</div>
+```
+
+Loading spinners may keep spinning under reduced motion because they show that work is happening, but prefer a [skeleton](/patterns/empty-loading-error-states) for content that is loading.

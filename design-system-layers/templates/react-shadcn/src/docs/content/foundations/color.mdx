@@ -1,0 +1,79 @@
+---
+title: Color
+description: A small set of named color roles, generated from one brand color and checked for contrast in light and dark mode.
+status: stable
+order: 10
+keywords: [palette, tokens, theme, dark mode, contrast]
+---
+
+## Principles
+
+- **Use roles, not hex values.** Components ask for `primary` or `muted`, never `#C2410C`. That is what makes dark mode and future brand changes a one-file edit.
+- **Every fill has a paired text color.** `primary` goes with `primary-foreground`, `destructive` with `destructive-foreground`. Use the pair together.
+- **Generated, not hand-picked.** The palette comes from one seed color through a contrast-aware color model, so every pair is readable.
+
+## Color roles
+
+<ColorPairs pairs={[
+  { bg: "primary", fg: "primary-foreground", label: "Primary" },
+  { bg: "secondary", fg: "secondary-foreground", label: "Secondary" },
+  { bg: "muted", fg: "muted-foreground", label: "Muted" },
+  { bg: "accent", fg: "accent-foreground", label: "Accent" },
+  { bg: "destructive", fg: "destructive-foreground", label: "Destructive" },
+  { bg: "card", fg: "card-foreground", label: "Card" },
+]} />
+
+## Tokens
+
+Values below are read live from the theme, so they always match what ships.
+
+<TokenTable tokens={[
+  { name: "background", on: "foreground", usage: "Page background." },
+  { name: "foreground", usage: "Default text and icons." },
+  { name: "primary", on: "primary-foreground", usage: "Main actions, selected states, links." },
+  { name: "secondary", on: "secondary-foreground", usage: "Supporting actions and highlighted areas." },
+  { name: "muted", on: "muted-foreground", usage: "Quiet backgrounds: inputs, tab rails, skeletons." },
+  { name: "muted-foreground", usage: "Secondary text, captions, placeholders." },
+  { name: "accent", on: "accent-foreground", usage: "Hover and pressed backgrounds for menu items and ghost buttons." },
+  { name: "destructive", on: "destructive-foreground", usage: "Errors and actions that delete or cancel." },
+  { name: "card", on: "card-foreground", usage: "Raised surfaces: cards, panels." },
+  { name: "popover", on: "popover-foreground", usage: "Menus, popovers, toasts." },
+  { name: "border", usage: "Dividers and card borders." },
+  { name: "input", usage: "Form field borders. Meets 3:1 against the page." },
+  { name: "ring", usage: "Focus rings." },
+]} />
+
+## Using color in code
+
+```css
+.booking-card {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+}
+```
+
+```tsx
+<div className="bg-primary text-primary-foreground">...</div>
+```
+
+## Changing the palette
+
+Do not edit theme values by hand. Rerun the generator with a new seed and commit the result:
+
+```bash
+scripts/seed-to-tokens.sh --seed "#C2410C" --variant fidelity --shadcn src/theme.css
+```
+
+<DoDont>
+  <Do caption="Pair each fill with its foreground role so text stays readable in both themes.">
+    <span className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Booked</span>
+  </Do>
+  <Dont caption="Hard-coded white text is unreadable on light fills and ignores the theme.">
+    <span className="rounded-lg bg-secondary px-4 py-2 text-sm font-medium text-white">Booked</span>
+  </Dont>
+</DoDont>
+
+## Accessibility
+
+Text pairs meet WCAG 2.2 AA (4.5:1) and borders, focus rings and form fields meet 3:1 in both themes. Never use color alone to carry meaning: pair it with text or an icon.

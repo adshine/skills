@@ -1,0 +1,348 @@
+---
+title: Menu
+description: A menu shows a short list of actions or options when people click a button, and hides them again when they are done.
+status: stable
+order: 41
+keywords: [dropdown, dropdown menu, actions, overflow, more, kebab, context]
+---
+
+import { CopyIcon, MoreHorizontalIcon, PencilIcon, ShareIcon, TrashIcon } from "lucide-react"
+import { toast } from "sonner"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Actions menu"
+  code={`<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline">Options</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent className="w-48">
+    <DropdownMenuItem onSelect={() => toast("Edit selected")}>
+      <PencilIcon /> Edit
+      <DropdownMenuShortcut>E</DropdownMenuShortcut>
+    </DropdownMenuItem>
+    <DropdownMenuItem onSelect={() => toast("Duplicated")}>
+      <CopyIcon /> Duplicate
+      <DropdownMenuShortcut>D</DropdownMenuShortcut>
+    </DropdownMenuItem>
+    <DropdownMenuItem onSelect={() => toast("Link copied")}>
+      <ShareIcon /> Copy link
+    </DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem variant="destructive" onSelect={() => toast("Moved to trash")}>
+      <TrashIcon /> Delete
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>`}
+>
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="outline">Options</Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent className="w-48">
+      <DropdownMenuItem onSelect={() => toast("Edit selected")}>
+        <PencilIcon /> Edit
+        <DropdownMenuShortcut>E</DropdownMenuShortcut>
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={() => toast("Duplicated")}>
+        <CopyIcon /> Duplicate
+        <DropdownMenuShortcut>D</DropdownMenuShortcut>
+      </DropdownMenuItem>
+      <DropdownMenuItem onSelect={() => toast("Link copied")}>
+        <ShareIcon /> Copy link
+      </DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem variant="destructive" onSelect={() => toast("Moved to trash")}>
+        <TrashIcon /> Delete
+      </DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</Example>
+
+## When to use
+
+- To group secondary actions for an item, like edit, duplicate and delete, behind one button.
+- When space is tight, such as on table rows, cards and toolbars.
+- To let people switch a view setting, like sort order or visible columns.
+
+## When not to use
+
+- **For the main action.** Put it on its own button so people can see it without opening anything.
+- **To pick a value in a form.** Use a select or radio group so the chosen value stays visible.
+- **For navigation between pages.** Use links or tabs.
+- **For one or two actions.** Show them as buttons instead.
+
+## Overflow menu
+
+An icon-only trigger keeps rows and cards quiet. Give it an `aria-label` that names the item.
+
+<Example
+  title="Overflow menu on a row"
+  code={`<div className="flex w-full max-w-sm items-center justify-between rounded-lg border p-3">
+  <div>
+    <p className="text-sm font-medium">Quarterly report</p>
+    <p className="text-xs text-muted-foreground">Edited 2 hours ago</p>
+  </div>
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="ghost" size="icon" aria-label="More actions for Quarterly report">
+        <MoreHorizontalIcon />
+      </Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent align="end">
+      <DropdownMenuItem>Rename</DropdownMenuItem>
+      <DropdownMenuItem>Move to folder</DropdownMenuItem>
+      <DropdownMenuItem disabled>Share (no access)</DropdownMenuItem>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</div>`}
+>
+  <div className="flex w-full max-w-sm items-center justify-between rounded-lg border p-3">
+    <div>
+      <p className="text-sm font-medium">Quarterly report</p>
+      <p className="text-xs text-muted-foreground">Edited 2 hours ago</p>
+    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" aria-label="More actions for Quarterly report">
+          <MoreHorizontalIcon />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem>Rename</DropdownMenuItem>
+        <DropdownMenuItem>Move to folder</DropdownMenuItem>
+        <DropdownMenuItem disabled>Share (no access)</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </div>
+</Example>
+
+## Options, groups and submenus
+
+Checkbox items turn a setting on or off. Radio items pick one option from a group. Labels and separators group related items. Use a submenu only when a group would make the main list too long.
+
+<Example
+  title="Checkbox, radio and submenu"
+  code={`<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button variant="outline">View</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent className="w-52">
+    <DropdownMenuLabel>Show columns</DropdownMenuLabel>
+    <DropdownMenuGroup>
+      <DropdownMenuCheckboxItem defaultChecked>Owner</DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem defaultChecked>Status</DropdownMenuCheckboxItem>
+      <DropdownMenuCheckboxItem>Last edited</DropdownMenuCheckboxItem>
+    </DropdownMenuGroup>
+    <DropdownMenuSeparator />
+    <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+    <DropdownMenuRadioGroup defaultValue="name">
+      <DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
+      <DropdownMenuRadioItem value="date">Date created</DropdownMenuRadioItem>
+    </DropdownMenuRadioGroup>
+    <DropdownMenuSeparator />
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger>Export as</DropdownMenuSubTrigger>
+      <DropdownMenuSubContent>
+        <DropdownMenuItem>CSV</DropdownMenuItem>
+        <DropdownMenuItem>PDF</DropdownMenuItem>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  </DropdownMenuContent>
+</DropdownMenu>`}
+>
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button variant="outline">View</Button>
+    </DropdownMenuTrigger>
+    <DropdownMenuContent className="w-52">
+      <DropdownMenuLabel>Show columns</DropdownMenuLabel>
+      <DropdownMenuGroup>
+        <DropdownMenuCheckboxItem defaultChecked>Owner</DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem defaultChecked>Status</DropdownMenuCheckboxItem>
+        <DropdownMenuCheckboxItem>Last edited</DropdownMenuCheckboxItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+      <DropdownMenuRadioGroup defaultValue="name">
+        <DropdownMenuRadioItem value="name">Name</DropdownMenuRadioItem>
+        <DropdownMenuRadioItem value="date">Date created</DropdownMenuRadioItem>
+      </DropdownMenuRadioGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>Export as</DropdownMenuSubTrigger>
+        <DropdownMenuSubContent>
+          <DropdownMenuItem>CSV</DropdownMenuItem>
+          <DropdownMenuItem>PDF</DropdownMenuItem>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+    </DropdownMenuContent>
+  </DropdownMenu>
+</Example>
+
+<DoDont>
+  <Do caption="Destructive actions sit last, after a separator, in the destructive style.">
+    <div className="w-44 rounded-md border bg-popover p-1 text-sm text-popover-foreground shadow-md">
+      <div className="rounded-sm px-2 py-1.5">Rename</div>
+      <div className="rounded-sm px-2 py-1.5">Duplicate</div>
+      <div className="-mx-1 my-1 h-px bg-border" />
+      <div className="rounded-sm px-2 py-1.5 text-destructive">Delete</div>
+    </div>
+  </Do>
+  <Dont caption="Delete sits between safe actions, so a slip of the pointer can remove something.">
+    <div className="w-44 rounded-md border bg-popover p-1 text-sm text-popover-foreground shadow-md">
+      <div className="rounded-sm px-2 py-1.5">Rename</div>
+      <div className="rounded-sm px-2 py-1.5">Delete</div>
+      <div className="rounded-sm px-2 py-1.5">Duplicate</div>
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Start each item with a verb: "Rename", "Move to folder", "Copy link".
+- Keep items to one to three words, in sentence case.
+- Order by how often people use them, with destructive items last.
+- Aim for seven items or fewer. Split longer lists with labels or move rare actions elsewhere.
+- Show a disabled item only when people would expect it there; otherwise leave it out.
+- Destructive items that cannot be undone should open a [dialog](/components/dialog) to confirm.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+```
+
+## Props
+
+`DropdownMenu` (root, from Radix Dropdown Menu):
+
+<PropsTable props={[
+  { name: "open", type: "boolean", description: "Controlled open state. Pair with onOpenChange." },
+  { name: "defaultOpen", type: "boolean", default: "false", description: "Open state on first render when uncontrolled." },
+  { name: "onOpenChange", type: "(open: boolean) => void", description: "Called when the menu opens or closes." },
+  { name: "modal", type: "boolean", default: "true", description: "When true, the page behind cannot be scrolled or clicked while the menu is open." },
+]} />
+
+`DropdownMenuContent`:
+
+<PropsTable props={[
+  { name: "align", type: '"start" | "center" | "end"', default: '"center"', description: "Alignment against the trigger. Use end for menus on the right edge." },
+  { name: "side", type: '"top" | "right" | "bottom" | "left"', default: '"bottom"', description: "Preferred side. Flips automatically when there is no room." },
+  { name: "sideOffset", type: "number", default: "4", description: "Gap in pixels between trigger and menu." },
+]} />
+
+`DropdownMenuItem`:
+
+<PropsTable props={[
+  { name: "variant", type: '"default" | "destructive"', default: '"default"', description: "Destructive colors the item with the --destructive role." },
+  { name: "inset", type: "boolean", default: "false", description: "Adds left padding so the label lines up with checkbox and radio items." },
+  { name: "disabled", type: "boolean", default: "false", description: "Skipped by keyboard navigation and cannot be selected." },
+  { name: "onSelect", type: "(event: Event) => void", description: "Runs when the item is chosen by click or keyboard. Call event.preventDefault() to keep the menu open." },
+]} />
+
+`DropdownMenuCheckboxItem` takes `checked`, `defaultChecked` and `onCheckedChange`. `DropdownMenuRadioGroup` takes `value`, `defaultValue` and `onValueChange`; each `DropdownMenuRadioItem` needs a `value`. `DropdownMenuLabel` and `DropdownMenuSubTrigger` accept `inset`. `DropdownMenuShortcut` is a plain `span` for a hint on the right.
+
+## Controlled checkbox items
+
+```tsx
+const [showStatus, setShowStatus] = React.useState(true)
+
+<DropdownMenuCheckboxItem checked={showStatus} onCheckedChange={setShowStatus}>
+  Status
+</DropdownMenuCheckboxItem>
+```
+
+## Opening a dialog from an item
+
+Control the dialog and open it from `onSelect`. The menu closes first, then the dialog takes focus:
+
+```tsx
+const [confirmOpen, setConfirmOpen] = React.useState(false)
+
+<DropdownMenuItem variant="destructive" onSelect={() => setConfirmOpen(true)}>
+  Delete
+</DropdownMenuItem>
+
+<Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+  <DialogContent>...</DialogContent>
+</Dialog>
+```
+
+## Styling
+
+The menu reads `--popover` and `--popover-foreground`; the highlighted item reads `--accent` and `--accent-foreground`. Set width with `className` on `DropdownMenuContent`.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Enter</kbd>, <kbd>Space</kbd> or <kbd>Arrow down</kbd> | On the trigger, opens the menu and focuses the first item |
+| <kbd>Arrow down</kbd> / <kbd>Arrow up</kbd> | Moves to the next or previous item |
+| <kbd>Home</kbd> / <kbd>End</kbd> | Moves to the first or last item |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Selects the focused item |
+| <kbd>Arrow right</kbd> | Opens a submenu |
+| <kbd>Arrow left</kbd> | Closes a submenu |
+| Typing a letter | Moves to the next item that starts with that letter |
+| <kbd>Esc</kbd> | Closes the menu and returns focus to the trigger |
+
+## Focus management
+
+- Opening the menu moves focus into it. Closing returns focus to the trigger.
+- Focus moves item by item with the arrow keys; <kbd>Tab</kbd> closes the menu.
+- Disabled items are skipped.
+
+## Checklist
+
+- The trigger is a real button with a visible label, or an `aria-label` if it is icon-only.
+- The menu uses `role="menu"` and items use `role="menuitem"`, `menuitemcheckbox` or `menuitemradio`, so state is announced.
+- Shortcut hints are decoration only. If a shortcut really exists, wire it up separately.
+- Destructive items are not identified by color alone; the label says what happens.
+- Items are at least 32 px tall, and the trigger meets the 44 by 44 px touch target.
+
+</DocTab>
+</DocTabs>

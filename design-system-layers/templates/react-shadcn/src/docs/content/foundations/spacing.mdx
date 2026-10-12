@@ -1,0 +1,109 @@
+---
+title: Spacing
+description: All spacing sits on a 4px grid, so layouts line up and density stays consistent across screens.
+status: stable
+order: 40
+keywords: [spacing, grid, layout, density, padding, margin, touch target, container width]
+---
+
+import { PlusIcon } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+
+## The 4px grid
+
+Every gap, padding and margin is a multiple of 4px. In Tailwind, one spacing step is 4px, so `p-4` is 16px and `gap-6` is 24px. Odd values like `p-[13px]` are not allowed; if a design seems to need one, the layout around it usually needs to change.
+
+## Scale
+
+These are the steps most screens need. Steps outside this list exist, but reach for them rarely.
+
+<SpacingScale steps={[1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24]} />
+
+| Step | Size | Typical use |
+| --- | --- | --- |
+| `1` to `2` | 4 to 8px | Icon to label, label to helper text |
+| `3` to `4` | 12 to 16px | Inside controls and small cards, between related fields |
+| `6` | 24px | Card padding, between groups of fields |
+| `8` to `12` | 32 to 48px | Between sections on a page |
+| `16` to `24` | 64 to 96px | Page top and bottom, marketing sections |
+
+## Proximity
+
+Space shows relationships. Things that belong together sit closer than things that do not. A label is 8px from its field; one field is 16 to 24px from the next; one section is 32px or more from the next.
+
+<DoDont>
+  <Do caption="Label hugs its field; fields are clearly separate.">
+    <div className="w-60 space-y-5 text-left">
+      <div className="space-y-2">
+        <Label htmlFor="sp-do-name">Full name</Label>
+        <Input id="sp-do-name" />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="sp-do-email">Email</Label>
+        <Input id="sp-do-email" type="email" />
+      </div>
+    </div>
+  </Do>
+  <Dont caption="Even spacing everywhere, so it is unclear which label belongs to which field.">
+    <div className="w-60 space-y-4 text-left">
+      <Label htmlFor="sp-dont-name">Full name</Label>
+      <Input id="sp-dont-name" />
+      <Label htmlFor="sp-dont-email">Email</Label>
+      <Input id="sp-dont-email" type="email" />
+    </div>
+  </Dont>
+</DoDont>
+
+## Density
+
+The default density suits most product screens. Tighten it only where people scan a lot of data, and never on forms people fill in once.
+
+| Density | Control height | Row padding | Use for |
+| --- | --- | --- | --- |
+| Comfortable | 36 to 40px (`h-9`, `h-10`) | `py-3` to `py-4` | Forms, settings, most screens |
+| Compact | 32px (`h-8`, `size="sm"`) | `py-2` | Data tables, admin lists, toolbars |
+
+Compact controls still need a 44px touch target on touch screens (see below).
+
+## Touch targets
+
+Anything people tap must have a target of at least 44 by 44px on touch screens, with at least 8px between neighboring targets. A target can be bigger than what you see: pad the clickable area rather than making the icon larger.
+
+<Example
+  title="Visible size versus tap area"
+  code={`<Button variant="ghost" size="icon" className="size-11" aria-label="Add guest"><PlusIcon /></Button>
+<Button size="lg" className="h-11">Confirm booking</Button>`}
+>
+  <Button variant="ghost" size="icon" className="size-11" aria-label="Add guest"><PlusIcon /></Button>
+  <Button size="lg" className="h-11">Confirm booking</Button>
+</Example>
+
+WCAG 2.2 sets a floor of 24 by 24px for every pointer target. The 44px rule is our own, stricter target for touch.
+
+## Layout widths
+
+Use a small set of container widths so pages line up with each other.
+
+| Width | Class | Use for |
+| --- | --- | --- |
+| 28rem (448px) | `max-w-md` | Sign-in, single-question screens, dialogs |
+| 36rem (576px) | `max-w-xl` | Forms and checkout steps |
+| 65 characters | `max-w-prose` | Long reading text and help articles |
+| 48rem (768px) | `max-w-3xl` | Settings pages and detail views |
+| 80rem (1280px) | `max-w-7xl` | Dashboards, tables and app shells |
+
+Page gutters are 16px on phones (`px-4`), 24px on tablets (`sm:px-6`) and 32px on desktop (`lg:px-8`).
+
+```tsx
+<main className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+  ...
+</main>
+```
+
+## Guidelines
+
+- Use `gap` and `space-y` on the parent instead of margins on children. It keeps spacing in one place.
+- Do not add space to fix alignment; fix the alignment.
+- Keep padding equal on all sides of a card unless the content has a clear reason to differ.

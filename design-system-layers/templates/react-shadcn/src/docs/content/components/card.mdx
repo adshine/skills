@@ -1,0 +1,286 @@
+---
+title: Card
+description: A card groups related content and actions about one subject into a single container.
+status: stable
+order: 30
+keywords: [card, container, panel, tile, surface, box]
+---
+
+import { MoreHorizontalIcon } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Card with header, content and footer"
+  code={`<Card className="w-full max-w-sm">
+  <CardHeader>
+    <CardTitle>Team plan</CardTitle>
+    <CardDescription>Renews on 1 March</CardDescription>
+    <CardAction>
+      <Badge variant="secondary">Active</Badge>
+    </CardAction>
+  </CardHeader>
+  <CardContent>
+    <p className="text-sm">12 of 20 seats in use. Add seats at any time; you only pay for the days you use them.</p>
+  </CardContent>
+  <CardFooter className="gap-2">
+    <Button>Manage seats</Button>
+    <Button variant="ghost">View invoices</Button>
+  </CardFooter>
+</Card>`}
+>
+  <Card className="w-full max-w-sm">
+    <CardHeader>
+      <CardTitle>Team plan</CardTitle>
+      <CardDescription>Renews on 1 March</CardDescription>
+      <CardAction>
+        <Badge variant="secondary">Active</Badge>
+      </CardAction>
+    </CardHeader>
+    <CardContent>
+      <p className="text-sm">12 of 20 seats in use. Add seats at any time; you only pay for the days you use them.</p>
+    </CardContent>
+    <CardFooter className="gap-2">
+      <Button>Manage seats</Button>
+      <Button variant="ghost">View invoices</Button>
+    </CardFooter>
+  </Card>
+</Example>
+
+## Anatomy
+
+<Anatomy parts={["Header", "Title", "Description", "Action", "Content", "Footer"]}>
+  <Card className="w-full max-w-sm">
+    <CardHeader className="relative">
+      <span className="absolute top-0 -left-3"><Marker n={1} /></span>
+      <CardTitle className="flex items-center gap-2">Project Atlas <Marker n={2} /></CardTitle>
+      <CardDescription className="flex items-center gap-2">Updated 2 hours ago <Marker n={3} /></CardDescription>
+      <CardAction className="flex items-center gap-2">
+        <Marker n={4} />
+        <Button size="icon" variant="ghost" aria-label="Project options"><MoreHorizontalIcon /></Button>
+      </CardAction>
+    </CardHeader>
+    <CardContent className="flex items-center gap-2">
+      <p className="text-sm">Three tasks are due this week.</p>
+      <Marker n={5} />
+    </CardContent>
+    <CardFooter className="gap-2">
+      <Button variant="outline" size="sm">Open project</Button>
+      <Marker n={6} />
+    </CardFooter>
+  </Card>
+</Anatomy>
+
+1. **Header** holds the title, description and action in a grid.
+2. **Title** names the subject in a few words.
+3. **Description** adds one line of context, like status or date.
+4. **Action** (optional) sits top right for a menu, badge or quick action.
+5. **Content** is the body: text, data, a form or a list.
+6. **Footer** (optional) holds the main actions for the card.
+
+## When to use
+
+- To show a set of similar items people browse and compare, like projects, plans or articles.
+- To group one subject's details and actions on a dashboard or settings page.
+
+## When not to use
+
+- **For a single block of page content.** A heading and a section are enough; a border adds noise.
+- **For dense data with many rows.** Use a table so people can scan and sort.
+- **Nested inside another card.** Use spacing or a separator instead.
+
+## Variations
+
+<Example
+  title="Stat card and simple content card"
+  code={`<Card className="w-56">
+  <CardHeader>
+    <CardDescription>Active users</CardDescription>
+    <CardTitle className="text-3xl tabular-nums">2,481</CardTitle>
+  </CardHeader>
+  <CardFooter>
+    <p className="text-sm text-muted-foreground">Up 4% from last month</p>
+  </CardFooter>
+</Card>
+<Card className="w-72">
+  <CardHeader className="border-b">
+    <CardTitle>Getting started</CardTitle>
+    <CardDescription>Three steps to set up your workspace.</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <ol className="list-decimal space-y-1 pl-4 text-sm">
+      <li>Invite your team</li>
+      <li>Create a project</li>
+      <li>Connect your calendar</li>
+    </ol>
+  </CardContent>
+</Card>`}
+>
+  <Card className="w-56">
+    <CardHeader>
+      <CardDescription>Active users</CardDescription>
+      <CardTitle className="text-3xl tabular-nums">2,481</CardTitle>
+    </CardHeader>
+    <CardFooter>
+      <p className="text-sm text-muted-foreground">Up 4% from last month</p>
+    </CardFooter>
+  </Card>
+  <Card className="w-72">
+    <CardHeader className="border-b">
+      <CardTitle>Getting started</CardTitle>
+      <CardDescription>Three steps to set up your workspace.</CardDescription>
+    </CardHeader>
+    <CardContent>
+      <ol className="list-decimal space-y-1 pl-4 text-sm">
+        <li>Invite your team</li>
+        <li>Create a project</li>
+        <li>Connect your calendar</li>
+      </ol>
+    </CardContent>
+  </Card>
+</Example>
+
+Adding `border-b` to the header or `border-t` to the footer draws a divider and adds matching padding automatically.
+
+<DoDont>
+  <Do caption="One clear primary action in the footer, with a quieter secondary.">
+    <Card className="w-60">
+      <CardHeader>
+        <CardTitle>Invite your team</CardTitle>
+        <CardDescription>Work together on projects.</CardDescription>
+      </CardHeader>
+      <CardFooter className="gap-2">
+        <Button size="sm">Invite</Button>
+        <Button size="sm" variant="ghost">Later</Button>
+      </CardFooter>
+    </Card>
+  </Do>
+  <Dont caption="A card inside a card adds borders without adding meaning.">
+    <Card className="w-60">
+      <CardHeader>
+        <CardTitle>Invite your team</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Card className="py-4 shadow-none">
+          <CardContent className="px-4 text-sm">Work together on projects.</CardContent>
+        </Card>
+      </CardContent>
+    </Card>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Titles are short and specific, in sentence case: "Team plan", not "Your Current Subscription Plan Details".
+- Keep cards in a set the same structure, so people compare like with like.
+- Put at most one primary [button](/components/button) on a card. In a grid of cards, consider making the whole card a link instead.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+```
+
+## Props
+
+Every card part is a styled `div` and accepts all `div` props. There are no variants; adjust layout with `className`.
+
+<PropsTable props={[
+  { name: "Card", type: 'ComponentProps<"div">', default: "-", description: "The container. Column layout with 24 px gaps, border, card background and small shadow." },
+  { name: "CardHeader", type: 'ComponentProps<"div">', default: "-", description: "Grid for title, description and action. Add border-b for a divider." },
+  { name: "CardTitle", type: 'ComponentProps<"div">', default: "-", description: "Semibold title. Renders a div, so wrap it in a heading when it should appear in the outline." },
+  { name: "CardDescription", type: 'ComponentProps<"div">', default: "-", description: "Muted supporting line under the title." },
+  { name: "CardAction", type: 'ComponentProps<"div">', default: "-", description: "Placed top right of the header across both rows." },
+  { name: "CardContent", type: 'ComponentProps<"div">', default: "-", description: "Body area with horizontal padding." },
+  { name: "CardFooter", type: 'ComponentProps<"div">', default: "-", description: "Row for actions. Add border-t for a divider." },
+]} />
+
+## Title as a heading
+
+`CardTitle` is a `div`. When the card title belongs in the page outline, render a real heading inside it:
+
+```tsx
+<CardHeader>
+  <CardTitle>
+    <h3>Team plan</h3>
+  </CardTitle>
+</CardHeader>
+```
+
+## Whole card as a link
+
+```tsx
+<Card className="relative transition-colors hover:bg-accent/40">
+  <CardHeader>
+    <CardTitle>
+      <a href="/projects/atlas" className="after:absolute after:inset-0">
+        Project Atlas
+      </a>
+    </CardTitle>
+    <CardDescription>Updated 2 hours ago</CardDescription>
+  </CardHeader>
+</Card>
+```
+
+The stretched link keeps one clear link name for screen readers while the whole card is clickable.
+
+## Grid of cards
+
+```tsx
+<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  {projects.map((p) => (
+    <Card key={p.id}>...</Card>
+  ))}
+</div>
+```
+
+## Styling
+
+Cards read `--card`, `--card-foreground` and `--border`. Change radius and shadow in the theme, not per card.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+A card is not interactive itself. Focus moves through the links and buttons inside it in reading order.
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves to the next link or button inside the card |
+| <kbd>Enter</kbd> | Follows the card link, when the whole card is a link |
+
+## Checklist
+
+- Card titles that structure the page use a real heading level that fits the outline.
+- When the whole card is clickable, there is one link with a clear name, not a link wrapping all the content.
+- Buttons inside a clickable card stay reachable and sit above the stretched link (`relative z-10`).
+- Icon-only actions in `CardAction` have an `aria-label`.
+- Text on `--card` meets 4.5:1 contrast in light and dark. See [Color](/foundations/color).
+- Groups of cards in a list use a `ul` or `role="list"` so screen readers announce the count.
+
+</DocTab>
+</DocTabs>

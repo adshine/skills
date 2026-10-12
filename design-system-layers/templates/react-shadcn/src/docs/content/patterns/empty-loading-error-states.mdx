@@ -1,0 +1,255 @@
+---
+title: Empty, loading and error states
+description: What to show when there is nothing yet, while content loads, and when something fails, so people always know what to do next.
+status: stable
+order: 20
+keywords: [empty state, zero state, loading, skeleton, spinner, error, retry, offline, recovery]
+---
+
+import { AlertCircleIcon, CalendarIcon, RefreshCwIcon, SearchXIcon, WifiOffIcon } from "lucide-react"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+
+## The problem
+
+A screen with no data, a long wait or a failure is where people most often get lost. A blank area looks broken, a spinner with no end looks stuck, and "Something went wrong" leaves people with nowhere to go. Each of these states needs to say what is happening and offer a next step.
+
+## When to use
+
+- **Empty**: a list, table or page that has no content yet, or no results for a search or filter.
+- **Loading**: content takes longer than about 300ms to appear.
+- **Error**: content fails to load or an action fails to complete.
+
+Every screen that shows data needs all three. Design them alongside the happy path, not after.
+
+## Empty states
+
+There are three kinds, and each needs different words.
+
+| Kind | Cause | What to show |
+| --- | --- | --- |
+| First use | Nothing has been created yet | What will appear here and the action to create the first one |
+| No results | A search or filter matched nothing | What was searched, and a way to change or clear it |
+| All done | People cleared their work, like an empty inbox | A short, calm confirmation. No action needed. |
+
+<Example
+  title="First use"
+  align="stretch"
+  code={`<div className="mx-auto flex max-w-sm flex-col items-center gap-3 rounded-xl border border-dashed p-8 text-center">
+  <span className="grid size-10 place-items-center rounded-full bg-muted text-muted-foreground">
+    <CalendarIcon className="size-5" />
+  </span>
+  <div className="space-y-1">
+    <h3 className="font-semibold">No bookings yet</h3>
+    <p className="text-sm text-muted-foreground">When customers book a slot, it shows up here with their details.</p>
+  </div>
+  <Button>Share booking link</Button>
+</div>`}
+>
+  <div className="mx-auto flex max-w-sm flex-col items-center gap-3 rounded-xl border border-dashed p-8 text-center">
+    <span className="grid size-10 place-items-center rounded-full bg-muted text-muted-foreground">
+      <CalendarIcon className="size-5" />
+    </span>
+    <div className="space-y-1">
+      <h3 className="font-semibold">No bookings yet</h3>
+      <p className="text-sm text-muted-foreground">When customers book a slot, it shows up here with their details.</p>
+    </div>
+    <Button>Share booking link</Button>
+  </div>
+</Example>
+
+<Example
+  title="No results"
+  align="stretch"
+  code={`<div className="mx-auto flex max-w-sm flex-col items-center gap-3 p-8 text-center">
+  <SearchXIcon className="size-6 text-muted-foreground" />
+  <div className="space-y-1">
+    <h3 className="font-semibold">No orders match "blue jacket"</h3>
+    <p className="text-sm text-muted-foreground">Check the spelling or search by order number instead.</p>
+  </div>
+  <Button variant="outline">Clear search</Button>
+</div>`}
+>
+  <div className="mx-auto flex max-w-sm flex-col items-center gap-3 p-8 text-center">
+    <SearchXIcon className="size-6 text-muted-foreground" />
+    <div className="space-y-1">
+      <h3 className="font-semibold">No orders match "blue jacket"</h3>
+      <p className="text-sm text-muted-foreground">Check the spelling or search by order number instead.</p>
+    </div>
+    <Button variant="outline">Clear search</Button>
+  </div>
+</Example>
+
+<DoDont>
+  <Do caption="Says what will appear here and gives one clear way to start.">
+    <div className="space-y-2 text-center">
+      <p className="text-sm font-semibold">No saved addresses</p>
+      <p className="text-sm text-muted-foreground">Add one to check out faster next time.</p>
+      <Button size="sm">Add address</Button>
+    </div>
+  </Do>
+  <Dont caption="A bare message that looks like a bug and offers no way forward.">
+    <p className="text-sm text-muted-foreground">No data</p>
+  </Dont>
+</DoDont>
+
+## Loading states
+
+Match the wait to the indicator.
+
+| Wait | Show |
+| --- | --- |
+| Under 300ms | Nothing. A flash of loading UI feels slower than none. |
+| 300ms to about 10 seconds, content area | Skeletons shaped like the content that is coming |
+| 300ms to about 10 seconds, an action | Spinner inside the button, with the button disabled and a progress label |
+| Over 10 seconds | A progress bar or steps, with time left if known, and a way to leave and come back |
+
+<Example
+  title="Skeleton shaped like a booking list"
+  align="stretch"
+  code={`<div className="mx-auto w-full max-w-sm space-y-4" aria-busy="true" aria-label="Loading bookings">
+  {[0, 1, 2].map((i) => (
+    <div key={i} className="flex items-center gap-3">
+      <Skeleton className="size-10 rounded-full" />
+      <div className="flex-1 space-y-2">
+        <Skeleton className="h-4 w-3/5" />
+        <Skeleton className="h-3 w-2/5" />
+      </div>
+    </div>
+  ))}
+</div>`}
+>
+  <div className="mx-auto w-full max-w-sm space-y-4" aria-busy="true" aria-label="Loading bookings">
+    {[0, 1, 2].map((i) => (
+      <div key={i} className="flex items-center gap-3">
+        <Skeleton className="size-10 rounded-full" />
+        <div className="flex-1 space-y-2">
+          <Skeleton className="h-4 w-3/5" />
+          <Skeleton className="h-3 w-2/5" />
+        </div>
+      </div>
+    ))}
+  </div>
+</Example>
+
+- Skeletons match the layout that replaces them, so nothing jumps when content arrives.
+- Keep what is already known on screen. Load the page frame, headings and navigation first; only the data area shows skeletons.
+- Show at most one loading indicator per area. Do not put a spinner on top of skeletons.
+- Mark the loading region with `aria-busy="true"` and announce completion if focus does not move.
+
+<DoDont>
+  <Do caption="Skeleton follows the real layout, so the page stays still when data arrives.">
+    <div className="w-56 space-y-2">
+      <Skeleton className="h-5 w-2/3" />
+      <Skeleton className="h-4 w-full" />
+      <Skeleton className="h-4 w-5/6" />
+    </div>
+  </Do>
+  <Dont caption="A full-page spinner hides everything, including parts that already loaded.">
+    <div className="grid h-24 w-56 place-items-center">
+      <RefreshCwIcon className="size-6 animate-spin text-muted-foreground motion-reduce:animate-none" />
+    </div>
+  </Dont>
+</DoDont>
+
+## Error states
+
+An error message says what happened, whether anything was lost, and what to do now. Pick the scope that matches the failure.
+
+| Scope | Use when | Component |
+| --- | --- | --- |
+| Field | One answer is wrong | Inline message under the field. See [Forms and validation](/patterns/forms-and-validation). |
+| Section | One part of a page failed to load | Message in place of that section, with retry |
+| Page | The whole page cannot load | Full-page message with retry and a way back |
+| Action | Saving, paying or sending failed | Destructive alert near the action, or a toast if the page moved on |
+
+<Example
+  title="Section failed to load, with retry"
+  align="stretch"
+  code={`<Alert variant="destructive" className="mx-auto max-w-md">
+  <AlertCircleIcon />
+  <AlertTitle>We couldn't load your orders</AlertTitle>
+  <AlertDescription>
+    <p>Your orders are safe. Check your connection and try again.</p>
+    <Button size="sm" variant="outline" className="mt-2"><RefreshCwIcon /> Try again</Button>
+  </AlertDescription>
+</Alert>`}
+>
+  <Alert variant="destructive" className="mx-auto max-w-md">
+    <AlertCircleIcon />
+    <AlertTitle>We couldn't load your orders</AlertTitle>
+    <AlertDescription>
+      <p>Your orders are safe. Check your connection and try again.</p>
+      <Button size="sm" variant="outline" className="mt-2"><RefreshCwIcon /> Try again</Button>
+    </AlertDescription>
+  </Alert>
+</Example>
+
+<Example
+  title="Offline, whole page"
+  align="stretch"
+  code={`<div className="mx-auto flex max-w-sm flex-col items-center gap-3 p-8 text-center">
+  <WifiOffIcon className="size-6 text-muted-foreground" />
+  <div className="space-y-1">
+    <h3 className="font-semibold">You're offline</h3>
+    <p className="text-sm text-muted-foreground">We'll show your account as soon as you're back online. Nothing you entered has been lost.</p>
+  </div>
+  <div className="flex gap-2">
+    <Button><RefreshCwIcon /> Try again</Button>
+    <Button variant="outline">Go to home</Button>
+  </div>
+</div>`}
+>
+  <div className="mx-auto flex max-w-sm flex-col items-center gap-3 p-8 text-center">
+    <WifiOffIcon className="size-6 text-muted-foreground" />
+    <div className="space-y-1">
+      <h3 className="font-semibold">You're offline</h3>
+      <p className="text-sm text-muted-foreground">We'll show your account as soon as you're back online. Nothing you entered has been lost.</p>
+    </div>
+    <div className="flex gap-2">
+      <Button><RefreshCwIcon /> Try again</Button>
+      <Button variant="outline">Go to home</Button>
+    </div>
+  </div>
+</Example>
+
+<DoDont>
+  <Do caption="Says what failed, reassures, and offers a retry.">
+    <Alert variant="destructive" className="max-w-xs text-left">
+      <AlertCircleIcon />
+      <AlertTitle>Payment didn't go through</AlertTitle>
+      <AlertDescription>You haven't been charged. Try again or use another card.</AlertDescription>
+    </Alert>
+  </Do>
+  <Dont caption="Error code with no meaning, no reassurance and no next step.">
+    <Alert variant="destructive" className="max-w-xs text-left">
+      <AlertCircleIcon />
+      <AlertTitle>Error 500</AlertTitle>
+      <AlertDescription>An unexpected error occurred.</AlertDescription>
+    </Alert>
+  </Dont>
+</DoDont>
+
+## Recovery
+
+- **Keep what people entered.** A failed save never clears a form or loses a draft.
+- **Retry in place.** "Try again" reloads only what failed, not the whole page.
+- **Retry automatically when safe.** Reading data can retry quietly once or twice; payments and other actions that cost money never retry without asking.
+- **Say if it is our fault.** "We're having trouble on our side" is honest and stops people from changing things that were fine.
+- **Offer a way out.** If retry keeps failing, link to help or a status page, and give a reference people can quote to support.
+- **Confirm recovery.** When things work again, replace the error with the content. A short "Back online" toast is enough.
+
+## Accessibility
+
+- Error alerts use `role="alert"` (built into `Alert`), so they are announced as soon as they appear. Use it only for new errors, not on page load for old ones.
+- Loading regions use `aria-busy="true"`; when loading finishes, focus stays where it was.
+- Spinners and skeleton pulses use `motion-reduce:animate-none` where motion is not essential.
+- Empty and error states use a real heading, so screen reader users can find them.
+- Icons in these states are decorative; the text carries the message.
+
+## Related
+
+- [Forms and validation](/patterns/forms-and-validation) for field errors and submit states
+- [Content and voice](/foundations/content) for writing error messages
+- [Elevation and motion](/foundations/elevation-and-motion) for reduced motion

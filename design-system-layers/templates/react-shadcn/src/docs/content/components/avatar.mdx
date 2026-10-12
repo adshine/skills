@@ -1,0 +1,230 @@
+---
+title: Avatar
+description: An avatar shows a picture or initials to represent a person or an account.
+status: stable
+order: 32
+keywords: [avatar, profile, user, picture, initials, photo, presence]
+---
+
+import { Avatar, AvatarBadge, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "@/components/ui/avatar"
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Avatar with initials and a person's name"
+  code={`<div className="flex items-center gap-3">
+  <Avatar size="lg">
+    <AvatarImage src="/avatars/jordan.jpg" alt="" />
+    <AvatarFallback>JL</AvatarFallback>
+  </Avatar>
+  <div className="grid gap-0.5">
+    <span className="text-sm font-medium">Jordan Lee</span>
+    <span className="text-sm text-muted-foreground">jordan@example.com</span>
+  </div>
+</div>`}
+>
+  <div className="flex items-center gap-3">
+    <Avatar size="lg">
+      <AvatarFallback>JL</AvatarFallback>
+    </Avatar>
+    <div className="grid gap-0.5">
+      <span className="text-sm font-medium">Jordan Lee</span>
+      <span className="text-sm text-muted-foreground">jordan@example.com</span>
+    </div>
+  </div>
+</Example>
+
+The image loads if it can; until then, or if it fails, the fallback shows. Always include a fallback.
+
+## When to use
+
+- To help people recognize who did something: comments, assignees, activity feeds.
+- To show who is signed in, usually in the top bar.
+- To show a group of people on a shared item.
+
+## When not to use
+
+- **As the only way to identify someone.** Show the name next to the avatar, or in a tooltip in tight spaces.
+- **For companies or products.** Use a logo with the right shape; avatars are round and suggest a person.
+
+## Sizes
+
+<Example
+  title="Small, default and large"
+  code={`<Avatar size="sm"><AvatarFallback>SM</AvatarFallback></Avatar>
+<Avatar><AvatarFallback>MD</AvatarFallback></Avatar>
+<Avatar size="lg"><AvatarFallback>LG</AvatarFallback></Avatar>`}
+>
+  <Avatar size="sm"><AvatarFallback>SM</AvatarFallback></Avatar>
+  <Avatar><AvatarFallback>MD</AvatarFallback></Avatar>
+  <Avatar size="lg"><AvatarFallback>LG</AvatarFallback></Avatar>
+</Example>
+
+| Size | Pixels | Use for |
+| --- | --- | --- |
+| `sm` | 24 | Dense lists, tables and inline mentions |
+| `default` | 32 | Comments, menus and most places |
+| `lg` | 40 | Profile headers and account menus |
+
+## Status badge
+
+`AvatarBadge` adds a small dot at the bottom right, for example to show someone is online.
+
+<Example
+  title="With a presence dot"
+  code={`<Avatar>
+  <AvatarFallback>AK</AvatarFallback>
+  <AvatarBadge />
+</Avatar>
+<Avatar size="lg">
+  <AvatarFallback>RM</AvatarFallback>
+  <AvatarBadge />
+</Avatar>`}
+>
+  <Avatar>
+    <AvatarFallback>AK</AvatarFallback>
+    <AvatarBadge />
+  </Avatar>
+  <Avatar size="lg">
+    <AvatarFallback>RM</AvatarFallback>
+    <AvatarBadge />
+  </Avatar>
+</Example>
+
+The dot is visual only. Say the status in text too, like "Online" next to the name or in the accessible name.
+
+## Groups
+
+<Example
+  title="Avatar group with overflow count"
+  code={`<AvatarGroup>
+  <Avatar><AvatarFallback>JL</AvatarFallback></Avatar>
+  <Avatar><AvatarFallback>AK</AvatarFallback></Avatar>
+  <Avatar><AvatarFallback>RM</AvatarFallback></Avatar>
+  <AvatarGroupCount>+4</AvatarGroupCount>
+</AvatarGroup>`}
+>
+  <AvatarGroup>
+    <Avatar><AvatarFallback>JL</AvatarFallback></Avatar>
+    <Avatar><AvatarFallback>AK</AvatarFallback></Avatar>
+    <Avatar><AvatarFallback>RM</AvatarFallback></Avatar>
+    <AvatarGroupCount>+4</AvatarGroupCount>
+  </AvatarGroup>
+</Example>
+
+Show three to five avatars, then a count for the rest. Make the group open the full list when people need to see everyone.
+
+<DoDont>
+  <Do caption="Avatar paired with the name, so people do not have to guess.">
+    <div className="flex items-center gap-2">
+      <Avatar size="sm"><AvatarFallback>JL</AvatarFallback></Avatar>
+      <span className="text-sm">Jordan Lee</span>
+    </div>
+  </Do>
+  <Dont caption="A row of initials alone, with no names, is hard to tell apart.">
+    <div className="flex items-center gap-2">
+      <Avatar size="sm"><AvatarFallback>JL</AvatarFallback></Avatar>
+      <Avatar size="sm"><AvatarFallback>JL</AvatarFallback></Avatar>
+      <Avatar size="sm"><AvatarFallback>JM</AvatarFallback></Avatar>
+    </div>
+  </Dont>
+</DoDont>
+
+## Content
+
+- Fallbacks use one or two initials, in capitals: first and last name.
+- When there is no name, use a generic person icon rather than a letter that might be wrong.
+- Use square, centered photos; the avatar crops them into a circle.
+
+</DocTab>
+<DocTab label="Code">
+
+## Import
+
+```tsx
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from "@/components/ui/avatar"
+```
+
+## Props
+
+Avatar wraps the Radix Avatar primitive, which shows the fallback until the image has loaded.
+
+### Avatar
+
+<PropsTable props={[
+  { name: "size", type: '"sm" | "default" | "lg"', default: '"default"', description: "24, 32 or 40 px. Also sizes the fallback text and badge." },
+  { name: "className", type: "string", default: "-", description: "Extra classes. Set a custom size with size-* only when the three sizes do not fit." },
+]} />
+
+### AvatarImage
+
+<PropsTable props={[
+  { name: "src", type: "string", default: "-", description: "Image URL." },
+  { name: "alt", type: "string", default: "-", description: "Use an empty string when the name is shown next to the avatar; otherwise the person's name." },
+  { name: "onLoadingStatusChange", type: '(status: "idle" | "loading" | "loaded" | "error") => void', default: "-", description: "Called as the image loads or fails." },
+]} />
+
+### AvatarFallback
+
+<PropsTable props={[
+  { name: "delayMs", type: "number", default: "-", description: "Wait before showing the fallback, to avoid a flash when images load fast." },
+  { name: "children", type: "ReactNode", default: "-", description: "Initials or an icon." },
+]} />
+
+`AvatarBadge`, `AvatarGroup` and `AvatarGroupCount` are styled `span` and `div` elements and accept their native props.
+
+## With an image
+
+```tsx
+<Avatar>
+  <AvatarImage src={user.imageUrl} alt="" />
+  <AvatarFallback delayMs={300}>{initials(user.name)}</AvatarFallback>
+</Avatar>
+```
+
+## Standalone avatar with a name
+
+When no name is visible nearby, give both the image and the fallback the person's name, so it is read whether or not the image loads:
+
+```tsx
+<Avatar>
+  <AvatarImage src={user.imageUrl} alt={user.name} />
+  <AvatarFallback role="img" aria-label={user.name}>{initials(user.name)}</AvatarFallback>
+</Avatar>
+```
+
+## Styling
+
+The fallback uses `--muted` and `--muted-foreground`. The badge uses `--primary` with a `--background` ring so it stays visible on any surface.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Avatars are not interactive. If an avatar opens a profile or menu, wrap it in a link or button, which gets the usual keyboard behavior.
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to an avatar wrapped in a link or button |
+| <kbd>Enter</kbd> | Opens the profile or menu |
+
+## Checklist
+
+- When the name is shown next to the avatar, the image has `alt=""` so the name is not read twice.
+- When the avatar stands alone, it has the person's name as `alt` or `aria-label`.
+- An avatar inside a button, like an account menu, gives the button a name such as "Account menu for Jordan Lee".
+- Status dots are backed by text; color alone does not say someone is online.
+- Group counts have context, for example `aria-label="4 more people"`.
+- Fallback initials meet 4.5:1 contrast on `--muted` in light and dark.
+
+</DocTab>
+</DocTabs>
