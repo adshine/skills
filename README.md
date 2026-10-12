@@ -23,6 +23,7 @@ Read: [Stop Guessing at UI Quality: Interaction QA Skills for AI Coding Agents](
 | [website-audit](website-audit/) | Conduct comprehensive website audits across 16 check buckets with dual-track reporting: Plain-English Executive Summary and Deep Engineering Spec. | Not continuous APM / synthetic uptime monitoring. |
 | [repair-broken-video](repair-broken-video/) | Recover an unplayable `.mov`/`.mp4` (missing `moov` atom) from a healthy same-device reference clip, then re-encode so frames play in order without stutter. | Not a product QA skill; not for truly missing frame data. |
 | [project-manager](project-manager/) | Run one agent as project manager over worker agents (subagents, CLI sessions, or terminal panes): tickets, dispatch, independent review, plain-English reports. | Not a builder; never writes product code itself. |
+| [design-system-layers](design-system-layers/) | Sort design system problems into foundation, component, or pattern before fixing, catch misrouted fixes (prop bloat, token drift, duplicate flows), and audit under-invested layers. | Not token/theming builds or code sweeps for palette violations. |
 
 ### Reserved (not shipped)
 
