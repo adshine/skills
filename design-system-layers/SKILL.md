@@ -1,6 +1,6 @@
 ---
 name: design-system-layers
-description: Sort a design system problem, request, or debate into the layer it belongs to (foundation, component, or pattern) before changing anything, then route the fix to that layer. Use when a design system "feels fragile" or inconsistent despite a big component library, when a component keeps growing props or variants, when a design review or ticket is going in circles, when asked to add or change a component that might really be a flow problem, or when auditing where a system is under-invested. Not for building tokens or theming (design-system-patterns), extracting a system from a site (extract-design-system), or sweeping code for palette violations (audit-design-system-violations).
+description: Build a usable design system fast, or fix a fragile one, by working in its three layers (foundation, component, pattern). Use when asked to create, bootstrap, or "deliver quickly" a design system for a product or client; to turn a brand color into tokens; when a system feels inconsistent despite a big component library; when a component keeps growing props or variants; when a design review or ticket is going in circles; or when auditing where a system is under-invested. Not for extracting a system from an existing site (extract-design-system) or sweeping code for palette violations (audit-design-system-violations).
 ---
 
 # Design System Layers
@@ -14,6 +14,13 @@ A design system does three different jobs. Most "the system is broken" complaint
 | **Pattern** | *How* does it work for the user, in context? | Search and filter, checkout, onboarding, settings, error recovery, booking date selection | Most often, as user needs move | DS team together with the product team that lives in it | Documented once with when-to-use, sequence, states, errors, and allowed adaptations |
 
 Users never meet components. They meet patterns. Foundations have the most leverage and the least visibility; components have the most visibility. Teams tend to invest by visibility, so components get overbuilt and the other two get starved.
+
+## Two modes
+
+- **Deliver a new system fast** (days, not months): follow `references/fast-delivery.md`. In short: a one-hour intake (seed color, typeface, platforms, top 3 to 5 user flows), then generate foundations (`scripts/seed-to-tokens.sh --seed "#RRGGBB"` turns one brand color into contrast-checked light and dark tokens) and write the reasoning beside them, then theme an accessible headless base for about 15 core components instead of building behavior, then write one pattern page per top flow before adding more components. Token naming: `references/token-scheme.md`. Page templates: `references/doc-templates.md`.
+- **Fix or extend an existing system:** Steps 1 to 3 below, or the audit.
+
+Both modes use the same layer test.
 
 ## Step 1: Name the layer before touching anything
 
@@ -62,4 +69,4 @@ Lead with the layer verdict in one sentence, then the fix at that layer, then an
 
 > This is a pattern problem, not a component problem: the date picker has grown props because booking, reporting filters, and profile birthday each need different behavior. Keep the widget to its states; document three date-selection patterns. Separately, the spacing complaint is a foundation gap: there is no written rule for control padding at compact density.
 
-Source idea: Ethan Feng, "Your design system isn't broken. You're just confusing its three layers." (Medium, Sep 2026). This skill restates the framework in operational form.
+Sources: Ethan Feng, "Your design system isn't broken. You're just confusing its three layers." (Medium, Sep 2026). Fast-delivery playbook distilled from Material Design 3, GOV.UK, Carbon, Primer, Atlassian, Radix, shadcn/ui, and the DTCG 2025.10 token format, checked October 2026.
