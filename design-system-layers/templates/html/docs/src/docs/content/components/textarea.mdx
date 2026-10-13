@@ -1,0 +1,140 @@
+---
+title: Textarea
+description: A textarea lets people write longer free text, like a message, a note or a project description.
+status: stable
+order: 24
+keywords: [multiline, message, comments, notes, description, text area]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Resizes vertically only so it never breaks the layout.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Textarea with label and helper text"
+  stage="narrow"
+  html={`
+    <div class="field">
+      <label class="label" for="ta-project">Tell us about your project</label>
+      <textarea class="textarea" id="ta-project" rows="4" aria-describedby="ta-project-hint" placeholder="What are you building, and by when?"></textarea>
+      <p class="field-hint" id="ta-project-hint">A few sentences is enough. We will follow up with questions.</p>
+    </div>
+  `}
+/>
+
+## When to use
+
+- For answers that may run to more than one line: messages, notes, feedback, project briefs.
+- When people need room to explain in their own words.
+
+## When not to use
+
+- **For short, single values.** Use a [text field](/components/text-field) for names, emails and titles.
+- **For formatted content.** A textarea is plain text only. Use a rich text editor if people need headings, links or lists.
+- **For answers you can predict.** Offer [radio buttons](/components/radio) or [checkboxes](/components/checkbox), then a textarea for "anything else".
+
+## States
+
+<Example
+  title="Optional, disabled and error"
+  stage="narrow"
+  html={`
+    <div class="field">
+      <label class="label" for="ta-notes">Notes <span class="label__optional">(optional)</span></label>
+      <textarea class="textarea" id="ta-notes"></textarea>
+    </div>
+    <div class="field">
+      <label class="label" for="ta-locked">Original brief</label>
+      <textarea class="textarea" id="ta-locked" disabled>Landing page for the autumn launch.</textarea>
+    </div>
+    <div class="field">
+      <label class="label" for="ta-message">Message</label>
+      <textarea class="textarea" id="ta-message" aria-invalid="true" aria-describedby="ta-message-error"></textarea>
+      <p class="field-error" id="ta-message-error">Write a message so we know how to help</p>
+    </div>
+  `}
+/>
+
+## Size
+
+Set `rows` to match the answer you expect: three or four rows for a short message, six to eight for a brief. A box that is too small tells people to write less. People can drag the corner to make it taller; it never grows sideways.
+
+<DoDont>
+  <Do
+    caption="Height that matches the expected answer, with a hint about length."
+    html={`<div class="field" style="width:100%"><label class="label" for="dd-ta-do">Project brief</label><textarea class="textarea" id="dd-ta-do" rows="4"></textarea><p class="field-hint">A few sentences is enough.</p></div>`}
+  />
+  <Dont
+    caption="A one-line box for a long answer. People write less and cannot review what they wrote."
+    html={`<div class="field" style="width:100%"><label class="label" for="dd-ta-dont">Project brief</label><textarea class="textarea" id="dd-ta-dont" rows="1" style="min-height:0"></textarea></div>`}
+  />
+</DoDont>
+
+## Content
+
+- Label says what to write about: "Tell us about your project", not "Comments".
+- If there is a length limit, say it in the helper text before people start, not only as an error.
+- Placeholders can suggest what to cover, but never hold instructions people need.
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+```html
+<div class="field">
+  <label class="label" for="message">Message</label>
+  <textarea class="textarea" id="message" name="message" rows="4"
+            aria-describedby="message-hint"></textarea>
+  <p class="field-hint" id="message-hint">A few sentences is enough.</p>
+</div>
+```
+
+| Class | What it does |
+| --- | --- |
+| `textarea` | Multi-line field matching text fields. Resizes vertically. |
+| `field`, `label`, `label__optional`, `field-hint`, `field-error` | Same as [text field](/components/text-field) |
+
+## Length limits
+
+Use `maxlength` to stop typing at a hard limit, and say the limit in the hint so it is not a surprise:
+
+```html
+<textarea class="textarea" id="bio" maxlength="300" aria-describedby="bio-hint"></textarea>
+<p class="field-hint" id="bio-hint">Up to 300 characters.</p>
+```
+
+## WordPress and Webflow
+
+- **WordPress:** give the form plugin's paragraph or message field the class `textarea`.
+- **Webflow:** give a Text Area element the class `textarea` and leave its Webflow styles empty.
+
+## Styling
+
+Reads `--input`, `--ring`, `--destructive` and `--radius`, like every field. Minimum height is 4rem; set `rows` for more.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus into the textarea |
+| <kbd>Enter</kbd> | Adds a new line (it does not submit the form) |
+| <kbd>Shift</kbd> + <kbd>Tab</kbd> | Moves focus to the previous field |
+
+## Checklist
+
+- Every textarea has a visible `label` tied to it with `for` and `id`.
+- Helper and error text are linked with `aria-describedby`.
+- Errors set `aria-invalid="true"` and say what to do next.
+- Length limits are stated up front in text, not only enforced.
+- Never trap focus or submit on <kbd>Enter</kbd>; people need new lines.
+
+</DocTab>
+</DocTabs>

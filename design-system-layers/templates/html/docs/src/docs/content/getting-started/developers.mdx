@@ -1,0 +1,124 @@
+---
+title: For developers
+description: Add the CSS files to any website, including WordPress and Webflow, and use the components with plain HTML.
+order: 2
+keywords: [install, setup, wordpress, webflow, cdn, link, script, dark mode]
+---
+
+## Add the files
+
+Copy `theme.css`, `brand.css`, `components.css` and `components.js` to your site, then add these lines inside `<head>`, in this order:
+
+```html
+<!-- Typeface (replace with the brand font if it changes) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" />
+
+<!-- 1. Colors  2. Type and shape  3. Components -->
+<link rel="stylesheet" href="/assets/ds/theme.css" />
+<link rel="stylesheet" href="/assets/ds/brand.css" />
+<link rel="stylesheet" href="/assets/ds/components.css" />
+
+<!-- Optional: dialogs, tabs, toasts and form errors -->
+<script src="/assets/ds/components.js" defer></script>
+```
+
+The order matters: components read the color and shape values, so those load first. The script is only needed for components that do something when clicked; buttons, fields, cards and badges are CSS only.
+
+Then write plain HTML with the class names from each component page:
+
+```html
+<button class="btn">Book a call</button>
+<button class="btn btn--outline">See pricing</button>
+```
+
+## Where things live
+
+| Path | What | Edit by hand? |
+| --- | --- | --- |
+| `theme.css` | Generated color roles for light and dark | No, rerun the generator |
+| `brand.css` | Typeface and corner radius | Yes |
+| `components.css` | The components | Yes, using role variables only |
+| `components.js` | Behavior for dialogs, tabs, toasts, forms | Rarely |
+| `index.html` | One-page preview of every component | Optional |
+| `docs/` | This documentation site | Yes, one MDX file per page |
+| `tokens/color.tokens.json` | The same colors in the W3C design tokens format | No |
+
+## WordPress
+
+1. Upload the four files to your child theme, for example `wp-content/themes/your-child-theme/ds/`.
+2. Load them from the child theme's `functions.php`:
+
+```php
+add_action('wp_enqueue_scripts', function () {
+  $dir = get_stylesheet_directory_uri() . '/ds';
+  wp_enqueue_style('ds-theme', "$dir/theme.css", [], '0.1.0');
+  wp_enqueue_style('ds-brand', "$dir/brand.css", ['ds-theme'], '0.1.0');
+  wp_enqueue_style('ds-components', "$dir/components.css", ['ds-brand'], '0.1.0');
+  wp_enqueue_script('ds-js', "$dir/components.js", [], '0.1.0', ['strategy' => 'defer']);
+});
+```
+
+3. In the block editor, use a **Custom HTML** block and paste markup from these docs, or give any block the class under **Advanced, Additional CSS class(es)**, for example `btn btn--outline` on a Button block.
+
+If you cannot edit theme files, a code snippets plugin can add the same `<link>` and `<script>` tags to the site header.
+
+## Webflow
+
+Webflow cannot host loose CSS files, so put them on any static host or CDN first (your own server, Netlify, Cloudflare Pages or a GitHub repository served through jsDelivr).
+
+1. Open **Site settings, Custom code**. Paste the `<link>` tags into **Head code** and the `<script>` tag into **Footer code**.
+2. In the Designer, give elements the same class names, like `btn` and `btn--outline`. Leave the Webflow styles for those classes empty so the shared CSS wins.
+3. For components with several parts, such as a dialog or tabs, paste the HTML from these docs into an **Embed** element.
+
+Custom code only runs on the published site and in preview, not on the Designer canvas, so check changes in preview.
+
+## Other site builders
+
+Anything that lets you add code to the page head and paste HTML works the same way: link the three CSS files, add the script, then use the class names. Squarespace uses **Code injection**; Wix uses **Custom code** with an **Embed HTML** element.
+
+## Dark mode
+
+Add the `dark` class to the `<html>` element and every component switches to the dark palette. To follow the visitor's system setting:
+
+```html
+<script>
+  const dark = matchMedia("(prefers-color-scheme: dark)")
+  const apply = () => document.documentElement.classList.toggle("dark", dark.matches)
+  apply()
+  dark.addEventListener("change", apply)
+</script>
+```
+
+The `dark` class also works on any container, which is how the examples in these docs switch on their own.
+
+## Content added later
+
+The script wires up components when the page loads. If markup is added afterwards, for example by a page builder, a popup plugin or `fetch`, call:
+
+```js
+DS.enhance(containerElement)
+```
+
+It is safe to call more than once. To show a toast from your own code, call `DS.toast("Saved", { description: "We will email you a copy." })`.
+
+## Living with an existing theme
+
+`components.css` sets the page font, background and text color on `body`, and uses `border-box` sizing. On a site with its own theme, remove those two rules at the top of `components.css` if they clash; the components keep working. Class names are short and generic (`btn`, `card`, `badge`), so check the theme does not already style them.
+
+## Rules
+
+1. Use role variables like `var(--primary)` and `var(--muted-foreground)`, never hex values. That keeps dark mode and future brand changes a one-file edit.
+2. Change colors by rerunning the generator, not by editing `theme.css`. See [Color](/foundations/color).
+3. New components go in `components.css` in the same style, with a page in these docs. See [Contributing](/resources/contributing).
+
+## Run these docs
+
+```bash
+cd docs
+pnpm install
+pnpm dev      # local preview with live reload
+pnpm build    # static site in docs/dist, ready for any host
+```
+
+The built site uses relative paths and hash links, so `docs/dist` can be uploaded anywhere, including a subfolder of the client's site.

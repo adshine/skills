@@ -58,12 +58,19 @@ body {
 .textarea { height: auto; min-height: 4rem; padding: 0.5rem 0.75rem; resize: vertical; }
 .input::placeholder, .textarea::placeholder { color: var(--muted-foreground); }
 .input:focus-visible, .select:focus-visible, .textarea:focus-visible { border-color: var(--ring); }
-.input[aria-invalid="true"] { border-color: var(--destructive); }
+.input[aria-invalid="true"], .select[aria-invalid="true"], .textarea[aria-invalid="true"] { border-color: var(--destructive); }
+.input:disabled, .select:disabled, .textarea:disabled { opacity: 0.5; cursor: not-allowed; }
+.field-hint { font-size: 0.875rem; color: var(--muted-foreground); margin: 0; }
 .field-error { font-size: 0.875rem; color: var(--destructive); margin: 0; }
+.field-error:empty { display: none; }
+.label__optional { font-weight: 400; color: var(--muted-foreground); }
+.fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 0.75rem; min-width: 0; }
+.legend { padding: 0; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 500; }
 
 /* Selection controls: native inputs, brand-tinted */
 .check, .radio { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 500; }
 .check input, .radio input { width: 1rem; height: 1rem; margin: 0; accent-color: var(--primary); }
+.check:has(input:disabled), .radio:has(input:disabled), .switch:has(input:disabled) { opacity: 0.5; cursor: not-allowed; }
 .switch { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; font-weight: 500; cursor: pointer; }
 .switch input { appearance: none; margin: 0; width: 2rem; height: 1.15rem; border-radius: 999px; background: var(--input); position: relative; cursor: pointer; transition: background 150ms; }
 .switch input::after { content: ""; position: absolute; top: 2px; left: 2px; width: calc(1.15rem - 4px); height: calc(1.15rem - 4px); border-radius: 50%; background: var(--background); transition: transform 150ms; }
@@ -74,18 +81,22 @@ body {
 .card { background: var(--card); color: var(--card-foreground); border: 1px solid var(--border); border-radius: calc(var(--radius) * 1.4); padding: 1.5rem; display: grid; gap: 1rem; }
 .card__title { font-weight: 600; margin: 0; }
 .card__desc { color: var(--muted-foreground); font-size: 0.875rem; margin: 0; }
+.card__footer { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 
 /* Badge, avatar, skeleton */
 .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 500; background: var(--primary); color: var(--primary-foreground); border: 1px solid transparent; }
 .badge--secondary { background: var(--secondary); color: var(--secondary-foreground); }
 .badge--outline { background: transparent; color: var(--foreground); border-color: var(--border); }
 .badge--destructive { background: var(--destructive); color: var(--destructive-foreground); }
-.avatar { width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: var(--muted); color: var(--muted-foreground); font-size: 0.75rem; }
+.avatar { width: 2rem; height: 2rem; flex-shrink: 0; overflow: hidden; border-radius: 50%; display: grid; place-items: center; background: var(--muted); color: var(--muted-foreground); font-size: 0.75rem; font-weight: 500; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar--sm { width: 1.5rem; height: 1.5rem; font-size: 0.625rem; }
+.avatar--lg { width: 3rem; height: 3rem; font-size: 1rem; }
 .skeleton { background: var(--accent); border-radius: calc(var(--radius) * 0.8); animation: pulse 2s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: 0.5; } }
 
 /* Dialog: native <dialog> gives focus trap and Escape for free */
-.dialog { border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); color: var(--foreground); padding: 1.5rem; width: min(28rem, calc(100% - 2rem)); }
+.dialog { margin: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); color: var(--foreground); padding: 1.5rem; width: min(28rem, calc(100% - 2rem)); }
 .dialog::backdrop { background: rgb(0 0 0 / 0.5); }
 .dialog__title { margin: 0 0 0.5rem; font-size: 1.125rem; font-weight: 600; }
 .dialog__desc { margin: 0 0 1.5rem; color: var(--muted-foreground); font-size: 0.875rem; }
@@ -99,6 +110,21 @@ body {
 
 /* Toast */
 .toast-region { position: fixed; bottom: 1.5rem; right: 1.5rem; display: grid; gap: 0.5rem; z-index: 50; }
-.toast { background: var(--popover); color: var(--popover-foreground); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.875rem 1rem; font-size: 0.875rem; box-shadow: 0 8px 24px rgb(0 0 0 / 0.12); animation: toast-in 200ms ease-out; }
+.toast { background: var(--popover); color: var(--popover-foreground); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.875rem 1rem; font-size: 0.875rem; box-shadow: 0 8px 24px rgb(0 0 0 / 0.12); animation: toast-in 200ms ease-out; display: flex; align-items: flex-start; gap: 0.75rem; width: min(22rem, calc(100vw - 3rem)); }
+.toast__body { flex: 1; display: grid; gap: 0.125rem; }
+.toast__title { font-weight: 600; }
+.toast__desc { color: var(--muted-foreground); }
+.toast--destructive { border-color: var(--destructive); }
+.toast--destructive .toast__title { color: var(--destructive); }
+@media (max-width: 40rem) { .toast-region { left: 1rem; right: 1rem; bottom: 1rem; } .toast { width: 100%; } }
+
+/* Alert: inline message, for example an error summary at the top of a form */
+.alert { border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; font-size: 0.875rem; background: var(--card); color: var(--card-foreground); display: grid; gap: 0.25rem; }
+.alert__title { font-weight: 600; margin: 0; }
+.alert--destructive { border-color: var(--destructive); }
+.alert--destructive .alert__title { color: var(--destructive); }
+.alert ul { margin: 0; padding-left: 1.25rem; list-style: disc; }
+.alert a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
 @keyframes toast-in { from { opacity: 0; transform: translateY(8px); } }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }

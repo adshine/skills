@@ -132,6 +132,18 @@ Icons are decoration. They help people scan a form but never replace the label.
 - Use the right `type` (`email`, `tel`, `url`, `search`, `number`) so phones show the right keyboard.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered fields, so the numbers always match the code.
+
+<Specs parts={[{ label: "Field", selector: "[data-slot=input]" }]}>
+  <Spec label="Empty"><Input className="w-56" placeholder="you@example.com" aria-label="Email" /></Spec>
+  <Spec label="Filled"><Input className="w-56" defaultValue="tolu@example.com" aria-label="Email" /></Spec>
+  <Spec label="Invalid"><Input className="w-56" defaultValue="tolu@" aria-invalid aria-label="Email" /></Spec>
+  <Spec label="Disabled"><Input className="w-56" disabled placeholder="you@example.com" aria-label="Email" /></Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

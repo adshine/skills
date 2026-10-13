@@ -179,6 +179,32 @@ Popovers open below the trigger by default and flip when there is not enough roo
 - Do not open a popover from inside another popover.
 
 </DocTab>
+<DocTab label="Specs">
+
+The popover is held open here so it can be measured live from the rendered component.
+
+<Specs minHeight={300} parts={[
+  { label: "Trigger", selector: "[data-slot=popover-trigger]" },
+  { label: "Panel", selector: "[data-slot=popover-content]", scope: "linked" },
+  { label: "Title", selector: "[data-slot=popover-title]", scope: "linked" },
+  { label: "Description", selector: "[data-slot=popover-description]", scope: "linked" },
+]}>
+  <Spec label="Open popover">
+    <Popover open>
+      <PopoverTrigger asChild>
+        <Button variant="outline">Deposit details</Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <PopoverHeader>
+          <PopoverTitle>Why a deposit?</PopoverTitle>
+          <PopoverDescription>It holds your slot. It comes off the final price.</PopoverDescription>
+        </PopoverHeader>
+      </PopoverContent>
+    </Popover>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

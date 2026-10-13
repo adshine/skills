@@ -1,0 +1,131 @@
+---
+title: Radio
+description: Radio buttons let people pick exactly one option from a short list where every choice stays visible.
+status: stable
+order: 32
+keywords: [radio button, radio group, option, choice, single select]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Native radios grouped with fieldset and legend.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Radio group"
+  align="start"
+  html={`
+    <fieldset class="fieldset">
+      <legend class="legend">How would you like to pay?</legend>
+      <label class="radio"><input type="radio" name="rd-pay" value="now" checked /> Pay in full now</label>
+      <label class="radio"><input type="radio" name="rd-pay" value="deposit" /> Pay a 50 USD deposit</label>
+      <label class="radio"><input type="radio" name="rd-pay" value="invoice" /> Send me an invoice</label>
+    </fieldset>
+  `}
+/>
+
+## When to use
+
+- To choose exactly one option from two to five choices.
+- When people benefit from seeing every option side by side before choosing.
+
+## When not to use
+
+- **For more than about five options.** Use a [select](/components/select).
+- **When people can choose several.** Use [checkboxes](/components/checkbox).
+- **For a single on or off setting.** Use a [switch](/components/switch) or a single checkbox.
+
+## Layout
+
+<Example
+  title="Inline group for short answers"
+  align="start"
+  html={`
+    <fieldset class="fieldset">
+      <legend class="legend">Have you worked with us before?</legend>
+      <div style="display:flex;flex-wrap:wrap;gap:1.5rem">
+        <label class="radio"><input type="radio" name="rd-before" value="yes" /> Yes</label>
+        <label class="radio"><input type="radio" name="rd-before" value="no" /> No</label>
+      </div>
+    </fieldset>
+  `}
+/>
+
+Stack options vertically by default. Put them in a row only for two or three very short answers, like Yes and No.
+
+<DoDont>
+  <Do
+    caption="A sensible default is chosen when one answer is clearly the most common."
+    html={`<fieldset class="fieldset"><legend class="legend">Delivery</legend><label class="radio"><input type="radio" name="dd-r1" checked /> Standard (free)</label><label class="radio"><input type="radio" name="dd-r1" /> Express (10 USD)</label></fieldset>`}
+  />
+  <Dont
+    caption="A lone radio button. Once chosen it cannot be cleared; use a checkbox."
+    html={`<label class="radio"><input type="radio" name="dd-r2" /> I agree to the terms</label>`}
+  />
+</DoDont>
+
+## Content
+
+- The legend asks the question: "How would you like to pay?"
+- Options are short, parallel and do not overlap, so only one can be true.
+- Order options logically: by price, by time, or from most to least common.
+- If none of the options may fit, add "Other" or "None of these".
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+All radios in a group share the same `name`; that is what makes them a group. The `fieldset` and `legend` give the group its question.
+
+```html
+<fieldset class="fieldset">
+  <legend class="legend">How would you like to pay?</legend>
+  <label class="radio"><input type="radio" name="pay" value="now" checked /> Pay in full now</label>
+  <label class="radio"><input type="radio" name="pay" value="deposit" /> Pay a deposit</label>
+</fieldset>
+```
+
+| Class | What it does |
+| --- | --- |
+| `radio` | Lines up a native radio with its label text and tints it with `--primary` |
+| `fieldset` | Removes the default fieldset border and stacks options with even spacing |
+| `legend` | The group question, styled like a field label |
+
+## Required group
+
+Add `required` to any one radio in the group. With `components.js` and `data-validate` on the form, an unanswered group blocks submit.
+
+## WordPress and Webflow
+
+- **WordPress:** add the class `radio` to each option label in your form plugin, or paste the markup into a Custom HTML block.
+- **Webflow:** Webflow's Radio Button element works; give its wrapper label the class `radio`. For the fieldset and legend, use an **Embed** element with the markup above.
+
+## Styling
+
+The radio is the browser's own control, tinted with `accent-color: var(--primary)`, so it keeps native size, focus and high contrast mode support.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus into the group, to the chosen option |
+| <kbd>Up</kbd> or <kbd>Left</kbd> | Chooses the previous option |
+| <kbd>Down</kbd> or <kbd>Right</kbd> | Chooses the next option |
+| <kbd>Space</kbd> | Chooses the focused option if none is chosen |
+
+## Checklist
+
+- Native `input type="radio"` with a shared `name`, so arrow keys move within the group and <kbd>Tab</kbd> leaves it.
+- The group is a `fieldset` with a `legend`, so screen readers announce the question and the position, like "2 of 3".
+- Each option's text is inside its `label` and is part of the click target.
+- Selected and unselected states differ by shape, not color alone.
+
+</DocTab>
+</DocTabs>

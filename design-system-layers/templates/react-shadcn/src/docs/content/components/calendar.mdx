@@ -205,6 +205,23 @@ For dates further away, set `captionLayout="dropdown"` so people can jump to a m
 - If some dates are not available, say why near the picker, like "Bookings open up to 60 days ahead".
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered calendar, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Calendar", selector: "[data-slot=calendar]" },
+  { label: "Month navigation button", selector: ".rdp-button_previous" },
+  { label: "Weekday heading", selector: ".rdp-weekday" },
+  { label: "Day", selector: "td:not(.rdp-outside):not(.rdp-today):not([data-selected=true]) > [data-day]" },
+  { label: "Selected day", selector: "[data-selected-single=true]" },
+]}>
+  <Spec label="Single date">
+    <Calendar mode="single" selected={new Date(2026, 9, 14)} defaultMonth={new Date(2026, 9, 1)} />
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

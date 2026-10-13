@@ -131,6 +131,35 @@ With `type="single"` only one section is open at a time; add `collapsible` so pe
 - Order sections by how often people need them.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered accordion, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Item", selector: "[data-slot=accordion-item]" },
+  { label: "Trigger", selector: "[data-slot=accordion-trigger]" },
+  { label: "Chevron", selector: "[data-slot=accordion-trigger] svg" },
+  { label: "Content", selector: "[data-slot=accordion-content] > div" },
+]}>
+  <Spec label="Open">
+    <Accordion type="single" collapsible defaultValue="a" className="w-80">
+      <AccordionItem value="a">
+        <AccordionTrigger>Can I change my booking?</AccordionTrigger>
+        <AccordionContent>Yes, up to 24 hours before your slot.</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  </Spec>
+  <Spec label="Closed">
+    <Accordion type="single" collapsible className="w-80">
+      <AccordionItem value="a">
+        <AccordionTrigger>Do I pay a deposit?</AccordionTrigger>
+        <AccordionContent>Some salons ask for one when you book.</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

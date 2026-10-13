@@ -115,6 +115,17 @@ If there is a limit, show it before people hit it and count what is left, not wh
 - Placeholders can suggest a starting point but must not hold required instructions.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered fields, so the numbers always match the code.
+
+<Specs parts={[{ label: "Field", selector: "[data-slot=textarea]" }]}>
+  <Spec label="Empty"><Textarea className="w-64" placeholder="Anything the stylist should know?" aria-label="Notes" /></Spec>
+  <Spec label="Invalid"><Textarea className="w-64" aria-invalid defaultValue="Please" aria-label="Notes" /></Spec>
+  <Spec label="Disabled"><Textarea className="w-64" disabled placeholder="Anything the stylist should know?" aria-label="Notes" /></Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

@@ -1,0 +1,172 @@
+---
+title: Card
+description: A card groups content and actions about one thing, like a service, a plan or a booking, so it reads as a single unit.
+status: stable
+order: 40
+keywords: [panel, tile, container, surface, box]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Adds card__footer for actions.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Card with actions"
+  stage="narrow"
+  html={`
+    <article class="card">
+      <div>
+        <h3 class="card__title">Website audit</h3>
+        <p class="card__desc">A full review of speed, search ranking and accessibility, with a fix list you can hand to any developer.</p>
+      </div>
+      <p class="t-title" style="margin:0">450 USD</p>
+      <div class="card__footer">
+        <button class="btn">Book an audit</button>
+        <a class="btn btn--ghost" href="#">What is included</a>
+      </div>
+    </article>
+  `}
+/>
+
+## Anatomy
+
+1. **Container:** `card`, with the card background, border and padding.
+2. **Title:** `card__title`. A heading, so it shows up in the page outline.
+3. **Description:** `card__desc`, quiet supporting text.
+4. **Content:** anything in between, such as a price, a list or an avatar row.
+5. **Footer:** `card__footer`, the actions, at most one primary.
+
+## When to use
+
+- To show several items of the same kind side by side, like services, plans or team members.
+- To group a summary and its actions, so it is clear which button belongs to which item.
+
+## When not to use
+
+- **For a single block of page content.** A heading and a section are enough; a border adds noise.
+- **For dense data with many rows.** Use a table so people can scan and compare.
+- **Nested inside another card.** Use spacing or a divider instead.
+
+## Variations
+
+<Example
+  title="Person card and loading card"
+  html={`
+    <div class="card" style="width:18rem">
+      <div style="display:flex;align-items:center;gap:0.75rem">
+        <span class="avatar avatar--lg">AL</span>
+        <div><p class="card__title">Ada Lovelace</p><p class="card__desc">Lead designer</p></div>
+        <span class="badge badge--secondary" style="margin-left:auto">New</span>
+      </div>
+      <p class="card__desc">Ten years building sites for clinics and schools.</p>
+    </div>
+    <div class="card" style="width:18rem" aria-busy="true" aria-label="Loading">
+      <div class="skeleton" style="height:1rem;width:60%"></div>
+      <div class="skeleton" style="height:0.875rem;width:90%"></div>
+      <div class="skeleton" style="height:2.25rem;width:8rem"></div>
+    </div>
+  `}
+/>
+
+<DoDont>
+  <Do
+    caption="One primary action per card, the same in every card of a set."
+    html={`<div class="card" style="width:100%"><p class="card__title">Starter plan</p><div class="card__footer"><button class="btn btn--sm">Choose plan</button><button class="btn btn--sm btn--ghost">Details</button></div></div>`}
+  />
+  <Dont
+    caption="Several primary buttons in one card. Nothing stands out and the card feels busy."
+    html={`<div class="card" style="width:100%"><p class="card__title">Starter plan</p><div class="card__footer"><button class="btn btn--sm">Choose</button><button class="btn btn--sm">Compare</button><button class="btn btn--sm">Share</button></div></div>`}
+  />
+</DoDont>
+
+## Content
+
+- Lead with the title people scan for: the service name, the plan name, the person.
+- Keep descriptions to one or two lines. Long text belongs on a detail page.
+- Cards in a set have the same structure in the same order, so people can compare them.
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+```html
+<article class="card">
+  <div>
+    <h3 class="card__title">Website audit</h3>
+    <p class="card__desc">Speed, search ranking and accessibility review.</p>
+  </div>
+  <div class="card__footer">
+    <button class="btn">Book an audit</button>
+  </div>
+</article>
+```
+
+| Class | What it does |
+| --- | --- |
+| `card` | Background, border, rounded corners, padding and even spacing between children |
+| `card__title` | Title text. Use a heading element at the right level for the page. |
+| `card__desc` | Quiet supporting text |
+| `card__footer` | Row of actions that wraps on small screens |
+
+## Title as a heading
+
+Use the heading level that fits the page: if the cards sit under an `h2` section title, use `h3` for card titles. The class sets the look; the element sets the outline that screen reader users navigate by.
+
+## Whole card as a link
+
+When the whole card goes to one place, make the title a link and do not wrap the card in an `a`. Wrapping makes screen readers read the entire card as one long link.
+
+```html
+<article class="card">
+  <h3 class="card__title"><a href="/services/audit">Website audit</a></h3>
+  <p class="card__desc">Speed, search ranking and accessibility review.</p>
+</article>
+```
+
+## Grid of cards
+
+```html
+<div style="display:grid;gap:1.5rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))">
+  <article class="card">...</article>
+  <article class="card">...</article>
+  <article class="card">...</article>
+</div>
+```
+
+## WordPress and Webflow
+
+- **WordPress:** add `card` to a Group block under **Advanced, Additional CSS class(es)**, then put a Heading with `card__title` and a Paragraph with `card__desc` inside it.
+- **Webflow:** give a Div Block the class `card`, and its heading and paragraph the classes `card__title` and `card__desc`. Collection lists of cards work the same way.
+
+## Styling
+
+Cards read `--card`, `--card-foreground`, `--border` and `--radius`. Spacing between children comes from the card's grid gap, so do not add margins to children.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Cards are not focusable themselves. Focus moves through the links and buttons inside them in reading order.
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves to the next link or button in the card |
+| <kbd>Enter</kbd> | Follows the focused link or activates the focused button |
+
+## Checklist
+
+- Titles are real headings at the right level, so the page outline makes sense.
+- Use `article` for cards that stand on their own, like a service or a post.
+- Button labels make sense out of context: "Book an audit", not "Book" repeated in every card.
+- Do not wrap a whole card in a link; link the title.
+- Loading cards set `aria-busy="true"` and have a label.
+- Card borders use `--border`; the content inside still meets text contrast in light and dark.
+
+</DocTab>
+</DocTabs>

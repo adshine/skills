@@ -1,0 +1,127 @@
+---
+title: Accessibility
+description: Every component and pattern meets WCAG 2.2 AA, and this page lists what that means in practice on any website.
+status: stable
+order: 50
+keywords: [a11y, wcag, contrast, focus, keyboard, screen reader, aria, target size, reduced motion, testing]
+---
+
+## Our commitment
+
+The system targets [WCAG 2.2](https://www.w3.org/TR/WCAG22/) level AA. Components ship meeting it; site builders keep it by using components as documented and by testing their own pages. Accessibility is part of "done", not a later pass.
+
+Accessible design helps more people than it seems: someone using a phone in bright sun, someone with a broken wrist using the keyboard, someone with slow internet, someone reading in a second language.
+
+## Contrast
+
+| What | Minimum ratio |
+| --- | --- |
+| Body text and labels | 4.5:1 |
+| Large text (24px and up, or 18.66px bold) | 3:1 |
+| Icons that carry meaning, field borders, focus rings | 3:1 against what is next to them |
+| Disabled controls and decorative elements | No minimum, but must not look active |
+
+Theme color pairs already meet these in light and dark mode. You keep them by always using a fill with its matching `-foreground` role. See [Color](/foundations/color).
+
+**Do not rely on color alone.** Errors have text, not just a red border. Links inside text are underlined.
+
+## Focus
+
+- Every interactive element shows a visible focus ring when reached by keyboard. `components.css` sets it once for the whole page with `:focus-visible`, using `--ring`. Never remove it with `outline: none`, and check that a site theme does not remove it either.
+- Focus is never hidden behind sticky headers or cookie banners.
+- When a dialog opens, focus moves into it, and when it closes focus returns to the button that opened it. The native `dialog` element does this for you.
+- After a form error, move focus to the error summary. `components.js` does this for forms with `data-validate`.
+
+<Example
+  title="Press Tab to see focus rings"
+  html={`
+    <button class="btn">Confirm booking</button>
+    <button class="btn btn--outline">Change time</button>
+    <input class="input" style="width:12rem" aria-label="Promo code" placeholder="Promo code" />
+  `}
+/>
+
+## Keyboard
+
+| Key | Expected result |
+| --- | --- |
+| <kbd>Tab</kbd> and <kbd>Shift</kbd> + <kbd>Tab</kbd> | Move between links, buttons and fields in reading order |
+| <kbd>Enter</kbd> | Follows a link, activates a button, submits a form |
+| <kbd>Space</kbd> | Activates a button, ticks a checkbox, flips a switch |
+| Arrow keys | Move between radio buttons and between tabs |
+| <kbd>Esc</kbd> | Closes a dialog |
+
+- Everything a mouse can do, the keyboard can do. No hover-only menus or actions.
+- Tab order follows the visual order. Do not use a positive `tabindex`.
+- Long pages with repeated navigation have a "Skip to content" link as the first focusable element.
+- Do not trap focus, except inside an open dialog.
+
+## Screen readers
+
+- **Use native elements first.** A `button` for actions, an `a` for navigation, a `label` for every field, a `dialog` for dialogs. They bring the right role and keyboard support with no script.
+- **Name every control.** Icon-only buttons need an `aria-label` that says what happens: "Delete booking", not "Trash".
+- **Connect help and errors to the field** with `aria-describedby`, and mark invalid fields with `aria-invalid="true"`.
+- **Announce changes people cannot see**, like "Saved", with a polite live region. Toasts from `components.js` do this.
+- **One `h1` per page**, and headings in order, so people can skim by heading.
+- Images that carry meaning have `alt` text; decorative images use `alt=""`.
+
+<DoDont>
+  <Do
+    caption="Visible label, connected help text, and a clear name for assistive technology."
+    html={`<div class="field" style="width:15rem"><label class="label" for="a11y-do-phone">Phone number</label><input class="input" id="a11y-do-phone" type="tel" autocomplete="tel" aria-describedby="a11y-do-phone-hint" /><p class="field-hint" id="a11y-do-phone-hint">We text you a reminder the day before.</p></div>`}
+  />
+  <Dont
+    caption="A placeholder used as the label disappears on typing and is not reliably announced."
+    html={`<input class="input" style="width:15rem" placeholder="Phone number" />`}
+  />
+</DoDont>
+
+## Target size
+
+- Pointer targets are at least 24 by 24px (WCAG 2.2, 2.5.8). Our own rule for touch screens is 44 by 44px. See [Spacing](/foundations/spacing).
+- Anything done by dragging also has a single-tap alternative (WCAG 2.2, 2.5.7).
+
+## Forms
+
+- Do not ask for the same information twice in one flow (WCAG 2.2, 3.3.7).
+- Allow password managers and pasting into every field. No puzzles or memory tests to sign in (WCAG 2.2, 3.3.8).
+- Use `autocomplete` values like `name`, `email` and `tel` so browsers can fill fields in.
+- Errors say what went wrong and how to fix it. See [Forms and validation](/patterns/forms-and-validation).
+
+## Motion
+
+`components.css` turns off its animations and transitions when the visitor has asked for reduced motion in their system settings:
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+```
+
+Keep that rule if you edit the file, and wrap any motion you add in your own CSS in the same media query. Nothing on the page flashes more than three times per second, and carousels or videos that move on their own have a pause button.
+
+## Page builders
+
+WordPress themes, plugins and Webflow templates can undo good markup. Watch for these:
+
+- **Missing labels.** Contact form plugins sometimes hide labels and use placeholders. Turn visible labels back on.
+- **Removed focus outlines.** Some themes set `outline: none` on everything. Search the theme CSS and remove it.
+- **Div buttons.** Webflow's Div Block with a click interaction is not a button. Use a Button or Link element, or paste the HTML from these docs into an Embed.
+- **Heading levels picked for looks.** Choose the level by structure, then add a `t-` class for the size.
+- **Popups without focus handling.** Use the native `dialog` pattern from [Dialog](/components/dialog) instead of a plugin modal where you can.
+
+## Testing checklist
+
+Run through this before publishing any new page.
+
+1. **Keyboard only.** Put the mouse away. Can you reach and use everything, in a sensible order, and always see where focus is?
+2. **Screen reader.** Use VoiceOver (macOS, iOS) or NVDA (Windows) on the main task. Is every control named, and are changes announced?
+3. **Zoom to 200%** and set the browser width to 320px. Does content reflow without sideways scrolling or overlap?
+4. **Contrast.** Check any new color combination in light and dark mode.
+5. **Automated scan.** Run axe or Lighthouse on the published page, not just the editor. Fix every error, but remember automated tools catch only about a third of issues.
+6. **Reduced motion.** Turn it on in system settings and repeat the main task.
+7. **Errors.** Submit forms empty and with bad data. Are errors clear, linked to fields, and announced?
+
+<Callout kind="tip" title="Found a problem in a component?">
+  Fix it once in components.css or components.js, not on each page. See [Contributing](/resources/contributing).
+</Callout>

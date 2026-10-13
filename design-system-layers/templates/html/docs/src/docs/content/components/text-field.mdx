@@ -1,0 +1,160 @@
+---
+title: Text field
+description: Text fields let people type a short piece of information, like a name, email address or search term.
+status: stable
+order: 20
+keywords: [input, text input, form field, email, search, label, helper text, error, field]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Error style driven by aria-invalid so the look and the screen reader message always match.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Text field with label and helper text"
+  stage="narrow"
+  html={`
+    <div class="field">
+      <label class="label" for="tf-email">Email address</label>
+      <input class="input" id="tf-email" type="email" autocomplete="email" placeholder="ada@example.com" aria-describedby="tf-email-hint" />
+      <p class="field-hint" id="tf-email-hint">We send your booking receipt here.</p>
+    </div>
+  `}
+/>
+
+## When to use
+
+- To collect a single line of free text: a name, an email address, a phone number, a search term.
+- When the answer is short and you cannot predict it well enough to offer a list.
+
+## When not to use
+
+- **For long answers.** Use a [textarea](/components/textarea) for comments, notes and descriptions.
+- **When there are a few known answers.** Use a [select](/components/select) or [radio buttons](/components/radio) so people choose instead of type.
+- **For yes or no questions.** Use a [checkbox](/components/checkbox) or a [switch](/components/switch).
+
+## States
+
+<Example
+  title="Default, optional, disabled and error"
+  stage="narrow"
+  html={`
+    <div class="field">
+      <label class="label" for="tf-name">Full name</label>
+      <input class="input" id="tf-name" autocomplete="name" value="Ada Lovelace" />
+    </div>
+    <div class="field">
+      <label class="label" for="tf-company">Company <span class="label__optional">(optional)</span></label>
+      <input class="input" id="tf-company" autocomplete="organization" />
+    </div>
+    <div class="field">
+      <label class="label" for="tf-ref">Booking reference</label>
+      <input class="input" id="tf-ref" value="BK-2048" disabled />
+    </div>
+    <div class="field">
+      <label class="label" for="tf-phone">Phone number</label>
+      <input class="input" id="tf-phone" type="tel" value="0803" aria-invalid="true" aria-describedby="tf-phone-error" />
+      <p class="field-error" id="tf-phone-error">Enter a full phone number, like 0803 123 4567</p>
+    </div>
+  `}
+/>
+
+The error style comes from `aria-invalid="true"`, so the visual state and what screen readers announce always match. Show errors after people leave the field or submit the form, not while they are still typing. See [Forms and validation](/patterns/forms-and-validation).
+
+<DoDont>
+  <Do
+    caption="A visible label above the field, with the format shown as an example."
+    html={`<div class="field" style="width:100%"><label class="label" for="dd-do-email">Email address</label><input class="input" id="dd-do-email" placeholder="ada@example.com" /></div>`}
+  />
+  <Dont
+    caption="Placeholder as the only label. It disappears as soon as people type."
+    html={`<div class="field" style="width:100%"><input class="input" aria-label="Email address" placeholder="Enter your email address" /></div>`}
+  />
+</DoDont>
+
+## Required and optional
+
+Mark the fields people can skip with "(optional)" instead of marking every required field with a star. Most fields in a good form are required, so the exception is the one worth labeling.
+
+## Content
+
+- **Labels** are short nouns in sentence case: "Email address", not "Please enter your email address".
+- **Placeholders** show an example of the format, not instructions. Anything people must know goes in helper text.
+- **Helper text** sits under the field and explains the format or why you need the information.
+- **Error messages** say what to do next: "Enter a date after today", not "Invalid input".
+- Use the right `type` (`email`, `tel`, `url`, `search`, `number`) so phones show the right keyboard.
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+```html
+<div class="field">
+  <label class="label" for="email">Email address</label>
+  <input class="input" id="email" name="email" type="email" autocomplete="email"
+         aria-describedby="email-hint" />
+  <p class="field-hint" id="email-hint">We send your booking receipt here.</p>
+</div>
+```
+
+| Class | What it does |
+| --- | --- |
+| `field` | Stacks label, control and messages with even spacing |
+| `label` | Field label. Always a real `label` with `for` matching the input `id`. |
+| `label__optional` | Quiet "(optional)" text inside the label |
+| `input` | The text field itself. Fills the width of its container. |
+| `field-hint` | Helper text under the field |
+| `field-error` | Error text under the field. Hidden while empty. |
+
+## Error state
+
+Set `aria-invalid="true"` on the input and point `aria-describedby` at the error text. Keep the hint id in the list too if the hint is still useful.
+
+```html
+<div class="field">
+  <label class="label" for="phone">Phone number</label>
+  <input class="input" id="phone" type="tel" aria-invalid="true"
+         aria-describedby="phone-error" />
+  <p class="field-error" id="phone-error">Enter a full phone number, like 0803 123 4567</p>
+</div>
+```
+
+With `components.js` on the page, add `data-validate` to the form and the script sets `aria-invalid`, writes the message and links it for you. Custom messages go in `data-error-required` and `data-error-format` on the input.
+
+## WordPress and Webflow
+
+- **WordPress:** form plugins render their own markup. Most let you add a CSS class to each field; add `input` to text fields, or paste a hand-written form into a Custom HTML block and post it to your form handler.
+- **Webflow:** on a Form Block, give each Text Field the class `input` and each Label the class `label`, and leave the Webflow styles for those classes empty.
+
+## Styling
+
+Text fields read `--input` for the border, `--ring` for focus, `--destructive` for errors and `--radius` for the corners. Width comes from the layout: the field fills its container, so set the width on the container.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus into the field |
+| <kbd>Shift</kbd> + <kbd>Tab</kbd> | Moves focus to the previous field |
+| <kbd>Enter</kbd> | Submits the form the field belongs to |
+
+## Checklist
+
+- Every field has a visible `label` tied to it with `for` and `id`. Fields without a visible label, like a site search, have an `aria-label`.
+- Helper and error text are linked with `aria-describedby`, so they are read along with the label.
+- Errors set `aria-invalid="true"` and are described in words, never by color alone.
+- The focus ring uses `--ring` and meets 3:1 contrast against the page; the border uses `--input`, which meets 3:1 too.
+- Placeholder text is not the only label and is not used for required information.
+- Use `autocomplete` values like `email`, `name` and `tel` so browsers and password managers can fill the field.
+- Disabled fields are skipped by the keyboard and not submitted. If people need to see the value, show it as text instead.
+
+</DocTab>
+</DocTabs>

@@ -164,6 +164,27 @@ Tooltips open above the trigger by default and flip if there is no room. Use `si
 - Never put the only copy of important information in a tooltip.
 
 </DocTab>
+<DocTab label="Specs">
+
+The tooltip is held open here so it can be measured live from the rendered component.
+
+<Specs minHeight={200} parts={[
+  { label: "Trigger", selector: "[data-slot=tooltip-trigger]" },
+  { label: "Tooltip", selector: "[data-slot=tooltip-content]", scope: "linked" },
+]}>
+  <Spec label="Icon button with tooltip">
+    <div className="pt-10">
+      <Tooltip open>
+        <TooltipTrigger asChild>
+          <Button variant="outline" size="icon" aria-label="Add item"><PlusIcon /></Button>
+        </TooltipTrigger>
+        <TooltipContent>Add item</TooltipContent>
+      </Tooltip>
+    </div>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

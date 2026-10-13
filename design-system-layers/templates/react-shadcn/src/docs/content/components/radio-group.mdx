@@ -169,6 +169,26 @@ Stack options vertically by default; it is easier to scan. A horizontal row work
 - Preselect a safe default when there is one. Leave all unselected only when choosing is the point, like a survey answer.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered group, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Group", selector: "[data-slot=radio-group]" },
+  { label: "Unselected item", selector: "[data-slot=radio-group-item][data-state=unchecked]" },
+  { label: "Selected item", selector: "[data-slot=radio-group-item][data-state=checked]" },
+  { label: "Selected dot", selector: "[data-slot=radio-group-indicator] svg" },
+  { label: "Label", selector: "[data-slot=label]" },
+]}>
+  <Spec label="Default">
+    <RadioGroup defaultValue="card" aria-label="Payment method">
+      <div className="flex items-center gap-2"><RadioGroupItem value="card" id="spec-rg-1" /><Label htmlFor="spec-rg-1">Card</Label></div>
+      <div className="flex items-center gap-2"><RadioGroupItem value="transfer" id="spec-rg-2" /><Label htmlFor="spec-rg-2">Bank transfer</Label></div>
+    </RadioGroup>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

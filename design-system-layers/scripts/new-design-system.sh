@@ -4,7 +4,8 @@
 #     [--name "Brand"] [--tagline "..."] [--font "DM Sans"] [--variant fidelity] [--radius 0.625rem]
 # react: Vite + React + Tailwind v4 + shadcn/ui (Radix) with a full documentation site
 #        (foundations, components, patterns, search) built from MDX in src/docs/content.
-# html:  plain HTML/CSS components with the same theme variable names.
+# html:  plain HTML/CSS components (plus components.js) with the same theme variable names,
+#        and a documentation site in docs/ (Vite + MDX) that renders those same files.
 set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATES="$HERE/../templates"
@@ -54,6 +55,23 @@ h = idx.read_text()
 h = re.sub(r'family=[^:&"]+', f'family={font_q}', h, count=1)
 if tpl == "html":
     h = h.replace('data-brand-name>Brand<', f'data-brand-name>{name}<').replace('data-brand-tagline>Design system starter<', f'data-brand-tagline>{tagline}<').replace('<title>Brand design system', f'<title>{name} design system')
+    # Documentation site (docs/): brand name, tagline, font and title.
+    import json
+    cfg = d / "docs/src/docs/site.config.ts"
+    if cfg.exists():
+        c = cfg.read_text()
+        c = c.replace('name: "Brand"', f'name: {json.dumps(name)}')
+        c = c.replace('tagline: "Design system"', f'tagline: {json.dumps(tagline)}')
+        c = c.replace("building Brand websites", f"building {name} websites")
+        cfg.write_text(c)
+        dh = d / "docs/index.html"
+        t = dh.read_text()
+        t = re.sub(r'family=[^:&"]+', f'family={font_q}', t, count=1)
+        t = re.sub(r'<title>[^<]*</title>', f'<title>{name} design system</title>', t)
+        dh.write_text(t)
+        dev = d / "docs/src/docs/content/getting-started/developers.mdx"
+        if dev.exists():
+            dev.write_text(re.sub(r'family=[^:&"]+', f'family={font_q}', dev.read_text(), count=1))
 else:
     h = re.sub(r'<title>[^<]*</title>', f'<title>{name} design system</title>', h)
     import json
@@ -95,5 +113,7 @@ if [ "$STACK" = "react" ]; then
   (cd "$DEST" && pnpm install >/dev/null 2>&1 || { echo "pnpm install failed; run it in $DEST" >&2; exit 1; })
   echo "Ready: cd $DEST && pnpm dev   (docs site; pnpm build writes a static site to dist/)"
 else
-  echo "Ready: open $DEST/index.html"
+  echo "Ready: open $DEST/index.html   (one-page preview of every component)"
+  echo "Docs:  cd $DEST/docs && pnpm install && pnpm dev   (documentation site)"
+  echo "       pnpm build writes static docs to $DEST/docs/dist, ready for any host"
 fi

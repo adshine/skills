@@ -1,0 +1,207 @@
+---
+title: Dialog
+description: A dialog interrupts the page to ask for a decision or a short piece of input before people carry on. It uses the native dialog element.
+status: stable
+order: 60
+keywords: [modal, confirm, popup, overlay, lightbox, alert dialog]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release on the native dialog element, with focus trap, Escape and focus return built in.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Confirm dialog"
+  html={`
+    <button class="btn btn--outline" data-dialog-open="archive-dialog">Archive project</button>
+    <dialog class="dialog" id="archive-dialog" aria-labelledby="archive-title" aria-describedby="archive-desc">
+      <h2 class="dialog__title" id="archive-title">Archive this project?</h2>
+      <p class="dialog__desc" id="archive-desc">The project moves to the archive. You can restore it at any time.</p>
+      <form method="dialog" class="dialog__footer">
+        <button class="btn btn--outline" value="cancel">Keep project</button>
+        <button class="btn" value="confirm" data-toast="Project archived">Archive project</button>
+      </form>
+    </dialog>
+  `}
+/>
+
+## When to use
+
+- To confirm an action that is hard to undo, like deleting something or cancelling a booking.
+- To collect a small amount of input (one to three fields) without leaving the page.
+- When people must deal with the question before they can carry on.
+
+## When not to use
+
+- **For long forms or multi-step flows.** Use a full page so people can scroll, save and come back.
+- **For information people did not ask for.** Newsletter popups and promotions on page load interrupt people and hurt trust. Use an inline section or a [toast](/components/toast).
+- **For quick, reversible actions.** Do the action and confirm with a toast instead of asking first.
+- **For images or video.** A lightbox has different needs; this dialog is for decisions.
+
+## Confirm dialogs
+
+A confirm dialog asks one question. The title is the question, the description says what happens, and the buttons repeat the verb. The safe choice comes first and closes the dialog.
+
+<DoDont>
+  <Do
+    caption="The title asks the question and the buttons repeat the verb."
+    html={`<div class="dialog" style="position: static; display: block; margin: 0"><p class="dialog__title">Cancel this booking?</p><p class="dialog__desc">Your slot on 14 Oct will be released.</p><div class="dialog__footer"><button class="btn btn--outline">Keep booking</button><button class="btn btn--destructive">Cancel booking</button></div></div>`}
+  />
+  <Dont
+    caption="Vague title and Yes or No buttons make people reread the question."
+    html={`<div class="dialog" style="position: static; display: block; margin: 0"><p class="dialog__title">Are you sure?</p><p class="dialog__desc">Please confirm.</p><div class="dialog__footer"><button class="btn btn--outline">No</button><button class="btn">Yes</button></div></div>`}
+  />
+</DoDont>
+
+## Destructive confirm
+
+When the action deletes something or cannot be undone, use the destructive button and say exactly what will be lost.
+
+<Example
+  title="Destructive confirm"
+  html={`
+    <button class="btn btn--destructive" data-dialog-open="delete-dialog">Delete account</button>
+    <dialog class="dialog" id="delete-dialog" aria-labelledby="delete-title" aria-describedby="delete-desc">
+      <h2 class="dialog__title" id="delete-title">Delete your account?</h2>
+      <p class="dialog__desc" id="delete-desc">Your bookings, invoices and messages will be removed. This cannot be undone.</p>
+      <form method="dialog" class="dialog__footer">
+        <button class="btn btn--outline" value="cancel" autofocus>Cancel</button>
+        <button class="btn btn--destructive" value="delete" data-toast="Account deleted">Delete account</button>
+      </form>
+    </dialog>
+  `}
+/>
+
+For destructive dialogs, put `autofocus` on the safe button so a stray Enter key does not delete anything.
+
+## Small form
+
+<Example
+  title="Dialog with a form, closes on backdrop click"
+  html={`
+    <button class="btn" data-dialog-open="callback-dialog">Request a call back</button>
+    <dialog class="dialog" id="callback-dialog" aria-labelledby="callback-title" data-light-dismiss>
+      <h2 class="dialog__title" id="callback-title">Request a call back</h2>
+      <p class="dialog__desc">We call within one working day.</p>
+      <form method="dialog" style="display: grid; gap: 1rem">
+        <div class="field">
+          <label class="label" for="callback-name">Name</label>
+          <input class="input" id="callback-name" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label class="label" for="callback-phone">Phone number</label>
+          <input class="input" id="callback-phone" type="tel" autocomplete="tel" />
+        </div>
+        <div class="dialog__footer">
+          <button class="btn btn--outline" value="cancel" formnovalidate>Cancel</button>
+          <button class="btn" value="send" data-toast="Request sent" data-toast-desc="We will call you within one working day.">Send request</button>
+        </div>
+      </form>
+    </dialog>
+  `}
+/>
+
+Add `data-light-dismiss` to let people close the dialog by clicking outside it. Use it for optional dialogs like this one, not for confirms, where an accidental click should not count as an answer.
+
+## Content
+
+- Title: a short question or task, like "Delete this file?" or "Request a call back".
+- Description: one or two sentences on what happens next.
+- Buttons: verbs that match the title. Never "OK" or "Yes".
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+```html
+<button class="btn btn--outline" data-dialog-open="archive-dialog">Archive project</button>
+
+<dialog class="dialog" id="archive-dialog"
+        aria-labelledby="archive-title" aria-describedby="archive-desc">
+  <h2 class="dialog__title" id="archive-title">Archive this project?</h2>
+  <p class="dialog__desc" id="archive-desc">You can restore it at any time.</p>
+  <form method="dialog" class="dialog__footer">
+    <button class="btn btn--outline" value="cancel">Keep project</button>
+    <button class="btn" value="confirm">Archive project</button>
+  </form>
+</dialog>
+```
+
+| Class or attribute | What it does |
+| --- | --- |
+| `dialog` | Styles the native `dialog`: surface, border, corners, backdrop |
+| `dialog__title`, `dialog__desc` | Title and description text |
+| `dialog__footer` | Right-aligned row of buttons |
+| `data-dialog-open="id"` | On any button: opens the dialog with that `id`. Needs `components.js`. |
+| `data-light-dismiss` | On the dialog: clicking the backdrop closes it. Needs `components.js`. |
+| `form method="dialog"` | Any button inside closes the dialog, with no script |
+
+## Reading the answer
+
+The button that closed the dialog sets `returnValue`, so your code can act on it:
+
+```js
+const dialog = document.getElementById("archive-dialog")
+dialog.addEventListener("close", () => {
+  if (dialog.returnValue === "confirm") {
+    // archive the project, then confirm with a toast
+    DS.toast("Project archived")
+  }
+})
+```
+
+## Without components.js
+
+The native element does the hard work. Opening it is one line:
+
+```html
+<button class="btn" onclick="document.getElementById('archive-dialog').showModal()">
+  Archive project
+</button>
+```
+
+Always use `showModal()`, not `show()` or the `open` attribute. Only `showModal()` adds the backdrop, keeps focus inside and closes on Escape.
+
+## WordPress and Webflow
+
+- **WordPress:** put the button and the `dialog` in one Custom HTML block. Popup plugins add their own markup and focus handling; prefer this native dialog for accessibility.
+- **Webflow:** paste the whole snippet into an Embed element. Webflow interactions cannot open a native dialog, so keep `components.js` in the footer code.
+
+## Styling
+
+Dialogs read `--background`, `--foreground`, `--border` and `--radius`. The backdrop is a translucent black so it works in both themes. Width is up to 28rem and shrinks on small screens.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> on the trigger | Opens the dialog and moves focus inside |
+| <kbd>Tab</kbd> and <kbd>Shift</kbd> + <kbd>Tab</kbd> | Move between controls inside the dialog; the page behind is inert |
+| <kbd>Escape</kbd> | Closes the dialog |
+
+## Focus management
+
+- When the dialog opens, focus moves to the first focusable element, or to the element with `autofocus`.
+- The page behind becomes inert, so focus and screen readers cannot reach it.
+- When the dialog closes, focus returns to the button that opened it. The native element does this; do not move focus elsewhere unless the trigger is gone (for example after deleting the item), in which case focus a sensible nearby heading or list.
+
+## Checklist
+
+- Uses the native `dialog` element opened with `showModal()`.
+- Has `aria-labelledby` pointing at the title, and `aria-describedby` pointing at the description for confirms.
+- Every dialog has a visible way to close it, such as a Cancel button, as well as Escape.
+- Destructive confirms put `autofocus` on the safe button.
+- Each dialog on a page has a unique `id`, and its title and description ids are unique too.
+- The dialog never opens on its own when the page loads.
+- Content fits on a 390 px wide screen without horizontal scrolling.
+
+</DocTab>
+</DocTabs>

@@ -1,0 +1,38 @@
+---
+title: Contributing
+description: How to propose a new component or pattern, and how it gets accepted.
+order: 2
+keywords: [proposal, process, governance, feedback]
+---
+
+## Before you propose
+
+Check whether an existing component or pattern already solves the problem. Most requests are a new use of something that exists.
+
+## Proposal checklist
+
+Open an issue or send a note with:
+
+1. **The layer.** Foundation, component or pattern.
+2. **The evidence.** Pages, research or support requests showing the need.
+3. **Why existing options fail.**
+
+## Acceptance gates
+
+| Stage | Gate | Question |
+| --- | --- | --- |
+| Propose | Useful | Is there evidence people need it? |
+| Propose | Unique | Is it different from what exists? |
+| Publish | Usable | Was it tested, including with a keyboard and a screen reader? |
+| Publish | Consistent | Does it follow the foundations and use role variables only? |
+| Publish | Versatile | Does it work in more than one place, and in WordPress and Webflow? |
+
+Anything used in only one place stays local to that page until a second page needs it.
+
+## Adding a component
+
+1. Add the classes to `components.css` under a comment with the component name. Read colors only from role variables like `var(--border)`; never write a hex value.
+2. If it needs behavior, add it to `components.js` behind a data attribute, and make sure the HTML still makes sense without the script.
+3. Add a page in `docs/src/docs/content/components/` with Usage, Code and Accessibility tabs. Copy an existing page as the starting point.
+4. Check it in light and dark mode, at 390 px wide, and with the keyboard only.
+5. Add a line to the [changelog](/resources/changelog).

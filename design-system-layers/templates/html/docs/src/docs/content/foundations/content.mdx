@@ -1,0 +1,129 @@
+---
+title: Content
+description: How the site talks, from button labels to error messages, so every page sounds like one helpful person.
+status: stable
+order: 60
+keywords: [voice, tone, copy, writing, ux writing, microcopy, labels, error messages, sentence case, dates, currency]
+---
+
+## Voice
+
+Voice is who we are, and it does not change. We sound like a capable person who wants you to get this done.
+
+| We are | So we | We are not |
+| --- | --- | --- |
+| Clear | Use plain, common words and short sentences | Vague, clever or full of jargon |
+| Helpful | Say what happens next and how to fix problems | Blaming or bossy |
+| Calm | Stay steady, even when something goes wrong | Alarmed, gushing or jokey |
+| Respectful | Value people's time and money | Pushy or salesy |
+
+## Tone
+
+Tone changes with the moment. Match how the person feels right now.
+
+| Moment | Tone | Example |
+| --- | --- | --- |
+| Routine task | Neutral and brief | "Message sent." |
+| Success after effort | Warm, not loud | "You're booked for Tuesday at 10:30." |
+| Error or failure | Calm and practical | "We couldn't send your message. Check your connection and try again." |
+| Destructive action | Serious and specific | "Cancel this booking? This can't be undone." |
+
+## Plain words
+
+| Instead of | Write |
+| --- | --- |
+| Utilize | Use |
+| Commence | Start |
+| Prior to | Before |
+| In order to | To |
+| Leverage our solutions | Use our services |
+| Submit an inquiry | Send a message |
+
+## Writing rules
+
+- **Sentence case everywhere**: headings, buttons, labels, menu items, tabs. Capitalize only the first word and proper names. "Contact us", not "Contact Us".
+- **Lead with what matters.** Put the key word or outcome first: "Refund sent to your card", not "Your card has had a refund sent to it".
+- **Use "you" for the person** and "we" for the company.
+- **Short sentences.** One idea each. Aim for under 20 words.
+- **No filler.** Cut "please", "simply", "just", "easily" and "successfully" unless removing them sounds rude.
+- **Contractions are fine.** "Can't", "you're" and "we'll" sound human.
+- **Avoid exclamation marks** except in rare, genuine celebrations.
+- **No dashes as punctuation.** Use a comma, colon, period or parentheses instead.
+
+## Button and link labels
+
+Start with a verb and say exactly what will happen. Keep labels to one to three words. The label should still make sense read on its own by a screen reader.
+
+<DoDont>
+  <Do
+    caption="Verb plus object; the outcome is clear before clicking."
+    html={`<button class="btn">Cancel booking</button><button class="btn btn--outline">Keep booking</button>`}
+  />
+  <Dont
+    caption="Yes and No force people to reread the question to know what each does."
+    html={`<button class="btn">Yes</button><button class="btn btn--outline">No</button>`}
+  />
+</DoDont>
+
+- Use the same verb through a flow: if the button says "Book a call", the confirmation says "Call booked".
+- Link text describes the destination: "Read the cancellation policy", never "Click here" or "Learn more" alone.
+
+## Error messages
+
+Use this formula: **what happened, then how to fix it.** Say it in the person's terms, without codes or blame.
+
+> [What went wrong, in plain words]. [What to do next].
+
+| Instead of | Write |
+| --- | --- |
+| "Invalid input." | "Enter an email address, like name@example.com." |
+| "Error 402." | "Your card was declined. Try another card or contact your bank." |
+| "Field is required." | "Enter your phone number so we can call you back." |
+| "Something went wrong." | "We couldn't send your message. Check your connection and try again." |
+
+<DoDont>
+  <Do
+    caption="Says what is wrong and exactly how to fix it, next to the field."
+    html={`<div class="field" style="width:16rem"><label class="label" for="ct-do-email">Email</label><input class="input" id="ct-do-email" value="sam@example" aria-invalid="true" aria-describedby="ct-do-email-error" /><p class="field-error" id="ct-do-email-error">Add the end of the address, like .com</p></div>`}
+  />
+  <Dont
+    caption="Blames the person and gives no way forward."
+    html={`<div class="field" style="width:16rem"><label class="label" for="ct-dont-email">Email</label><input class="input" id="ct-dont-email" value="sam@example" aria-invalid="true" /><p class="field-error" style="font-weight:700;text-transform:uppercase">Invalid entry!</p></div>`}
+  />
+</DoDont>
+
+## Confirmations
+
+Confirm what happened and anything people need to know next. Skip praise.
+
+<Example
+  title="Success message"
+  stage="narrow"
+  html={`
+    <div class="alert" role="status">
+      <p class="alert__title">Booking confirmed</p>
+      <p style="margin:0">Tuesday 14 October at 10:30. We've emailed the details to sam@example.com.</p>
+    </div>
+  `}
+/>
+
+## Numbers, dates and prices
+
+| Type | Write | Avoid |
+| --- | --- | --- |
+| Numbers | Numerals for everything: "3 guests", "12 results" | "three guests" in forms and lists |
+| Large numbers | Thousands separators: "12,480" | "12480" |
+| Prices | Two decimals only when there are cents: "48.50 USD"; no decimals for round amounts: "50 USD" | "48.5 USD" |
+| Dates | "Tue 14 Oct" or "14 October 2026" | "14/10/26" (it means different dates in different countries) |
+| Times | "10:30" or "10:30 am", with the time zone when people are in different places | "10:30:00" |
+| Ranges | "10:30 to 11:30", "Mon to Fri" | Dashes between values |
+| Percentages | "15%" | "15 percent" in tables |
+
+If the site serves several countries, format with the visitor's locale in code (`Intl.NumberFormat`, `Intl.DateTimeFormat`) rather than writing the string by hand.
+
+## Inclusive language
+
+- Write for everyone. Use "they" when gender is unknown.
+- Avoid idioms and cultural references that do not translate.
+- Do not use "easy" or "simple": if it is not easy for someone, it makes them feel worse.
+- Describe the action, not the device: "Select", not "Click" or "Tap".

@@ -1,0 +1,184 @@
+---
+title: Forms and validation
+description: How to lay out a form, mark fields, check answers and show errors so people finish on the first try.
+status: stable
+order: 10
+keywords: [form, validation, errors, error summary, required, optional, input, submit, inline validation, contact form, data-validate]
+---
+
+## Try it
+
+Submit the form empty, then fix the errors one by one. This is plain HTML: `components.js` adds the checks, the error messages and the summary.
+
+<Example
+  title="Booking request with validation"
+  stage="narrow"
+  html={`
+    <form class="card" data-validate data-success="Request sent. We'll reply within one working day." novalidate>
+      <div class="alert alert--destructive" data-error-summary tabindex="-1" hidden>
+        <p class="alert__title">Fix these to send your request</p>
+        <ul></ul>
+      </div>
+      <div class="field">
+        <label class="label" for="ff-name">Full name</label>
+        <input class="input" id="ff-name" name="name" autocomplete="name" required
+          data-error-required="Enter your full name." />
+        <p class="field-error" id="ff-name-error"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="ff-email">Email</label>
+        <input class="input" id="ff-email" name="email" type="email" autocomplete="email" required
+          aria-describedby="ff-email-hint"
+          data-error-required="Enter your email address so we can reply."
+          data-error-format="Enter an email address like name@example.com." />
+        <p class="field-hint" id="ff-email-hint">We only use this to reply to you.</p>
+        <p class="field-error" id="ff-email-error"></p>
+      </div>
+      <div class="field">
+        <label class="label" for="ff-phone">Phone <span class="label__optional">(optional)</span></label>
+        <input class="input" id="ff-phone" name="phone" type="tel" autocomplete="tel" />
+      </div>
+      <div class="field">
+        <label class="label" for="ff-service">Service</label>
+        <select class="select" id="ff-service" name="service" required data-error-required="Choose a service.">
+          <option value="">Choose a service</option>
+          <option>Consultation</option>
+          <option>Design review</option>
+          <option>Support plan</option>
+        </select>
+        <p class="field-error" id="ff-service-error"></p>
+      </div>
+      <fieldset class="fieldset">
+        <legend class="legend">How should we contact you?</legend>
+        <label class="radio"><input type="radio" name="contact" value="email" checked /> Email</label>
+        <label class="radio"><input type="radio" name="contact" value="phone" /> Phone call</label>
+      </fieldset>
+      <div class="field">
+        <label class="label" for="ff-notes">Anything we should know? <span class="label__optional">(optional)</span></label>
+        <textarea class="textarea" id="ff-notes" name="notes" maxlength="500"></textarea>
+      </div>
+      <div class="card__footer"><button class="btn" type="submit">Send request</button></div>
+    </form>
+  `}
+/>
+
+## Principles
+
+- **Ask for less.** Every field is a reason to give up. Remove anything you do not need right now.
+- **One column.** Fields stack in a single column so people read straight down. Put two fields side by side only when they belong together, like first and last name.
+- **Labels above fields, always visible.** Never use the placeholder as the label.
+- **Help before errors.** Explain format and purpose up front with a hint, so fewer people make the mistake.
+
+## Layout
+
+- Each field is a `div class="field"` holding the label, the control, an optional hint and the error. The `field` class sets 8px between them.
+- Put 16 to 24px between fields. A `card` or any grid with `gap: 1rem` does this.
+- Keep forms to about 36rem wide. Long fields do not make long answers.
+- Group related questions under a heading or in a `fieldset` with a `legend`, like the contact choice above.
+- The primary button sits at the end of the form, left-aligned with the fields, and says what happens: "Send request", not "Submit".
+
+## Required and optional
+
+Most fields in a short form are required, so mark the **optional** ones with `<span class="label__optional">(optional)</span>` inside the label. Add `required` to every field that must be filled. If most fields are optional, ask whether they belong in the form at all.
+
+<DoDont>
+  <Do
+    caption="Only the exception is marked, in words."
+    html={`<div class="field" style="width:15rem"><label class="label" for="ro-do-phone">Phone <span class="label__optional">(optional)</span></label><input class="input" id="ro-do-phone" type="tel" /></div>`}
+  />
+  <Dont
+    caption="A lone asterisk is easy to miss and means nothing to many people."
+    html={`<div class="field" style="width:15rem"><label class="label" for="ro-dont-phone">Phone*</label><input class="input" id="ro-dont-phone" type="tel" /></div>`}
+  />
+</DoDont>
+
+## When to validate
+
+| Moment | What happens |
+| --- | --- |
+| While typing | Nothing. Do not show errors for half-typed answers. |
+| On submit | Every field is checked. Errors appear under each field, the summary lists them all, and focus moves to the summary. |
+| Leaving a field that has an error | That field is checked again, so the error clears as soon as it is fixed. |
+| After a successful submit | A confirmation says what happens next. |
+
+`components.js` follows this timing for any `form` with `data-validate`. It checks fields with the classes `input`, `select` and `textarea` using the browser's own rules: `required`, `type="email"`, `minlength`, `maxlength` and `pattern`.
+
+## Error messages
+
+Say what is wrong and how to fix it, in the person's words. See [Content](/foundations/content) for the formula.
+
+| Situation | Message |
+| --- | --- |
+| Empty required field | "Enter your full name." |
+| Wrong format | "Enter an email address like name@example.com." |
+| Nothing chosen | "Choose a service." |
+| Too long | "Keep this under 500 characters." |
+
+Set messages on the field itself so they read well, instead of the browser's generic text:
+
+| Attribute | Used when |
+| --- | --- |
+| `data-error-required` | The field is empty |
+| `data-error-format` | The field has a value but it is the wrong format or length |
+| `data-error` | Any error, if you only want one message |
+
+## Error summary
+
+When a form has more than two fields, show a summary at the top on submit. It lists every error as a link that moves focus to the field, so screen reader and keyboard users hear everything at once and can jump straight to each problem.
+
+```html
+<div class="alert alert--destructive" data-error-summary tabindex="-1" hidden>
+  <p class="alert__title">Fix these to send your request</p>
+  <ul></ul>
+</div>
+```
+
+The script fills the list and shows the summary. `tabindex="-1"` lets it receive focus without being in the tab order. Without a summary, focus moves to the first field with an error instead.
+
+## Code
+
+The full markup for one field, with hint and error connected:
+
+```html
+<form data-validate novalidate action="/contact" method="post">
+  <div class="field">
+    <label class="label" for="email">Email</label>
+    <input class="input" id="email" name="email" type="email" autocomplete="email" required
+      aria-describedby="email-hint"
+      data-error-required="Enter your email address so we can reply."
+      data-error-format="Enter an email address like name@example.com." />
+    <p class="field-hint" id="email-hint">We only use this to reply to you.</p>
+    <p class="field-error" id="email-error"></p>
+  </div>
+  <button class="btn" type="submit">Send message</button>
+</form>
+```
+
+- Every field needs an `id`. The error element must be `id` plus `-error`; the script creates it if it is missing and adds it to `aria-describedby`.
+- `novalidate` turns off the browser's own popups so the inline errors show instead. The script adds it for you, but writing it keeps the behavior clear.
+- When the form is valid and has `data-success`, the script stops the submit and shows that message as a toast. That is for demos and forms sent with your own script. For a real form that posts to a server, leave `data-success` off and the form submits normally once valid.
+- Radio buttons and checkboxes are not checked by the script. Preselect a sensible radio option, as above, and make checkboxes optional choices rather than required ones.
+
+## WordPress and Webflow
+
+- **WordPress:** form plugins (Contact Form 7, Gravity Forms, WPForms) render their own markup and validation. Either add the classes `input`, `label` and `btn` through the plugin's CSS class settings and keep its validation, or paste this HTML into a Custom HTML block and point `action` at the plugin's or your own handler.
+- **Webflow:** native form elements post to Webflow forms. Give the elements the classes above and add `data-validate` as a custom attribute on the Form Block; Webflow's own success and error messages still show after submit.
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves to the next field, then the submit button |
+| <kbd>Enter</kbd> | Submits the form from a text field |
+| Arrow keys | Move between radio buttons in a group |
+| <kbd>Enter</kbd> on a summary link | Moves focus to that field |
+
+## Accessibility
+
+- Every control has a visible `label` connected with `for` and `id`.
+- Hints and errors are connected with `aria-describedby`, so they are read when the field gets focus.
+- Invalid fields get `aria-invalid="true"`, which screen readers announce and which turns the border to `--destructive`.
+- Errors are written in text, not shown by color alone.
+- On a failed submit, focus moves to the summary so the problem is announced.
+- Use `autocomplete` values (`name`, `email`, `tel`, `street-address`) so browsers and password managers can fill fields.
+- Do not disable the submit button until the form is valid. People cannot find out what is wrong from a button that does nothing.

@@ -1,0 +1,178 @@
+---
+title: Toast
+description: A toast is a short message that confirms something just happened, like "Saved" or "Message sent", then goes away on its own.
+status: stable
+order: 80
+keywords: [notification, snackbar, message, feedback, alert, confirmation]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release with title, description and destructive variant, shown with DS.toast or data-toast.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Show a toast"
+  html={`
+    <button class="btn" data-toast="Message sent" data-toast-desc="We reply within one working day.">Send message</button>
+    <button class="btn btn--outline" data-toast="Couldn't save changes" data-toast-desc="Check your connection and try again." data-toast-variant="destructive">Show error toast</button>
+  `}
+/>
+
+## When to use
+
+- To confirm an action people just took, when the page itself does not show the change: "Message sent", "Link copied".
+- For low-stakes errors from a background task, alongside a way to retry.
+
+## When not to use
+
+- **For form errors.** Show them next to the field, where people are looking. See [Forms and validation](/patterns/forms-and-validation).
+- **For anything people must act on or remember.** Toasts disappear. Use an inline alert or a [dialog](/components/dialog).
+- **For marketing or announcements.** Unasked-for messages train people to ignore toasts.
+- **When the result is already visible.** If the new item appears on the page, a toast adds noise.
+
+## Toast or inline message
+
+| Situation | Use |
+| --- | --- |
+| Action succeeded, nothing visible changed | Toast |
+| Form field is wrong | Inline error under the field |
+| Whole form failed to send | Alert at the top of the form |
+| Something needs a decision | Dialog |
+
+## Types
+
+<Example
+  title="Static preview"
+  align="start"
+  html={`
+    <div style="display: grid; gap: 0.5rem">
+      <div class="toast" style="animation: none">
+        <div class="toast__body">
+          <div class="toast__title">Booking confirmed</div>
+          <div class="toast__desc">We sent the details to your email.</div>
+        </div>
+      </div>
+      <div class="toast toast--destructive" style="animation: none">
+        <div class="toast__body">
+          <div class="toast__title">Payment failed</div>
+          <div class="toast__desc">Your card was declined. Try another card.</div>
+        </div>
+      </div>
+    </div>
+  `}
+/>
+
+<DoDont>
+  <Do
+    caption="Says what happened in a few words."
+    html={`<div class="toast" style="animation: none"><div class="toast__body"><div class="toast__title">Link copied</div></div></div>`}
+  />
+  <Dont
+    caption="Vague and long. People only glance at toasts."
+    html={`<div class="toast" style="animation: none"><div class="toast__body"><div class="toast__title">Success!</div><div class="toast__desc">Your request has been processed successfully and everything is now complete.</div></div></div>`}
+  />
+</DoDont>
+
+## Content
+
+- Title: what happened, in past tense, two to four words. "Changes saved", not "Success!".
+- Description: optional, one short sentence on what happens next.
+- Error toasts say what went wrong and what to do.
+
+</DocTab>
+<DocTab label="Code">
+
+## From a button
+
+Add `data-toast` to any button. `components.js` shows the toast when it is clicked:
+
+```html
+<button class="btn" data-toast="Message sent"
+        data-toast-desc="We reply within one working day.">Send message</button>
+```
+
+| Attribute | What it does |
+| --- | --- |
+| `data-toast` | The title. Required. |
+| `data-toast-desc` | Optional description under the title |
+| `data-toast-variant="destructive"` | Error styling |
+
+## From your own code
+
+```js
+DS.toast("Booking confirmed", {
+  description: "We sent the details to your email.",
+  variant: "destructive", // optional
+  duration: 6000,         // optional, in milliseconds, default 4000
+})
+```
+
+`DS.toast` returns the toast element, so you can remove it early with `.remove()`.
+
+## The region
+
+Toasts go into one `toast-region` container at the bottom right (full width on phones). The script creates it if it is missing, but add it yourself near the end of `body` so screen readers are already listening when the first toast arrives:
+
+```html
+<div class="toast-region" role="status" aria-live="polite"></div>
+```
+
+## Markup
+
+If you build toasts without the script, use this structure:
+
+```html
+<div class="toast">
+  <div class="toast__body">
+    <div class="toast__title">Booking confirmed</div>
+    <div class="toast__desc">We sent the details to your email.</div>
+  </div>
+</div>
+```
+
+| Class | What it does |
+| --- | --- |
+| `toast-region` | Fixed stack at the bottom of the screen |
+| `toast` | One message, with a short slide-in |
+| `toast--destructive` | Error styling |
+| `toast__body`, `toast__title`, `toast__desc` | Text parts |
+
+## WordPress and Webflow
+
+- **WordPress:** after a form plugin submits, call `DS.toast()` from its success hook, or put `data-toast` on a button in a Custom HTML block.
+- **Webflow:** Webflow forms show their own success message. For other actions, add `data-toast` as a custom attribute on a Button in the Designer.
+
+## Styling
+
+Toasts read `--popover`, `--popover-foreground`, `--border`, `--muted-foreground` and `--destructive`. The slide-in turns off when people ask for reduced motion.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Toasts do not take focus, so they never interrupt typing.
+
+| Key | Action |
+| --- | --- |
+| None | Toasts are announced, not focused |
+
+## Focus management
+
+Focus stays where it was. Never put the only way to do something, like Undo, in a toast that disappears; offer it elsewhere on the page too.
+
+## Checklist
+
+- The region has `role="status"` and `aria-live="polite"`, so screen readers announce new toasts without cutting off what they are reading.
+- The region is in the page from the start. If `components.js` has to create it, some screen readers miss the first toast.
+- Toasts stay at least four seconds; use a longer `duration` for longer text.
+- Error toasts are shown by more than color: the title says what went wrong.
+- Text meets 4.5:1 contrast on `--popover` in light and dark.
+- The slide-in animation stops when people ask for reduced motion.
+
+</DocTab>
+</DocTabs>

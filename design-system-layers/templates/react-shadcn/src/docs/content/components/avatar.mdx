@@ -138,6 +138,21 @@ Show three to five avatars, then a count for the rest. Make the group open the f
 - Use square, centered photos; the avatar crops them into a circle.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered avatars, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Avatar", selector: "[data-slot=avatar]" },
+  { label: "Fallback initials", selector: "[data-slot=avatar-fallback]" },
+  { label: "Status badge", selector: "[data-slot=avatar-badge]" },
+]}>
+  <Spec label="Small"><Avatar size="sm"><AvatarFallback>AO</AvatarFallback><AvatarBadge /></Avatar></Spec>
+  <Spec label="Default"><Avatar><AvatarFallback>AO</AvatarFallback><AvatarBadge /></Avatar></Spec>
+  <Spec label="Large"><Avatar size="lg"><AvatarFallback>AO</AvatarFallback><AvatarBadge /></Avatar></Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

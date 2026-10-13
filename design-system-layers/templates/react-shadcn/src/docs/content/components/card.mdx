@@ -188,6 +188,31 @@ Adding `border-b` to the header or `border-t` to the footer draws a divider and 
 - Put at most one primary [button](/components/button) on a card. In a grid of cards, consider making the whole card a link instead.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered card, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Card", selector: "[data-slot=card]" },
+  { label: "Header", selector: "[data-slot=card-header]" },
+  { label: "Title", selector: "[data-slot=card-title]" },
+  { label: "Description", selector: "[data-slot=card-description]" },
+  { label: "Content", selector: "[data-slot=card-content]" },
+  { label: "Footer", selector: "[data-slot=card-footer]" },
+]}>
+  <Spec label="Default">
+    <Card className="w-80">
+      <CardHeader>
+        <CardTitle>Silk press</CardTitle>
+        <CardDescription>90 minutes with Tolu</CardDescription>
+      </CardHeader>
+      <CardContent>Wash, blow dry and press. Bring your own products if you like.</CardContent>
+      <CardFooter><Button>Book now</Button></CardFooter>
+    </Card>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

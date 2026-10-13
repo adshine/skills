@@ -1,0 +1,153 @@
+---
+title: Button
+description: Buttons start an action, like saving, booking or confirming. Use one primary button per view for the main thing people came to do.
+status: stable
+order: 10
+keywords: [cta, action, submit, link button, btn]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Destructive variant uses a paired foreground role instead of white.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Variants"
+  html={`
+    <button class="btn">Primary</button>
+    <button class="btn btn--secondary">Secondary</button>
+    <button class="btn btn--outline">Outline</button>
+    <button class="btn btn--ghost">Ghost</button>
+    <button class="btn btn--destructive">Delete</button>
+    <button class="btn btn--link">Link</button>
+  `}
+/>
+
+## When to use
+
+- To trigger an action on the current page: submit a form, confirm a choice, open a dialog.
+- For the main call to action in a section, like "Book a call", when it starts something rather than just moving to another page.
+
+## When not to use
+
+- **To go to another page.** Use a link. Links say "this takes you somewhere"; buttons say "this does something". If a link must look like a button, see [As a link](?tab=code).
+- **For several equal options.** Use [radio buttons](/components/radio) or [tabs](/components/tabs) so people can see all choices at once.
+
+## Choosing a variant
+
+| Variant | Class | Use for | Limit |
+| --- | --- | --- | --- |
+| Primary | `btn` | The one main action in a view | One per view or card |
+| Secondary | `btn btn--secondary` | Supporting actions next to a primary | Any |
+| Outline | `btn btn--outline` | Neutral actions that should stay quiet | Any |
+| Ghost | `btn btn--ghost` | Toolbars, menus and dense areas | Needs a clear label |
+| Destructive | `btn btn--destructive` | Actions that delete or cancel something | Confirm if it cannot be undone |
+| Link | `btn btn--link` | Low-emphasis actions inside text | Not for navigation |
+
+<DoDont>
+  <Do
+    caption="One primary action, with supporting actions in quieter styles."
+    html={`<button class="btn">Confirm booking</button><button class="btn btn--outline">Change time</button>`}
+  />
+  <Dont
+    caption="Several primary buttons compete, so nothing reads as the main action."
+    html={`<button class="btn">Confirm</button><button class="btn">Change</button><button class="btn">Save</button>`}
+  />
+</DoDont>
+
+## Labels
+
+Start with a verb and say what will happen: "Book a call", "Pay deposit", "Cancel booking". Avoid "OK", "Submit" and "Click here". Keep labels to one to three words, in sentence case.
+
+<DoDont>
+  <Do caption="Specific verb, so people know what happens next." html={`<button class="btn">Pay 50 USD deposit</button>`} />
+  <Dont caption="Vague label that hides the consequence." html={`<button class="btn">Submit</button>`} />
+</DoDont>
+
+## Sizes and states
+
+<Example
+  title="Sizes, icon and disabled"
+  html={`
+    <button class="btn btn--sm">Small</button>
+    <button class="btn">Default</button>
+    <button class="btn btn--lg">Large</button>
+    <button class="btn btn--outline btn--icon" aria-label="Delete booking">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+    </button>
+    <button class="btn" disabled>Saving</button>
+  `}
+/>
+
+Use the default size almost everywhere. Large suits a hero section; small suits tables and dense toolbars. Icon-only buttons need an `aria-label` that says what happens.
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+```html
+<button type="button" class="btn">Book a call</button>
+```
+
+Add one variant class and, if needed, one size class:
+
+| Class | What it changes |
+| --- | --- |
+| `btn` | Base button, primary style. Always required. |
+| `btn--secondary`, `btn--outline`, `btn--ghost`, `btn--destructive`, `btn--link` | Visual weight |
+| `btn--sm`, `btn--lg` | Height and padding |
+| `btn--icon` | Square button for a single icon. Needs `aria-label`. |
+
+Set `type="button"` on buttons inside a form that should not submit it. A button with no type inside a form submits the form.
+
+## As a link
+
+When something navigates but must look like a button, use a real link with the same classes. It keeps link behavior: open in new tab, copy address, and the right screen reader announcement.
+
+```html
+<a class="btn btn--outline" href="/pricing">See pricing</a>
+```
+
+## Loading state
+
+Disable the button and change the label while work is in progress, so people do not click twice:
+
+```html
+<button class="btn" disabled>Saving</button>
+```
+
+## WordPress and Webflow
+
+- **WordPress:** on a Button block, open **Advanced** and add `btn btn--outline` to **Additional CSS class(es)**, or paste the markup into a Custom HTML block.
+- **Webflow:** give a Button or Link Block the classes `btn` and `btn--outline` and leave their Webflow styles empty.
+
+## Styling
+
+Buttons read only role variables: `--primary` and `--primary-foreground` for the primary variant, `--destructive` and `--destructive-foreground` for destructive, and `--radius` for the corners. To restyle every button, change those roles or `brand.css`. Never add raw colors to a single button; add a variant to `components.css` instead.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the button |
+| <kbd>Enter</kbd> or <kbd>Space</kbd> | Activates the button |
+
+## Checklist
+
+- Uses a native `button` element, so it is announced as a button and works with the keyboard with no script.
+- The focus ring uses `--ring` and meets 3:1 contrast against the page.
+- Text on every variant meets 4.5:1 contrast in light and dark. See [Color](/foundations/color).
+- Icon-only buttons have an `aria-label` that says what happens, like "Delete booking", and the icon has `aria-hidden="true"`.
+- Disabled buttons cannot be focused, so people using a keyboard may not find them. If people need to know why something is unavailable, say so in nearby text.
+- Targets are at least 44 by 44 px on touch screens. The default button is 36 px tall, so leave space around it on mobile or use `btn--lg`.
+- Never put a `div` or `span` with a click handler in place of a button.
+
+</DocTab>
+</DocTabs>

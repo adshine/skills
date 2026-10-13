@@ -102,8 +102,8 @@
 
     <section id="overlays"><h2>Overlays and feedback</h2>
       <div class="row">
-        <button class="btn btn--outline" id="open-dialog">Open dialog</button>
-        <button class="btn" id="show-toast">Show toast</button>
+        <button class="btn btn--outline" data-dialog-open="dialog">Open dialog</button>
+        <button class="btn" data-toast="Saved." data-toast-desc="We'll remind you a day before.">Show toast</button>
       </div>
       <div class="row"><span class="badge">Default</span><span class="badge badge--secondary">Secondary</span><span class="badge badge--outline">Outline</span><span class="badge badge--destructive">Error</span></div>
       <dialog class="dialog" id="dialog" aria-labelledby="dlg-title">
@@ -114,8 +114,8 @@
     </section>
 
     <section id="navigation"><h2>Tabs</h2>
-      <div>
-        <div class="tabs__list" role="tablist">
+      <div class="tabs">
+        <div class="tabs__list" role="tablist" aria-label="Bookings">
           <button class="tabs__tab" role="tab" aria-selected="true" aria-controls="p1" id="t1">Upcoming</button>
           <button class="tabs__tab" role="tab" aria-selected="false" aria-controls="p2" id="t2" tabindex="-1">Past</button>
         </div>
@@ -124,30 +124,11 @@
       </div>
     </section>
   </main>
-  <div class="toast-region" aria-live="polite"></div>
+  <div class="toast-region" role="status" aria-live="polite"></div>
 
+  <script src="components.js" defer></script>
   <script>
-    const root = document.documentElement;
-    document.getElementById('theme-toggle').onclick = () => root.classList.toggle('dark');
-    document.getElementById('open-dialog').onclick = () => document.getElementById('dialog').showModal();
-    document.getElementById('show-toast').onclick = () => {
-      const t = Object.assign(document.createElement('div'), { className: 'toast', textContent: "Saved. We'll remind you a day before." });
-      document.querySelector('.toast-region').append(t);
-      setTimeout(() => t.remove(), 3500);
-    };
-    const tabs = [...document.querySelectorAll('[role="tab"]')];
-    const select = (tab) => tabs.forEach((t) => {
-      const on = t === tab;
-      t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-    });
-    tabs.forEach((t, i) => {
-      t.onclick = () => select(t);
-      t.onkeydown = (e) => {
-        const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-        if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; select(n); n.focus(); }
-      };
-    });
+    document.getElementById('theme-toggle').onclick = () => document.documentElement.classList.toggle('dark');
   </script>
 </body>
 </html>

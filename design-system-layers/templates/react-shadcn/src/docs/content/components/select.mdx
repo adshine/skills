@@ -207,6 +207,37 @@ Use the `sm` size in toolbars and filter bars. Pair an error state with a visibl
 - Never put a "Select..." option inside the list as a real value.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered select. Open one to measure its list; the table keeps the last reading after it closes.
+
+<Specs parts={[
+  { label: "Trigger", selector: "[data-slot=select-trigger]" },
+  { label: "Chevron", selector: "[data-slot=select-trigger] > svg" },
+  { label: "List", selector: "[data-slot=select-content]", scope: "linked" },
+  { label: "Option", selector: "[data-slot=select-item]", scope: "linked" },
+]}>
+  <Spec label="Default">
+    <Select>
+      <SelectTrigger className="w-48" aria-label="Service"><SelectValue placeholder="Pick a service" /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="braids">Braids</SelectItem>
+        <SelectItem value="press">Silk press</SelectItem>
+      </SelectContent>
+    </Select>
+  </Spec>
+  <Spec label="Small">
+    <Select>
+      <SelectTrigger size="sm" className="w-48" aria-label="Service"><SelectValue placeholder="Pick a service" /></SelectTrigger>
+      <SelectContent>
+        <SelectItem value="braids">Braids</SelectItem>
+        <SelectItem value="press">Silk press</SelectItem>
+      </SelectContent>
+    </Select>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

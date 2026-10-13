@@ -1,0 +1,157 @@
+---
+title: Select
+description: A select lets people choose one option from a list that is too long to show all at once.
+status: stable
+order: 22
+keywords: [dropdown, picker, options, choose, native select, menu]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Uses the native select element for full keyboard, touch and screen reader support.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Select with label"
+  stage="narrow"
+  html={`
+    <div class="field">
+      <label class="label" for="sel-service">Service</label>
+      <select class="select" id="sel-service" name="service">
+        <option value="">Choose a service</option>
+        <option>Website audit</option>
+        <option>Brand refresh</option>
+        <option>Ongoing support</option>
+      </select>
+    </div>
+  `}
+/>
+
+## When to use
+
+- To choose one option from about six to fifteen known choices, like a service, a time slot or a department.
+- When space is tight and the choices do not need comparing side by side.
+
+## When not to use
+
+- **For two to five options.** Use [radio buttons](/components/radio) so every choice is visible without opening anything.
+- **For long lists people search through,** like countries. A text field with suggestions works better than scrolling.
+- **For actions.** A select changes a value. To run a command, use a [button](/components/button).
+- **For several choices at once.** Use [checkboxes](/components/checkbox). Multi-select lists are hard to use on every device.
+
+## Groups and states
+
+<Example
+  title="Grouped options, disabled and error"
+  stage="narrow"
+  html={`
+    <div class="field">
+      <label class="label" for="sel-time">Time slot</label>
+      <select class="select" id="sel-time">
+        <optgroup label="Morning">
+          <option>9:00</option>
+          <option>10:30</option>
+        </optgroup>
+        <optgroup label="Afternoon">
+          <option>13:00</option>
+          <option disabled>15:30 (full)</option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="field">
+      <label class="label" for="sel-region">Region</label>
+      <select class="select" id="sel-region" disabled><option>Lagos</option></select>
+    </div>
+    <div class="field">
+      <label class="label" for="sel-budget">Budget</label>
+      <select class="select" id="sel-budget" aria-invalid="true" aria-describedby="sel-budget-error">
+        <option value="">Choose a budget</option>
+        <option>Under 1,000 USD</option>
+        <option>1,000 to 5,000 USD</option>
+      </select>
+      <p class="field-error" id="sel-budget-error">Choose a budget so we can suggest the right plan</p>
+    </div>
+  `}
+/>
+
+Use `optgroup` when the list has natural groups. Show unavailable options as disabled with the reason in the label, rather than hiding them, so people know they exist.
+
+<DoDont>
+  <Do
+    caption="A prompt option with an empty value, so people make a real choice."
+    html={`<select class="select" aria-label="Service"><option value="">Choose a service</option><option>Website audit</option></select>`}
+  />
+  <Dont
+    caption="A real option chosen by default. People skip past it and send the wrong answer."
+    html={`<select class="select" aria-label="Service"><option>Website audit</option><option>Brand refresh</option></select>`}
+  />
+</DoDont>
+
+## Content
+
+- Order options in a way people expect: by time, by size, or alphabetically. Put the most common choice first only if the list is short.
+- Keep option labels short and parallel: "Small", "Medium", "Large", not "Small size", "Medium", "Big one".
+- The prompt option says what to do: "Choose a service".
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+```html
+<div class="field">
+  <label class="label" for="service">Service</label>
+  <select class="select" id="service" name="service" required>
+    <option value="">Choose a service</option>
+    <option value="audit">Website audit</option>
+    <option value="brand">Brand refresh</option>
+  </select>
+</div>
+```
+
+| Class | What it does |
+| --- | --- |
+| `select` | Styles a native `select` to match text fields. Fills its container. |
+| `field`, `label`, `field-hint`, `field-error` | Same as [text field](/components/text-field) |
+
+The native element keeps the platform picker: a wheel on iPhone, a sheet on Android, a list on desktop. That is better on phones than any custom dropdown, so do not replace it with a `div` menu.
+
+## Error state
+
+Add `aria-invalid="true"` and link the message with `aria-describedby`, exactly as for a text field. With `required` and an empty prompt option, `components.js` catches an empty choice on submit when the form has `data-validate`.
+
+## WordPress and Webflow
+
+- **WordPress:** give the form plugin's dropdown field the class `select`, or paste the markup into a Custom HTML block.
+- **Webflow:** give a Select element the class `select` and leave its Webflow styles empty.
+
+## Styling
+
+The select reads the same roles as a text field: `--input`, `--ring`, `--destructive` and `--radius`. The arrow is the browser's own, so it follows the text color in light and dark mode.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the select |
+| <kbd>Space</kbd> or <kbd>Enter</kbd> | Opens the list (on most browsers) |
+| <kbd>Up</kbd> or <kbd>Down</kbd> | Moves through options |
+| Typing a letter | Jumps to the next option starting with that letter |
+| <kbd>Escape</kbd> | Closes the list without changing the value |
+
+## Checklist
+
+- Every select has a visible `label` tied to it with `for` and `id`.
+- The native element is used, so screen readers announce it as a list with the current value and option count.
+- Errors set `aria-invalid="true"` and the message is linked with `aria-describedby`.
+- Disabled options say why in their label, like "(full)".
+- Do not submit or navigate as soon as the value changes; people using a keyboard move through options one by one.
+
+</DocTab>
+</DocTabs>

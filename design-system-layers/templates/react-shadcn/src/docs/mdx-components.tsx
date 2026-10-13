@@ -6,6 +6,7 @@ import { Anatomy, Callout, DocTab, DocTabs, Marker, PropsTable, SectionGrid } fr
 import { Do, DoDont, Dont } from "@/docs/blocks/DoDont"
 import { Example } from "@/docs/blocks/Example"
 import { RadiusScale, SpacingScale, TypeScale } from "@/docs/blocks/Scales"
+import { Spec, Specs } from "@/docs/blocks/Specs"
 import { ColorPairs, TokenTable } from "@/docs/blocks/TokenTable"
 
 function textOf(node: React.ReactNode): string {
@@ -40,4 +41,6 @@ export const mdxComponents = {
   DocTabs,
   DocTab,
   SectionGrid,
+  Specs,
+  Spec,
 }

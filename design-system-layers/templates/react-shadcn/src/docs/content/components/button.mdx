@@ -73,7 +73,7 @@ Start with a verb and say what will happen: "Book slot", "Pay deposit", "Cancel 
 
 <DoDont>
   <Do caption="Specific verb, so people know what happens next.">
-    <Button>Pay ₦5,000 deposit</Button>
+    <Button>Pay $50 deposit</Button>
   </Do>
   <Dont caption="Vague label that hides the consequence.">
     <Button>Submit</Button>
@@ -102,6 +102,29 @@ Start with a verb and say what will happen: "Book slot", "Pay deposit", "Cancel 
 </Example>
 
 Put icons before the label for actions ("Add") and after it for direction ("Next"). Icon-only buttons need an `aria-label` and a tooltip.
+
+</DocTab>
+<DocTab label="Specs">
+
+Every number below is read from the rendered button in your browser, so it always matches the code.
+
+<Specs title="Sizes" parts={[{ label: "Container", selector: "[data-slot=button]" }, { label: "Icon", selector: "svg" }]}>
+  <Spec label="Extra small"><Button size="xs">Book now</Button></Spec>
+  <Spec label="Small"><Button size="sm">Book now</Button></Spec>
+  <Spec label="Default"><Button>Book now</Button></Spec>
+  <Spec label="Default with icon"><Button>Book now <ArrowRightIcon /></Button></Spec>
+  <Spec label="Large"><Button size="lg">Book now</Button></Spec>
+  <Spec label="Icon"><Button size="icon" aria-label="Add service"><PlusIcon /></Button></Spec>
+</Specs>
+
+<Specs title="Variants" parts={[{ label: "Container", selector: "[data-slot=button]" }]}>
+  <Spec label="Primary"><Button>Book now</Button></Spec>
+  <Spec label="Secondary"><Button variant="secondary">Save salon</Button></Spec>
+  <Spec label="Outline"><Button variant="outline">See services</Button></Spec>
+  <Spec label="Ghost"><Button variant="ghost">Not now</Button></Spec>
+  <Spec label="Destructive"><Button variant="destructive">Cancel booking</Button></Spec>
+  <Spec label="Link"><Button variant="link">View on map</Button></Spec>
+</Specs>
 
 </DocTab>
 <DocTab label="Code">

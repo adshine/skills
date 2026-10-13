@@ -83,6 +83,19 @@ Icons are sized automatically to 12 px. Use them so status does not depend on co
 - For counts, show "99+" once the number gets too long to read at a glance.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered badges, so the numbers always match the code.
+
+<Specs parts={[{ label: "Container", selector: "[data-slot=badge]" }, { label: "Icon", selector: "svg" }]}>
+  <Spec label="Default"><Badge>Confirmed</Badge></Spec>
+  <Spec label="Secondary"><Badge variant="secondary">Pending</Badge></Spec>
+  <Spec label="Outline"><Badge variant="outline">Draft</Badge></Spec>
+  <Spec label="Destructive"><Badge variant="destructive">Cancelled</Badge></Spec>
+  <Spec label="With icon"><Badge><CheckIcon /> Paid</Badge></Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

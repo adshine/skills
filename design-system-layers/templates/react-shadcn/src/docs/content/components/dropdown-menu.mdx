@@ -231,6 +231,36 @@ Checkbox items turn a setting on or off. Radio items pick one option from a grou
 - Destructive items that cannot be undone should open a [dialog](/components/dialog) to confirm.
 
 </DocTab>
+<DocTab label="Specs">
+
+The menu is held open here so it can be measured live from the rendered component.
+
+<Specs minHeight={360} parts={[
+  { label: "Menu", selector: "[data-slot=dropdown-menu-content]", scope: "linked" },
+  { label: "Label", selector: "[data-slot=dropdown-menu-label]", scope: "linked" },
+  { label: "Item", selector: "[data-slot=dropdown-menu-item]", scope: "linked" },
+  { label: "Item icon", selector: "[data-slot=dropdown-menu-item] svg", scope: "linked" },
+  { label: "Shortcut", selector: "[data-slot=dropdown-menu-shortcut]", scope: "linked" },
+  { label: "Separator", selector: "[data-slot=dropdown-menu-separator]", scope: "linked" },
+  { label: "Destructive item", selector: "[data-slot=dropdown-menu-item][data-variant=destructive]", scope: "linked" },
+]}>
+  <Spec label="Open menu">
+    <DropdownMenu open modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline">Booking actions</Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuLabel>Booking</DropdownMenuLabel>
+        <DropdownMenuItem><PencilIcon /> Change time <DropdownMenuShortcut>E</DropdownMenuShortcut></DropdownMenuItem>
+        <DropdownMenuItem><ShareIcon /> Share</DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem variant="destructive"><TrashIcon /> Cancel booking</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

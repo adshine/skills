@@ -1,0 +1,128 @@
+---
+title: Typography
+description: One typeface and a short scale of text roles, so every page reads in the same order.
+status: stable
+order: 20
+keywords: [type, fonts, type scale, headings, line length, tabular numbers, t-display, t-body]
+---
+
+## Principles
+
+- **Roles, not sizes.** Pick the role ("Headline", "Body", "Caption") and use its class. Do not invent a size for one page.
+- **Hierarchy comes from size and weight, not color.** Use muted text only for text that is truly secondary.
+- **Readable first.** Body text is never smaller than 14px on screen, and 16px on phones where people type.
+
+## Typeface
+
+The site uses one family for everything, set once in `brand.css`:
+
+| Variable | Default | Used by |
+| --- | --- | --- |
+| `--brand-font-sans` | The brand font, then the system sans | Body text, labels, buttons, fields |
+| `--brand-font-heading` | Same as sans | Headings |
+
+Change the typeface by editing those two variables and the Google Fonts link in the page head. Components never name a font directly, so one edit updates the whole site. If you add a separate heading face, keep the body face for anything people read in long runs.
+
+```css
+/* brand.css */
+:root {
+  --brand-font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --brand-font-heading: var(--brand-font-sans);
+}
+```
+
+## Type scale
+
+Sizes, line heights and weights below are measured live from `components.css`, so they always match what ships.
+
+<TypeScale roles={[
+  { name: "Display", className: "t-display", usage: "Hero lines on landing pages. At most one per page." },
+  { name: "Headline", className: "t-headline", usage: "The one h1 on a page, like \"Our services\" or \"Contact us\"." },
+  { name: "Title", className: "t-title", usage: "h2 and h3 section titles, card titles, dialog titles." },
+  { name: "Body", className: "t-body", usage: "Default reading text and form values." },
+  { name: "Label", className: "t-label", usage: "Form labels, button text and tab labels." },
+  { name: "Caption", className: "t-caption", usage: "Dates, metadata and footnotes. Never for anything people must read to finish a task." },
+]} />
+
+## Using the scale in HTML
+
+Choose the heading level by structure, then add the class for how it should look:
+
+```html
+<h1 class="t-headline">Book a consultation</h1>
+<p class="t-body">Pick a time that suits you. Sessions last 45 minutes.</p>
+<h2 class="t-title">What to bring</h2>
+<p class="t-caption">Updated 12 October 2026</p>
+```
+
+<Example
+  title="Heading, body and caption together"
+  align="start"
+  html={`
+    <div style="display:grid;gap:0.5rem;max-width:32rem">
+      <h1 class="t-headline" style="margin:0">Book a consultation</h1>
+      <p class="t-body" style="margin:0">Pick a time that suits you. Sessions last 45 minutes and you can move them up to a day before.</p>
+      <p class="t-caption" style="margin:0">Updated 12 October 2026</p>
+    </div>
+  `}
+/>
+
+Use one heading level after another (h1, then h2, then h3). If a heading needs to look smaller than its level, that usually means the page structure is wrong. In WordPress, set the level in the Heading block and add the class under **Advanced**; in Webflow, pick the tag in the element settings and add the class in the Selector field.
+
+## Line length and spacing
+
+- Keep reading text between 45 and 75 characters per line. A `max-width` of about `36rem` on text blocks does this.
+- Body text uses a line height of 1.5. Headings are tighter (1.1 to 1.2) because they are short.
+- Put more space above a heading than below it, so the heading clearly belongs to the text that follows.
+- Left-align text. Center only short lines, like a hero headline, and never more than two lines.
+
+<DoDont>
+  <Do
+    caption="Comfortable line length and a clear heading above its text."
+    html={`<div style="max-width:18rem;display:grid;gap:0.25rem"><p class="t-title" style="margin:0">Cancellation policy</p><p class="t-body" style="margin:0;font-size:0.875rem;color:var(--muted-foreground)">Cancel up to 24 hours before your booking for a full refund. After that, the deposit is kept.</p></div>`}
+  />
+  <Dont
+    caption="Long centered paragraph in small muted text is hard to scan and hard to read."
+    html={`<p class="t-caption" style="text-align:center;margin:0">Cancel up to 24 hours before your booking for a full refund. After that, the deposit is kept. If you need to change the time instead, you can reschedule from your bookings page at no cost as long as a slot is free.</p>`}
+  />
+</DoDont>
+
+## Numbers
+
+Use `font-variant-numeric: tabular-nums` wherever numbers sit in columns or change in place: price lists, totals, timers. Every digit then takes the same width, so columns line up.
+
+<Example
+  title="Tabular numbers in a price list"
+  html={`
+    <dl style="width:100%;max-width:18rem;margin:0;display:grid;gap:0.5rem;font-size:0.875rem;font-variant-numeric:tabular-nums">
+      <div style="display:flex;justify-content:space-between"><dt>Consultation</dt><dd style="margin:0">111.00 USD</dd></div>
+      <div style="display:flex;justify-content:space-between"><dt>Follow-up</dt><dd style="margin:0">48.50 USD</dd></div>
+      <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:0.5rem;font-weight:600"><dt>Total</dt><dd style="margin:0">159.50 USD</dd></div>
+    </dl>
+  `}
+/>
+
+- Right-align numbers in table columns so place values line up.
+- See [Content](/foundations/content) for how to write numbers, dates and prices.
+
+## Emphasis
+
+- Use weight (500 or 600) for emphasis. Avoid italics for interface text and never underline anything that is not a link.
+- Do not set whole sentences in capitals. An overline label of one or two words is fine.
+
+<DoDont>
+  <Do
+    caption="Weight and size create the hierarchy; the supporting line is muted."
+    html={`<div style="display:grid;gap:0.125rem"><span class="t-label">Haircut and style</span><span class="t-caption">Tue 14 Oct, 10:30</span></div>`}
+  />
+  <Dont
+    caption="All caps, mixed weights and color fight each other; nothing reads first."
+    html={`<div style="display:grid;gap:0.125rem"><span style="font-size:0.75rem;font-weight:700;text-transform:uppercase;color:var(--primary)">Haircut and style</span><span style="font-size:1.125rem;font-weight:300;font-style:italic">Tue 14 Oct, 10:30</span></div>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Text must stay usable at 200% browser zoom and when people set a larger default font size. The scale uses `rem`, so never override it with fixed `px` font sizes.
+- Body and label text meets 4.5:1 contrast; large headings (24px and up, or 18.66px bold) meet 3:1. See [Color](/foundations/color).
+- Use real heading elements (`h1` to `h6`) so screen reader users can jump between sections. A styled `div` or `p` is not a heading.

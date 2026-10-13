@@ -129,6 +129,21 @@ Use `sm` in dense lists and tables. Use the default size everywhere else.
 - If switching takes time or can fail, show progress and roll back with a message when it fails.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered switches, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Track", selector: "[data-slot=switch]" },
+  { label: "Thumb", selector: "[data-slot=switch-thumb]" },
+]}>
+  <Spec label="Default, off"><Switch aria-label="Reminders" /></Spec>
+  <Spec label="Default, on"><Switch aria-label="Reminders" defaultChecked /></Spec>
+  <Spec label="Small, off"><Switch size="sm" aria-label="Reminders" /></Spec>
+  <Spec label="Small, on"><Switch size="sm" aria-label="Reminders" defaultChecked /></Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

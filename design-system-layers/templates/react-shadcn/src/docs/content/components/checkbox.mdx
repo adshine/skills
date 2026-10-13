@@ -138,6 +138,21 @@ Use the indeterminate state only on a parent checkbox whose children are partly 
 - Never preselect a checkbox that signs people up for marketing or payment.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered checkboxes, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Box", selector: "[data-slot=checkbox]" },
+  { label: "Indicator", selector: "[data-slot=checkbox-indicator]" },
+  { label: "Label", selector: "[data-slot=label]" },
+]}>
+  <Spec label="Unchecked"><div className="flex items-center gap-2"><Checkbox id="spec-cb-1" /><Label htmlFor="spec-cb-1">Text reminders</Label></div></Spec>
+  <Spec label="Checked"><div className="flex items-center gap-2"><Checkbox id="spec-cb-2" defaultChecked /><Label htmlFor="spec-cb-2">Text reminders</Label></div></Spec>
+  <Spec label="Indeterminate"><div className="flex items-center gap-2"><Checkbox id="spec-cb-3" checked="indeterminate" /><Label htmlFor="spec-cb-3">All services</Label></div></Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

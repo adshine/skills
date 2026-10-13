@@ -1,0 +1,80 @@
+---
+title: Shape
+description: Corner radius comes from one value in brand.css, and every component steps up or down from it.
+status: stable
+order: 30
+keywords: [radius, corners, rounded, border radius, shape, pill]
+---
+
+## The rule: one value
+
+Every corner on the site is derived from a single variable, `--radius`, set in `brand.css`. Components multiply it:
+
+| Step | CSS value | Used by |
+| --- | --- | --- |
+| Small | `calc(var(--radius) * 0.6)` | The selected tab inside a tab rail |
+| Medium | `calc(var(--radius) * 0.8)` | Buttons, text fields, selects, text areas, skeletons |
+| Default | `var(--radius)` | Dialogs, toasts, alerts |
+| Large | `calc(var(--radius) * 1.4)` | Cards |
+| Full | `999px` or `50%` | Badges, switches, avatars |
+
+Change `--radius` and the whole site changes shape together: `0.25rem` reads sharp and technical, `0.625rem` (the default) reads friendly and neutral, `1rem` reads soft.
+
+```css
+/* brand.css */
+:root {
+  --radius: 0.625rem;
+}
+```
+
+## Scale
+
+Larger surfaces get larger corners. The previews below use the live value.
+
+<RadiusScale steps={[
+  { name: "Small", radius: "calc(var(--radius) * 0.6)", usage: "Small items inside another rounded shape, like the selected tab." },
+  { name: "Medium", radius: "calc(var(--radius) * 0.8)", usage: "Controls: buttons, fields, selects." },
+  { name: "Default", radius: "var(--radius)", usage: "Floating panels: dialogs, toasts, alerts." },
+  { name: "Large", radius: "calc(var(--radius) * 1.4)", usage: "Cards and large containers." },
+  { name: "Full", radius: "999px", usage: "Pills and circles: badges, switches, avatars." },
+]} />
+
+## Nesting
+
+When one rounded shape sits inside another, the inner corner is smaller than the outer one, so the gap between them looks even. A tab inside the tab rail uses Small inside Medium; a button inside a card uses Medium inside Large.
+
+<Example
+  title="Nested corners: button inside card"
+  html={`
+    <div class="card" style="max-width:20rem">
+      <div>
+        <p class="card__title">Starter plan</p>
+        <p class="card__desc">For a single site with up to five pages.</p>
+      </div>
+      <div class="card__footer"><button class="btn">Choose plan</button><span class="badge badge--secondary">Popular</span></div>
+    </div>
+  `}
+/>
+
+<DoDont>
+  <Do
+    caption="Corners come from the shared scale, so related things match."
+    html={`<button class="btn">Save</button><input class="input" style="width:10rem" aria-label="Name" placeholder="Name" />`}
+  />
+  <Dont
+    caption="A fixed radius on one element breaks the family and will not follow brand changes."
+    html={`<button class="btn" style="border-radius:2px">Save</button><input class="input" style="width:10rem;border-radius:20px" aria-label="Name" placeholder="Name" />`}
+  />
+</DoDont>
+
+## Using it in your own CSS
+
+When you build something new, use the same steps instead of a fixed value:
+
+```css
+.promo-banner {
+  border-radius: calc(var(--radius) * 1.4);
+}
+```
+
+Never write a fixed corner like `border-radius: 6px`. It will not change when the brand does.

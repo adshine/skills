@@ -1,0 +1,105 @@
+---
+title: Spacing
+description: All spacing sits on a 4px grid, so layouts line up and density stays the same across pages.
+status: stable
+order: 40
+keywords: [spacing, grid, layout, density, padding, margin, gap, touch target, container width, mobile]
+---
+
+## The 4px grid
+
+Every gap, padding and margin is a multiple of 4px. Write spacing in `rem` (1rem is 16px) so it scales with the visitor's font size: 0.25rem is 4px, 0.5rem is 8px, 1rem is 16px, 1.5rem is 24px. Odd values like 13px are not allowed; if a design seems to need one, the layout around it usually needs to change.
+
+## Scale
+
+These are the steps most pages need. The number is the step; the bar shows the real size.
+
+<SpacingScale />
+
+| Step | Size | Typical use |
+| --- | --- | --- |
+| 1 to 2 | 4 to 8px (0.25 to 0.5rem) | Icon to label, label to field |
+| 3 to 4 | 12 to 16px (0.75 to 1rem) | Inside controls, between related fields |
+| 6 | 24px (1.5rem) | Card padding, between groups of fields |
+| 8 to 12 | 32 to 48px (2 to 3rem) | Between sections inside a page |
+| 16 to 24 | 64 to 96px (4 to 6rem) | Page top and bottom, landing page sections |
+
+The components already follow this: a `field` puts 8px between label and input, a `card` has 24px padding and 16px between its parts.
+
+## Proximity
+
+Space shows relationships. Things that belong together sit closer than things that do not. A label is 8px from its field; one field is 16 to 24px from the next; one section is 32px or more from the next.
+
+<Example
+  title="Related fields grouped, groups separated"
+  stage="narrow"
+  html={`
+    <div style="display:grid;gap:2rem">
+      <div style="display:grid;gap:1rem">
+        <p class="t-label" style="margin:0">Your details</p>
+        <div class="field"><label class="label" for="sp-name">Full name</label><input class="input" id="sp-name" autocomplete="name" /></div>
+        <div class="field"><label class="label" for="sp-email">Email</label><input class="input" id="sp-email" type="email" autocomplete="email" /></div>
+      </div>
+      <div style="display:grid;gap:1rem">
+        <p class="t-label" style="margin:0">Your visit</p>
+        <div class="field"><label class="label" for="sp-date">Preferred date</label><input class="input" id="sp-date" type="date" /></div>
+      </div>
+    </div>
+  `}
+/>
+
+## Stacks and sections
+
+Put spacing on the parent with `gap`, not on each child with margins. It keeps spacing in one place, and there is no stray margin at the start or end.
+
+```css
+.stack { display: grid; gap: 1rem; }
+.section { padding-block: 4rem; }
+.container { max-width: 64rem; margin-inline: auto; padding-inline: 1rem; }
+@media (min-width: 40rem) { .container { padding-inline: 1.5rem; } }
+@media (min-width: 64rem) { .section { padding-block: 6rem; } }
+```
+
+In WordPress, set block spacing in the Group block's **Dimensions** panel using the same steps. In Webflow, use the same values in the Spacing panel, or save them as variables.
+
+## Layout widths
+
+Use a small set of container widths so pages line up with each other.
+
+| Width | Use for |
+| --- | --- |
+| 28rem (448px) | Sign-in, single-question pages, dialogs |
+| 36rem (576px) | Forms and checkout steps; long reading text (about 65 characters) |
+| 48rem (768px) | Articles with images, settings pages |
+| 64rem to 80rem (1024 to 1280px) | Page sections, pricing grids, galleries |
+
+Page gutters are 16px on phones, 24px on tablets and 32px on desktop.
+
+## Mobile
+
+- Stack columns into one at narrow widths. A grid with `repeat(auto-fit, minmax(16rem, 1fr))` does this without a media query.
+- Reduce section spacing on phones (about half the desktop value) but keep the space inside cards and between fields the same.
+- Test at 390px and 320px wide. Nothing should scroll sideways.
+
+## Touch targets
+
+Anything people tap must have a target of at least 44 by 44px on touch screens, with at least 8px between neighboring targets. Default buttons are 36px tall, so leave space around them or use `btn--lg` for important mobile actions.
+
+<DoDont>
+  <Do
+    caption="Enough space between targets, so a thumb hits the right one."
+    html={`<div style="display:flex;gap:0.75rem"><button class="btn btn--lg">Book</button><button class="btn btn--lg btn--outline">Call us</button></div>`}
+  />
+  <Dont
+    caption="Small targets pressed together cause mis-taps on phones."
+    html={`<div style="display:flex;gap:1px"><button class="btn btn--sm">Book</button><button class="btn btn--sm btn--outline">Call us</button><button class="btn btn--sm btn--outline">Email</button></div>`}
+  />
+</DoDont>
+
+WCAG 2.2 sets a floor of 24 by 24px for every pointer target. The 44px rule is our own, stricter target for touch.
+
+## Guidelines
+
+- Do not add space to fix alignment; fix the alignment.
+- Keep padding equal on all sides of a card unless the content has a clear reason to differ.
+- Use the same spacing for the same relationship everywhere on the site.

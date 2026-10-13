@@ -1,0 +1,138 @@
+---
+title: Skeleton
+description: Skeletons hold the shape of content while it loads, so the page does not jump when the real content arrives.
+status: stable
+order: 54
+keywords: [loading, placeholder, shimmer, pulse, busy]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. The pulse animation stops when people ask for reduced motion.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Card while loading"
+  align="start"
+  html={`
+    <div class="card" style="width: 100%; max-width: 22rem" aria-busy="true" aria-label="Loading booking">
+      <div style="display: flex; align-items: center; gap: 0.75rem">
+        <div class="skeleton" style="width: 2.5rem; height: 2.5rem; border-radius: 50%"></div>
+        <div style="flex: 1; display: grid; gap: 0.5rem">
+          <div class="skeleton" style="height: 0.875rem; width: 60%"></div>
+          <div class="skeleton" style="height: 0.75rem; width: 40%"></div>
+        </div>
+      </div>
+      <div class="skeleton" style="height: 6rem"></div>
+    </div>
+  `}
+/>
+
+## When to use
+
+- When content takes longer than about half a second to load and you know roughly what shape it will have: a card, a list, a profile.
+- When content loads in place on a page that is already showing, like results that come from a form or an embed.
+
+## When not to use
+
+- **For very quick loads.** A flash of skeleton under 300 ms feels like flicker. Show nothing, then the content.
+- **For actions people started.** When someone clicks Save, change the button label to "Saving" instead. See [Button](/components/button).
+- **For the whole page.** A full page of grey blocks says less than a short message. Load the frame first, then skeleton the parts that wait.
+- **For errors or empty results.** Replace the skeleton with a clear message as soon as you know.
+
+## Match the real layout
+
+<DoDont>
+  <Do
+    caption="Skeleton has the same size and layout as the content it stands in for."
+    html={`<div style="width: 12rem; display: grid; gap: 0.5rem"><div class="skeleton" style="height: 0.875rem; width: 70%"></div><div class="skeleton" style="height: 0.75rem; width: 45%"></div></div>`}
+  />
+  <Dont
+    caption="One big block. When the text arrives, everything below it jumps."
+    html={`<div class="skeleton" style="width: 12rem; height: 4rem"></div>`}
+  />
+</DoDont>
+
+## Guidance
+
+- Use as few blocks as needed to suggest the shape: a heading line, two text lines, an image.
+- Make text lines shorter than full width, and vary them, so they read as text.
+- Keep the same container (card, list) around the skeleton, so only the inside changes.
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+A skeleton is an empty `div` with the `skeleton` class. Set its size with inline styles or your own layout classes:
+
+```html
+<div class="skeleton" style="height: 1rem; width: 60%"></div>
+```
+
+| Class | What it does |
+| --- | --- |
+| `skeleton` | Muted fill, rounded corners, slow pulse |
+
+For a round shape, add `style="border-radius: 50%"` with equal width and height.
+
+## Loading pattern
+
+Mark the region that is loading with `aria-busy="true"` and a label, then replace its contents when the data arrives:
+
+```html
+<div id="team" aria-busy="true" aria-label="Loading team">
+  <div class="skeleton" style="height: 1rem; width: 50%"></div>
+  <div class="skeleton" style="height: 1rem; width: 35%"></div>
+</div>
+
+<script>
+  fetch("/api/team")
+    .then((r) => r.text())
+    .then((html) => {
+      const el = document.getElementById("team")
+      el.innerHTML = html
+      el.removeAttribute("aria-busy")
+      el.removeAttribute("aria-label")
+      DS.enhance(el)
+    })
+</script>
+```
+
+## WordPress and Webflow
+
+- **WordPress:** skeletons are mostly useful in custom code that loads content after the page, such as a booking widget. Put the markup in a Custom HTML block where that content will appear.
+- **Webflow:** add Div Blocks with the class `skeleton` inside an Embed or a Div that your script fills in.
+
+## Styling
+
+Skeletons use `--accent` for the fill and `--radius` for the corners. The pulse is a CSS animation that turns off when the visitor's system asks for reduced motion.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Skeletons are not interactive and never take focus.
+
+| Key | Action |
+| --- | --- |
+| None | Skipped by <kbd>Tab</kbd> |
+
+## Focus management
+
+Do not move focus when content finishes loading. If people were waiting for the result of their own action, announce it instead, for example with a [toast](/components/toast).
+
+## Checklist
+
+- The loading region has `aria-busy="true"` and an `aria-label` like "Loading team", and both are removed when content arrives.
+- The skeleton blocks themselves are empty, so screen readers skip them.
+- The pulse animation stops when people ask for reduced motion.
+- If loading fails, the skeleton is replaced with a message that says what happened and what to do.
+- Layout does not shift when the real content replaces the skeleton.
+
+</DocTab>
+</DocTabs>

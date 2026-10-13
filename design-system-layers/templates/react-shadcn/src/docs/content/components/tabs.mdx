@@ -152,6 +152,34 @@ Vertical tabs suit settings pages with many sections. A disabled tab shows a vie
 - Do not hide required inputs in a tab people may never open.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered tabs, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "List", selector: "[data-slot=tabs-list]" },
+  { label: "Active tab", selector: "[data-slot=tabs-trigger][data-state=active]" },
+  { label: "Inactive tab", selector: "[data-slot=tabs-trigger][data-state=inactive]" },
+]}>
+  <Spec label="Default">
+    <Tabs defaultValue="upcoming">
+      <TabsList>
+        <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+        <TabsTrigger value="past">Past</TabsTrigger>
+      </TabsList>
+    </Tabs>
+  </Spec>
+  <Spec label="Line">
+    <Tabs defaultValue="upcoming">
+      <TabsList variant="line">
+        <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+        <TabsTrigger value="past">Past</TabsTrigger>
+      </TabsList>
+    </Tabs>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

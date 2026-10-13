@@ -164,6 +164,23 @@ For work that takes a moment, show a loading toast that turns into the result.
 - Do not say "Successfully". "Saved" is enough.
 
 </DocTab>
+<DocTab label="Specs">
+
+Toasts appear in the corner of the screen, so show one to measure it. The table keeps the last reading after it goes away.
+
+<Specs parts={[
+  { label: "Toast", selector: "[data-sonner-toast]", scope: "document" },
+  { label: "Title", selector: "[data-sonner-toast] [data-title]", scope: "document" },
+  { label: "Description", selector: "[data-sonner-toast] [data-description]", scope: "document" },
+]}>
+  <Spec label="With description">
+    <Button variant="outline" onClick={() => toast("Booking confirmed", { description: "Saturday 14 Oct at 10:00 with Tolu." })}>
+      Show a toast to measure
+    </Button>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

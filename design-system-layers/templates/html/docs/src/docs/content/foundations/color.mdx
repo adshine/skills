@@ -1,0 +1,88 @@
+---
+title: Color
+description: A small set of named color roles, generated from one brand color and checked for contrast in light and dark mode.
+status: stable
+order: 10
+keywords: [palette, tokens, theme, dark mode, contrast, variables]
+---
+
+## Principles
+
+- **Use roles, not hex values.** Components ask for `var(--primary)` or `var(--muted)`, never a hex value. That is what makes dark mode and future brand changes a one-file edit.
+- **Every fill has a paired text color.** `primary` goes with `primary-foreground`, `destructive` with `destructive-foreground`. Use the pair together.
+- **Generated, not hand-picked.** The palette comes from one seed color through a contrast-aware color model, so every pair is readable.
+
+## Color roles
+
+<ColorPairs pairs={[
+  { bg: "primary", fg: "primary-foreground", label: "Primary" },
+  { bg: "secondary", fg: "secondary-foreground", label: "Secondary" },
+  { bg: "muted", fg: "muted-foreground", label: "Muted" },
+  { bg: "accent", fg: "accent-foreground", label: "Accent" },
+  { bg: "destructive", fg: "destructive-foreground", label: "Destructive" },
+  { bg: "card", fg: "card-foreground", label: "Card" },
+]} />
+
+## Tokens
+
+Values below are read live from `theme.css`, so they always match what ships. The contrast column checks each fill against its paired text color.
+
+<TokenTable tokens={[
+  { name: "background", on: "foreground", usage: "Page background." },
+  { name: "foreground", usage: "Default text and icons." },
+  { name: "primary", on: "primary-foreground", usage: "Main actions, selected states, links." },
+  { name: "secondary", on: "secondary-foreground", usage: "Supporting actions and highlighted areas." },
+  { name: "muted", on: "muted-foreground", usage: "Quiet backgrounds: tab rails, avatars." },
+  { name: "muted-foreground", usage: "Secondary text, captions, placeholders." },
+  { name: "accent", on: "accent-foreground", usage: "Hover backgrounds for ghost and outline buttons, skeletons." },
+  { name: "destructive", on: "destructive-foreground", usage: "Errors and actions that delete or cancel." },
+  { name: "card", on: "card-foreground", usage: "Raised surfaces: cards, panels, alerts." },
+  { name: "popover", on: "popover-foreground", usage: "Toasts and floating panels." },
+  { name: "border", usage: "Dividers and card borders." },
+  { name: "input", usage: "Form field borders. Meets 3:1 against the page." },
+  { name: "ring", usage: "Focus rings." },
+]} />
+
+## Using color in code
+
+Read roles with `var()` in any CSS, including a WordPress theme's custom CSS or a Webflow embed:
+
+```css
+.booking-panel {
+  background: var(--card);
+  color: var(--card-foreground);
+  border: 1px solid var(--border);
+}
+```
+
+For a tint, mix a role with transparent instead of inventing a new color:
+
+```css
+.highlight {
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+}
+```
+
+## Changing the palette
+
+Do not edit `theme.css` by hand. Rerun the generator with a new seed and replace the file:
+
+```bash
+scripts/seed-to-tokens.sh --seed "#1D4ED8" --variant fidelity --shadcn theme.css
+```
+
+Every component and every page of these docs picks up the new colors with no other change.
+
+<DoDont>
+  <Do
+    caption="Pair each fill with its foreground role so text stays readable in both themes."
+    html={`<span class="badge">Booked</span><span class="badge badge--secondary">Pending</span>`}
+  />
+  <Dont caption="Hard-coded white text is unreadable on light fills and ignores the theme.">
+    <span style={{ background: "var(--secondary)", color: "#fff", padding: "0.125rem 0.5rem", borderRadius: "999px", fontSize: "0.75rem", fontWeight: 500 }}>Pending</span>
+  </Dont>
+</DoDont>
+
+## Accessibility
+
+Text pairs meet WCAG 2.2 AA (4.5:1), and borders, focus rings and form fields meet 3:1 in both themes. Never use color alone to carry meaning: pair it with text or an icon, like an error message under a red field.

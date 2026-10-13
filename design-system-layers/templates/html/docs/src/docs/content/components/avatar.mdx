@@ -1,0 +1,155 @@
+---
+title: Avatar
+description: Avatars show a person or an organization with a photo or their initials, so people can recognize who is who at a glance.
+status: stable
+order: 52
+keywords: [profile, user, photo, initials, picture]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release with initials, images and small and large sizes.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Initials and image"
+  html={`
+    <span class="avatar" aria-hidden="true">AL</span>
+    <span class="avatar"><img src="https://i.pravatar.cc/96?img=47" alt="Grace Hopper" /></span>
+    <span class="avatar avatar--lg" aria-hidden="true">KO</span>
+  `}
+/>
+
+## When to use
+
+- Next to a name in a team section, a testimonial, a comment or a booking.
+- In a list of people, so they can be told apart quickly.
+
+## When not to use
+
+- **Instead of a name.** An avatar supports a name; it does not replace it. People do not recognize each other from initials alone.
+- **For logos of products or partners.** Use a plain image with its own aspect ratio, not a circle crop.
+- **As decoration.** If there is no real person or account behind it, leave it out.
+
+## Sizes
+
+<Example
+  title="Small, default and large"
+  html={`
+    <span class="avatar avatar--sm" aria-hidden="true">SM</span>
+    <span class="avatar" aria-hidden="true">MD</span>
+    <span class="avatar avatar--lg" aria-hidden="true">LG</span>
+  `}
+/>
+
+| Size | Class | Use for |
+| --- | --- | --- |
+| Small, 24 px | `avatar avatar--sm` | Dense lists, comment threads, stacked groups |
+| Default, 32 px | `avatar` | Lists, cards, tables |
+| Large, 48 px | `avatar avatar--lg` | Team pages, testimonials, profile headers |
+
+## With a name
+
+<Example
+  title="Avatar with name and role"
+  html={`
+    <div style="display: flex; align-items: center; gap: 0.75rem">
+      <span class="avatar avatar--lg"><img src="https://i.pravatar.cc/96?img=12" alt="" /></span>
+      <div>
+        <div class="t-label">Tunde Bakare</div>
+        <div class="t-caption">Head of design</div>
+      </div>
+    </div>
+  `}
+/>
+
+When the name sits right next to the avatar, the image is decoration: give it an empty `alt=""` so screen readers do not read the name twice.
+
+<DoDont>
+  <Do
+    caption="Name next to the avatar, so everyone knows who it is."
+    html={`<span class="avatar" aria-hidden="true">AO</span><span class="t-label">Ada Obi</span>`}
+  />
+  <Dont
+    caption="Initials alone. Several people share initials, and screen readers get nothing."
+    html={`<span class="avatar">AO</span><span class="avatar">AO</span>`}
+  />
+</DoDont>
+
+## Content
+
+- Use up to two initials: first and last name. "Ada Obi" becomes "AO".
+- Use a square, well lit photo of the face, at least 96 px, so it stays sharp on high density screens.
+- If a photo fails to load, show initials instead (see Code).
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+Initials:
+
+```html
+<span class="avatar" aria-hidden="true">AO</span>
+```
+
+Image:
+
+```html
+<span class="avatar avatar--lg">
+  <img src="/images/ada.jpg" alt="Ada Obi" />
+</span>
+```
+
+| Class | What it changes |
+| --- | --- |
+| `avatar` | Circle, muted background, centered initials. Always required. |
+| `avatar--sm` | 24 px |
+| `avatar--lg` | 48 px |
+
+The image fills the circle and is cropped to fit, so off-center photos may lose the edges.
+
+## Falling back to initials
+
+If an image might be missing, swap it for initials when it fails:
+
+```html
+<span class="avatar" data-initials="AO">
+  <img src="/images/ada.jpg" alt="Ada Obi"
+       onerror="this.parentNode.textContent = this.parentNode.dataset.initials" />
+</span>
+```
+
+## WordPress and Webflow
+
+- **WordPress:** use a Custom HTML block. For a photo from the media library, copy its file address into the `src`.
+- **Webflow:** add a Div Block with the class `avatar` and an Image inside it. For a CMS collection, bind the image to the person's photo field.
+
+## Styling
+
+Avatars read `--muted` and `--muted-foreground` for the initials. To change the shape for the whole site, edit the `.avatar` rule in `components.css`; do not override it per page.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Avatars are not interactive. If an avatar links to a profile, wrap the avatar and the name in one link so there is a single focus stop.
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Skips the avatar, or focuses the surrounding link |
+
+## Checklist
+
+- An image avatar on its own has `alt` with the person's name.
+- An image avatar next to the visible name has `alt=""`, so the name is not read twice.
+- Initials next to a visible name have `aria-hidden="true"`.
+- Initials meet 4.5:1 contrast against the muted background in light and dark.
+- Never use an avatar as the only way to identify a person.
+
+</DocTab>
+</DocTabs>

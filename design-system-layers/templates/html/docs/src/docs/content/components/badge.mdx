@@ -1,0 +1,142 @@
+---
+title: Badge
+description: Badges label a status or a category with a short word, like "New", "Paid" or "Overdue". They never do anything when clicked.
+status: stable
+order: 50
+keywords: [tag, label, status, pill, chip]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release with default, secondary, outline and destructive variants.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Variants"
+  html={`
+    <span class="badge">New</span>
+    <span class="badge badge--secondary">Pending</span>
+    <span class="badge badge--outline">Draft</span>
+    <span class="badge badge--destructive">Overdue</span>
+  `}
+/>
+
+## When to use
+
+- To show the status of an item at a glance: paid, pending, cancelled.
+- To mark something new or recently changed, like a new service on a pricing page.
+- To tag an item with a short category, like "Remote" on a job listing.
+
+## When not to use
+
+- **As a button or filter.** Badges are not interactive. Use a [button](/components/button) or a checkbox list for filters.
+- **For long text.** A badge holds one or two words. Put sentences in body text or an alert.
+- **To announce something that just happened.** Use a [toast](/components/toast).
+- **On every item.** If every row has a badge, none of them stand out. Badge the exceptions.
+
+## Choosing a variant
+
+| Variant | Class | Use for |
+| --- | --- | --- |
+| Default | `badge` | Positive or highlighted states: New, Paid, Active |
+| Secondary | `badge badge--secondary` | Neutral or in-between states: Pending, Scheduled |
+| Outline | `badge badge--outline` | Quiet tags and categories: Draft, Remote |
+| Destructive | `badge badge--destructive` | Problems that need attention: Overdue, Failed |
+
+Pick one meaning per variant and keep it the same across the site. If "Pending" is secondary on one page, it is secondary everywhere.
+
+<DoDont>
+  <Do
+    caption="A clear word carries the meaning, the color supports it."
+    html={`<span class="badge badge--destructive">Overdue</span><span class="badge">Paid</span>`}
+  />
+  <Dont
+    caption="Color alone carries the meaning, so people who cannot tell the colors apart miss it."
+    html={`<span class="badge badge--destructive">Invoice 104</span><span class="badge">Invoice 105</span>`}
+  />
+</DoDont>
+
+## With other components
+
+<Example
+  title="Badge in a card heading"
+  align="start"
+  html={`
+    <div class="card" style="width: 100%; max-width: 22rem">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem">
+        <p class="card__title">Website audit</p>
+        <span class="badge badge--secondary">Scheduled</span>
+      </div>
+      <p class="card__desc">Thursday at 10:00. We will send the report the same day.</p>
+    </div>
+  `}
+/>
+
+## Content
+
+- One or two words, in sentence case: "In review", not "IN REVIEW".
+- Use the same word for the same status everywhere.
+- Prefer adjectives or states ("Paid") over actions ("Pay now"). Actions belong on buttons.
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+```html
+<span class="badge badge--secondary">Pending</span>
+```
+
+| Class | What it changes |
+| --- | --- |
+| `badge` | Base badge, primary fill. Always required. |
+| `badge--secondary` | Secondary fill for neutral states |
+| `badge--outline` | Transparent fill with a border |
+| `badge--destructive` | Destructive fill for problems |
+
+Use a `span`, not a `button` or `a`. A badge is text, so screen readers read it as part of the sentence around it.
+
+## Mapping status to variant
+
+Keep the mapping in one place so pages agree. For example:
+
+| Status | Class |
+| --- | --- |
+| Paid, Active, Confirmed | `badge` |
+| Pending, Scheduled | `badge badge--secondary` |
+| Draft, Archived | `badge badge--outline` |
+| Overdue, Failed, Cancelled | `badge badge--destructive` |
+
+## WordPress and Webflow
+
+- **WordPress:** paste the `span` into a Custom HTML block, or wrap a word in a Paragraph block with the HTML editor and add the classes.
+- **Webflow:** add a Text Span or Text Block, give it the classes `badge` and `badge--secondary`, and leave its Webflow styles empty.
+
+## Styling
+
+Badges read only role variables: `--primary`, `--secondary`, `--destructive` and their `-foreground` pairs, plus `--border` for the outline variant. Add a new variant to `components.css` if you need another meaning, using a role pair, never a raw color.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+Badges are not interactive, so they never take focus.
+
+| Key | Action |
+| --- | --- |
+| None | Badges are skipped by <kbd>Tab</kbd> |
+
+## Checklist
+
+- The word in the badge carries the meaning on its own. Color only supports it.
+- Text meets 4.5:1 contrast on every variant in light and dark. See [Color](/foundations/color).
+- If the badge only makes sense next to something else, like a status next to an invoice number, keep them in the same sentence or row so screen readers read them together.
+- If a badge is a count, write what it counts, like "3 new", so it makes sense when read on its own.
+- Never put a click handler on a badge. If people need to act, use a button.
+
+</DocTab>
+</DocTabs>

@@ -229,6 +229,37 @@ The form example keeps the dialog open after submit so you can try it again. In 
 - Do not stack dialogs on top of each other. Finish or close one before opening another.
 
 </DocTab>
+<DocTab label="Specs">
+
+The dialog renders above the page, so open it to measure the panel. The table keeps the last reading after you close it.
+
+<Specs parts={[
+  { label: "Panel", selector: "[data-slot=dialog-content]", scope: "linked" },
+  { label: "Title", selector: "[data-slot=dialog-title]", scope: "linked" },
+  { label: "Description", selector: "[data-slot=dialog-description]", scope: "linked" },
+  { label: "Footer", selector: "[data-slot=dialog-footer]", scope: "linked" },
+  { label: "Close icon button", selector: "[data-slot=dialog-content] > [data-slot=dialog-close]", scope: "linked" },
+]}>
+  <Spec label="Confirm dialog">
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">Open to measure</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Cancel this booking?</DialogTitle>
+          <DialogDescription>Your deposit is refunded within 3 working days.</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <DialogClose asChild><Button variant="outline">Keep booking</Button></DialogClose>
+          <DialogClose asChild><Button variant="destructive">Cancel booking</Button></DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

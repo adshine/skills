@@ -1,0 +1,36 @@
+---
+title: Introduction
+description: What this design system is, what is in it, and how to use it on any website.
+order: 1
+keywords: [overview, start, layers]
+---
+
+This design system is the shared language for building our websites. The components are plain HTML and CSS, so they work in WordPress, Webflow, Squarespace, a static site or a hand-written page. Nothing needs to be installed or compiled.
+
+It has three layers, and each one does a different job:
+
+| Layer | Answers | Examples |
+| --- | --- | --- |
+| [Foundations](/foundations/color) | Why is it this way? | Color, type, shape, spacing |
+| [Components](/components/overview) | What is this block and what states does it have? | Button, text field, dialog |
+| [Patterns](/patterns/overview) | How does it work for people, in context? | Forms and validation |
+
+When a question comes up, name the layer first. A spacing debate is a foundation question; a widget's states are a component question; how a flow behaves is a pattern question. Most stuck discussions are two layers talking past each other.
+
+## What you get
+
+| File | What it does |
+| --- | --- |
+| `theme.css` | Brand colors for light and dark mode, generated from one seed color. |
+| `brand.css` | Typeface and corner radius. |
+| `components.css` | Every component on these pages, as CSS classes. |
+| `components.js` | Small optional script for dialogs, tabs, toasts and form errors. |
+
+These docs load the same four files, so what you see here is exactly what ships.
+
+## How to use these docs
+
+- **Building a page?** Check [Patterns](/patterns/overview) first. If a pattern exists, follow it.
+- **Need a part?** Find it in [Components](/components/overview). Every page has a live example, the HTML to copy and accessibility notes.
+- **Adding the files to a site?** Read [For developers](/getting-started/developers).
+- **Something missing?** See [Contributing](/resources/contributing).

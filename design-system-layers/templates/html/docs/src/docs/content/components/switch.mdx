@@ -1,0 +1,138 @@
+---
+title: Switch
+description: A switch turns a single setting on or off, and the change takes effect right away.
+status: stable
+order: 34
+keywords: [toggle, on off, setting, preference]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Native checkbox with role="switch", so it works without script.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Switch"
+  html={`
+    <label class="switch"><input type="checkbox" role="switch" checked /> Email notifications</label>
+  `}
+/>
+
+## When to use
+
+- For a setting that applies as soon as it changes, like turning notifications on or showing prices with tax.
+- When the choice is clearly on or off.
+
+## When not to use
+
+- **Inside a form that is submitted later.** Use a [checkbox](/components/checkbox); people expect a switch to act right away.
+- **For choices that are not on or off,** like "Monthly or yearly". Use [radio buttons](/components/radio).
+- **For actions.** "Publish now" is a [button](/components/button).
+
+## Switch or checkbox
+
+| Question | Switch | Checkbox |
+| --- | --- | --- |
+| Does it take effect right away? | Yes | No, on submit |
+| Is it a setting or a preference? | Yes | Can be either |
+| Is it part of a longer form? | No | Yes |
+| Is it agreeing to something? | No | Yes |
+
+## Settings list
+
+<Example
+  title="Settings list with states"
+  align="start"
+  html={`
+    <div style="display:grid;gap:1rem">
+      <label class="switch"><input type="checkbox" role="switch" checked /> Booking confirmations</label>
+      <label class="switch"><input type="checkbox" role="switch" /> Weekly summary</label>
+      <label class="switch"><input type="checkbox" role="switch" disabled /> Text messages (add a phone number first)</label>
+    </div>
+  `}
+/>
+
+<DoDont>
+  <Do
+    caption="Label names the setting, so the switch position answers it."
+    html={`<label class="switch"><input type="checkbox" role="switch" checked /> Dark mode</label>`}
+  />
+  <Dont
+    caption="Label changes with the state. People cannot tell if it shows the current state or the action."
+    html={`<label class="switch"><input type="checkbox" role="switch" checked /> Turn off dark mode</label>`}
+  />
+</DoDont>
+
+## Content
+
+- Name the setting, not the action: "Email notifications", not "Turn on email notifications".
+- Keep the label the same in both states.
+- When a switch is disabled, say why next to it.
+- Confirm the change if it is not obvious, for example with a [toast](/components/toast) "Notifications turned off".
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+A switch is a native checkbox with `role="switch"`. Screen readers announce it as a switch that is on or off, and the form submits it like any checkbox.
+
+```html
+<label class="switch">
+  <input type="checkbox" role="switch" name="notifications" checked />
+  Email notifications
+</label>
+```
+
+| Class | What it does |
+| --- | --- |
+| `switch` | Lines up the control with its label and draws the track and thumb from the native checkbox |
+
+## Saving right away
+
+Listen for `change` and save. Show a toast if the result is not visible on the page:
+
+```html
+<label class="switch">
+  <input type="checkbox" role="switch" id="tax-switch" /> Show prices with tax
+</label>
+<script>
+  document.getElementById("tax-switch").addEventListener("change", (e) => {
+    // save the setting, then confirm it
+    DS.toast(e.target.checked ? "Prices now include tax" : "Prices now exclude tax")
+  })
+</script>
+```
+
+## WordPress and Webflow
+
+- **WordPress:** paste the markup into a Custom HTML block. Form plugins render plain checkboxes, which suit forms better anyway.
+- **Webflow:** use an **Embed** element with the markup above.
+
+## Styling
+
+The track reads `--input` when off and `--primary` when on; the thumb reads `--background`. Motion is turned off for people who ask for reduced motion.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the switch |
+| <kbd>Space</kbd> | Turns the switch on or off |
+
+## Checklist
+
+- Native checkbox with `role="switch"`, so its state is announced as on or off and it works without script.
+- The label is visible and stays the same in both states.
+- On and off differ by thumb position, not color alone.
+- The focus ring uses `--ring` and meets 3:1 against the page.
+- If the change fails to save, put the switch back and say what went wrong.
+
+</DocTab>
+</DocTabs>

@@ -129,6 +129,33 @@ The icon is optional; the layout adjusts when it is missing. A title alone works
 - Show one alert at a time in an area. Several stacked alerts get ignored.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered alerts, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Container", selector: "[data-slot=alert]" },
+  { label: "Icon", selector: "[data-slot=alert] > svg" },
+  { label: "Title", selector: "[data-slot=alert-title]" },
+  { label: "Description", selector: "[data-slot=alert-description]" },
+]}>
+  <Spec label="Default">
+    <Alert className="w-80">
+      <InfoIcon />
+      <AlertTitle>Deposit needed</AlertTitle>
+      <AlertDescription>This salon holds your slot with a deposit.</AlertDescription>
+    </Alert>
+  </Spec>
+  <Spec label="Destructive">
+    <Alert variant="destructive" className="w-80">
+      <AlertCircleIcon />
+      <AlertTitle>Payment failed</AlertTitle>
+      <AlertDescription>Your card was declined. Try another card.</AlertDescription>
+    </Alert>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

@@ -1,0 +1,151 @@
+---
+title: Tabs
+description: Tabs switch between related views of the same thing in one place, like monthly and yearly pricing, without leaving the page.
+status: stable
+order: 70
+keywords: [tablist, segmented, switcher, panels]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Arrow keys, Home and End handled by components.js.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Tabs"
+  align="start"
+  html={`
+    <div class="tabs" style="width: 100%; max-width: 26rem">
+      <div class="tabs__list" role="tablist" aria-label="Pricing period">
+        <button class="tabs__tab" role="tab" id="price-tab-month" aria-selected="true" aria-controls="price-panel-month">Monthly</button>
+        <button class="tabs__tab" role="tab" id="price-tab-year" aria-selected="false" aria-controls="price-panel-year" tabindex="-1">Yearly</button>
+      </div>
+      <div class="tabs__panel" role="tabpanel" id="price-panel-month" aria-labelledby="price-tab-month">40 USD a month, billed monthly. Cancel any time.</div>
+      <div class="tabs__panel" role="tabpanel" id="price-panel-year" aria-labelledby="price-tab-year" hidden>400 USD a year, which is two months free.</div>
+    </div>
+  `}
+/>
+
+## When to use
+
+- To switch between views of the same content: monthly or yearly prices, a product's details and its reviews.
+- When people only need one view at a time and the views are about the same size.
+- For two to five options with short labels.
+
+## When not to use
+
+- **For navigation between pages.** Use links in the site navigation. Tabs do not change the address, so people cannot bookmark or share a tab.
+- **For steps in a process.** Steps happen in order; tabs can be opened in any order. Use a form with numbered steps.
+- **When people need to compare views.** Show them side by side instead.
+- **For content people must read.** Hidden panels get missed. If everything matters, show everything.
+
+## Labels
+
+<DoDont>
+  <Do
+    caption="Short, parallel labels for views of the same thing."
+    html={`<div class="tabs__list" aria-hidden="true"><span class="tabs__tab" aria-selected="true">Overview</span><span class="tabs__tab">Pricing</span><span class="tabs__tab">Reviews</span></div>`}
+  />
+  <Dont
+    caption="Long labels that mix topics and actions, and wrap on phones."
+    html={`<div class="tabs__list" aria-hidden="true"><span class="tabs__tab" aria-selected="true">Everything about us</span><span class="tabs__tab">Click here to book</span></div>`}
+  />
+</DoDont>
+
+## More than two tabs
+
+<Example
+  title="Three tabs"
+  align="start"
+  html={`
+    <div class="tabs" style="width: 100%; max-width: 26rem">
+      <div class="tabs__list" role="tablist" aria-label="Service details">
+        <button class="tabs__tab" role="tab" id="svc-tab-1" aria-selected="true" aria-controls="svc-panel-1">Overview</button>
+        <button class="tabs__tab" role="tab" id="svc-tab-2" aria-selected="false" aria-controls="svc-panel-2" tabindex="-1">What is included</button>
+        <button class="tabs__tab" role="tab" id="svc-tab-3" aria-selected="false" aria-controls="svc-panel-3" tabindex="-1">FAQ</button>
+      </div>
+      <div class="tabs__panel" role="tabpanel" id="svc-panel-1" aria-labelledby="svc-tab-1">A two week brand sprint for small teams.</div>
+      <div class="tabs__panel" role="tabpanel" id="svc-panel-2" aria-labelledby="svc-tab-2" hidden>Workshop, logo, color, type and a one page guide.</div>
+      <div class="tabs__panel" role="tabpanel" id="svc-panel-3" aria-labelledby="svc-tab-3" hidden>Most questions are answered on the first call.</div>
+    </div>
+  `}
+/>
+
+## Content
+
+- One or two words per label, in sentence case.
+- Keep the first tab the one most people need.
+- Do not put tabs inside tabs.
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+```html
+<div class="tabs">
+  <div class="tabs__list" role="tablist" aria-label="Pricing period">
+    <button class="tabs__tab" role="tab" id="tab-month"
+            aria-selected="true" aria-controls="panel-month">Monthly</button>
+    <button class="tabs__tab" role="tab" id="tab-year"
+            aria-selected="false" aria-controls="panel-year" tabindex="-1">Yearly</button>
+  </div>
+  <div class="tabs__panel" role="tabpanel" id="panel-month" aria-labelledby="tab-month">...</div>
+  <div class="tabs__panel" role="tabpanel" id="panel-year" aria-labelledby="tab-year" hidden>...</div>
+</div>
+```
+
+| Class or attribute | What it does |
+| --- | --- |
+| `tabs` | Wrapper around the list and panels |
+| `tabs__list` with `role="tablist"` | The rail of tabs. Give it an `aria-label`. |
+| `tabs__tab` with `role="tab"` | One tab. `aria-controls` points at its panel. |
+| `aria-selected="true"` | Marks the current tab and styles it as selected |
+| `tabs__panel` with `role="tabpanel"` | The content. `aria-labelledby` points at its tab; add `hidden` to every panel but the first. |
+
+Set `tabindex="-1"` on every tab except the selected one, so <kbd>Tab</kbd> moves into the tab list once and then on to the panel.
+
+## Behavior
+
+`components.js` finds every `role="tablist"` on the page and handles clicks, arrow keys, Home and End. It updates `aria-selected`, `tabindex` and `hidden` for you. Without the script, only the first panel shows, so the most important content belongs there.
+
+If you add tabs after the page loads, call `DS.enhance(container)`.
+
+## WordPress and Webflow
+
+- **WordPress:** paste the markup into a Custom HTML block. Every `id` must be unique on the page, so rename them if you use tabs twice.
+- **Webflow:** Webflow's own Tabs element works too, but it is styled separately. To use these styles, paste the markup into an Embed element.
+
+## Styling
+
+The rail uses `--muted`, the selected tab uses `--background` and `--foreground`, and other tabs use `--muted-foreground`. Corners follow `--radius`.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the selected tab, then into the panel |
+| <kbd>Right arrow</kbd> or <kbd>Left arrow</kbd> | Selects the next or previous tab, wrapping around |
+| <kbd>Home</kbd> or <kbd>End</kbd> | Selects the first or last tab |
+
+## Focus management
+
+Arrow keys move focus and show the new panel at the same time. Focus never jumps into the panel on its own; people press <kbd>Tab</kbd> to go there.
+
+## Checklist
+
+- The tab list has `role="tablist"` and an `aria-label` that names the set.
+- Each tab has `role="tab"`, `aria-selected` and `aria-controls`; each panel has `role="tabpanel"` and `aria-labelledby`.
+- Only the selected tab is in the tab order.
+- Every `id` is unique on the page.
+- The selected tab is shown by more than color: it has a raised background and a shadow.
+- Labels fit on one line at 390 px wide.
+
+</DocTab>
+</DocTabs>

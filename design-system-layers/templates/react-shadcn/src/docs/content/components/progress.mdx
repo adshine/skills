@@ -139,6 +139,18 @@ Set `value` from 0 to 100. The bar fills from the left with the `--primary` role
 - If the task fails, keep the bar where it stopped and show an error with a retry action.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered bar, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Track", selector: "[data-slot=progress]" },
+  { label: "Indicator", selector: "[data-slot=progress-indicator]" },
+]}>
+  <Spec label="40 percent"><Progress value={40} className="w-64" aria-label="Upload progress" /></Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import

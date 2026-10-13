@@ -1,0 +1,133 @@
+---
+title: Checkbox
+description: Checkboxes let people pick any number of options from a list, or confirm a single statement like agreeing to terms.
+status: stable
+order: 30
+keywords: [check, tick, multi-select, agree, terms, consent, options]
+updated: 2026-10-12
+changes:
+  - version: 0.1.0
+    date: 12 Oct 2026
+    note: First release. Native checkbox tinted with the primary role through accent-color.
+---
+
+<DocTabs>
+<DocTab label="Usage">
+
+<Example
+  title="Single checkbox"
+  html={`
+    <label class="check"><input type="checkbox" name="reminders" checked /> Send me a reminder the day before</label>
+  `}
+/>
+
+## When to use
+
+- To let people choose any number of options from a short list, including none.
+- To confirm one statement, like "I agree to the terms", where checking it is a deliberate act.
+- In a form that is submitted later, where nothing happens until people press the button.
+
+## When not to use
+
+- **For one choice from several.** Use [radio buttons](/components/radio).
+- **For a setting that applies right away.** Use a [switch](/components/switch).
+- **For long lists.** Over about ten options, group them or let people search.
+
+## Groups
+
+Wrap related checkboxes in a `fieldset` with a `legend` that asks the question. Screen readers read the legend before each option.
+
+<Example
+  title="Checkbox group"
+  align="start"
+  html={`
+    <fieldset class="fieldset">
+      <legend class="legend">What do you need help with?</legend>
+      <label class="check"><input type="checkbox" name="help" value="design" checked /> Website design</label>
+      <label class="check"><input type="checkbox" name="help" value="copy" /> Copywriting</label>
+      <label class="check"><input type="checkbox" name="help" value="seo" checked /> Search ranking</label>
+      <label class="check"><input type="checkbox" name="help" value="hosting" disabled /> Hosting (not offered yet)</label>
+    </fieldset>
+  `}
+/>
+
+Stack options vertically, one per line. Side by side options are harder to scan and easy to misread as one label.
+
+<DoDont>
+  <Do
+    caption="Labels say what checking the box means, and the whole label is clickable."
+    html={`<label class="check"><input type="checkbox" /> Email me about new services</label>`}
+  />
+  <Dont
+    caption="Negative label. People have to work out what checking it does."
+    html={`<label class="check"><input type="checkbox" /> Do not stop sending me emails</label>`}
+  />
+</DoDont>
+
+## Content
+
+- Write labels as positive statements: "Email me updates", not "Do not email me".
+- Keep each label short. If an option needs explaining, put a short line of helper text under the group.
+- Never check a consent or marketing box for people by default.
+
+</DocTab>
+<DocTab label="Code">
+
+## Markup
+
+The native checkbox sits inside its `label`, so clicking the text toggles it with no extra script.
+
+```html
+<label class="check">
+  <input type="checkbox" name="reminders" value="yes" />
+  Send me a reminder the day before
+</label>
+```
+
+## Group
+
+```html
+<fieldset class="fieldset">
+  <legend class="legend">What do you need help with?</legend>
+  <label class="check"><input type="checkbox" name="help" value="design" /> Website design</label>
+  <label class="check"><input type="checkbox" name="help" value="copy" /> Copywriting</label>
+</fieldset>
+```
+
+| Class | What it does |
+| --- | --- |
+| `check` | Lines up a native checkbox with its label text and tints it with `--primary` |
+| `fieldset` | Removes the default fieldset border and stacks options with even spacing |
+| `legend` | The group question, styled like a field label |
+
+A disabled checkbox dims its whole label automatically.
+
+## WordPress and Webflow
+
+- **WordPress:** most form plugins render a checkbox inside a label already; add the class `check` to that label, or paste the markup into a Custom HTML block.
+- **Webflow:** Webflow's default checkbox is a styled `div`. Use an **Embed** element with the markup above inside the Form Block so the real checkbox is submitted.
+
+## Styling
+
+The box is the browser's own control, tinted with `accent-color: var(--primary)`. That keeps the right size, focus behavior and high contrast mode support on every platform.
+
+</DocTab>
+<DocTab label="Accessibility">
+
+## Keyboard
+
+| Key | Action |
+| --- | --- |
+| <kbd>Tab</kbd> | Moves focus to the next checkbox |
+| <kbd>Space</kbd> | Checks or unchecks the focused checkbox |
+
+## Checklist
+
+- Uses a native `input type="checkbox"`, so its checked state is announced with no extra attributes.
+- Each checkbox has a label, and the label text is part of the click target.
+- Groups use `fieldset` and `legend` so the question is read with each option.
+- The tick and border follow the theme and meet 3:1 against the page in light and dark.
+- Required consent boxes say why they are required in nearby text.
+
+</DocTab>
+</DocTabs>

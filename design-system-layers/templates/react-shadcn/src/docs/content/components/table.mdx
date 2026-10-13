@@ -236,6 +236,32 @@ When there are no rows, keep the header and say why the table is empty and what 
 - Show a dash for missing values rather than leaving the cell blank.
 
 </DocTab>
+<DocTab label="Specs">
+
+Measured live from the rendered table, so the numbers always match the code.
+
+<Specs parts={[
+  { label: "Table", selector: "[data-slot=table]" },
+  { label: "Header cell", selector: "[data-slot=table-head]" },
+  { label: "Body row", selector: "[data-slot=table-body] [data-slot=table-row]" },
+  { label: "Body cell", selector: "[data-slot=table-cell]" },
+  { label: "Caption", selector: "[data-slot=table-caption]" },
+]}>
+  <Spec label="Default" className="w-full max-w-lg">
+    <Table>
+      <TableCaption>Bookings this week</TableCaption>
+      <TableHeader>
+        <TableRow><TableHead>Client</TableHead><TableHead>Service</TableHead><TableHead className="text-right">Price</TableHead></TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow><TableCell>Order 1042</TableCell><TableCell>Paid</TableCell><TableCell className="text-right">$150.00</TableCell></TableRow>
+        <TableRow><TableCell>Order 1043</TableCell><TableCell>Pending</TableCell><TableCell className="text-right">$250.00</TableCell></TableRow>
+      </TableBody>
+    </Table>
+  </Spec>
+</Specs>
+
+</DocTab>
 <DocTab label="Code">
 
 ## Import
