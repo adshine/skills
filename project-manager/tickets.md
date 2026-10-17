@@ -10,7 +10,10 @@ $PM_HOME/<project-folder-name>/      (PM_HOME defaults to ~/.pm)
   tickets/T07-slug.md one file per ticket
   reports/T07.md      written by the worker, one file per ticket
   inbox/              one file per finished or blocked ticket, from pm-report
-  manager             your agent name, so workers can ring you
+  manager             the name workers ring: the delegator, or you when solo
+  front               the front desk's name, only when a delegator runs (pm-delegate)
+  requests/           front desk -> delegator, one file per user request (pm-request)
+  digests/            delegator -> front desk, one file per digest (pm-digest)
   plans/<slug>/       plan, advisor prompt and answers (see planning.md)
   needs-you.md        open questions for the user (see user.md)
   handoffs/           see user.md

@@ -58,7 +58,8 @@ The skill reads its setup rather than assuming one. `SKILL.md` has an
 
 ```
 project-manager/
-  SKILL.md                        the role, principles, loop, hard stops
+  SKILL.md                        the role, principles, front desk, hard stops
+  delegator.md                    the loop, run by the delegator (or by you when solo)
   planning.md                     large new work: brainstorm, plan, one approval
   tickets.md                      ticket template, slicing, board, parallel work
   review.md                       verifier, fix loop, final review, shipping
@@ -72,6 +73,8 @@ project-manager/
     pm-capacity                   OK / BUSY / STOP verdict (macOS and Linux; agent count needs Herdr)
     pm-watch                      capacity alarm and inbox nudges (nudges need Herdr)
     pm-spawn  pm-blocked-watch  pm-stall-watch   Herdr only
+    pm-delegate                   start a delegator pane so workers never ring the user's pane (Herdr only)
+    pm-request  pm-digest  pm-ring   front desk to delegator and back; pm-ring is their shared bell
 ```
 
 Dependencies: bash, git; `jq` for the Herdr scripts; zsh and python3 for

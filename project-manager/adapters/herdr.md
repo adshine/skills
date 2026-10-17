@@ -26,8 +26,9 @@ printf '%s\n' "${HERDR_ENV:-outside}" "$HERDR_WORKSPACE_ID" "$HERDR_PANE_ID"
   matches the project folder you were started in. Tell the user in one line
   which you adopted. With no match or several, ask once. Outside there is no
   `--current`, so pass explicit pane IDs, and make your first worker tab with
-  `herdr tab create`. If the list command fails, Herdr is not running: tell the
-  user and give them tickets to paste.
+  `herdr tab create`. If the list command fails, Herdr is not running: use
+  the host's background subagents as workers, and tell the user in one line
+  that you are doing so.
 
 The workspace decides the project. The project folder is where the workspace's
 panes live (`herdr pane list --workspace "$WS"` shows each pane's folder), which
@@ -83,6 +84,8 @@ time, spent like this:
 
 1. Read its last 10 lines. If your text is sitting in its input box, send
    `herdr agent send-keys <name> enter` and look again after 20 seconds.
+   Grey text in a Claude Code input box is the tool's own suggestion, not your
+   brief and not user input: never press enter on it.
 2. Still nothing: mark it `wedged` on the board with one line of what you saw
    ("context 99.9%, prompts echo, nothing runs"), return its ticket to the
    frontier, and dispatch that ticket to another worker, creating one if nobody
@@ -120,14 +123,16 @@ You never wait. After dispatch you end your turn, and one of two things starts
 the next one:
 
 - **A doorbell.** A worker's `pm-report` types one line beginning `inbox:` into
-  your pane. It needs your agent name, so set it once at the start:
+  the pane named in `<board-dir>/manager` (the delegator's, when the board has
+  a front desk; the front desk itself is never rung by workers). It needs your
+  agent name, so set it once at the start:
 
 ```bash
 herdr agent rename "$HERDR_PANE_ID" app-pm
-echo app-pm > $PM_HOME/<project>/manager
+echo app-pm > $PM_HOME/<project>/manager   # pm-delegate later swaps in app-delegate
 ```
 
-- **A nudge.** The watchdog (`pm-watch`) types `nudge:` into your pane when
+- **A nudge.** The watchdog (`pm-watch`) types `nudge:` into the manager's pane when
   the inbox has held unread entries for more than two minutes, which covers a
   lost or failed doorbell.
 
@@ -168,7 +173,8 @@ agents are open and refuses while memory pressure is at warning, because an
 idle worker you already have is always cheaper than a new one. A message in
 your pane beginning `capacity: STOP` comes from the watchdog: treat it the same
 way, at once. When your frontier is empty, close the workers you created: open
-agents pile up in swap even when idle.
+agents pile up in swap even when idle. With a front desk only the delegator
+is rung; it tells the front desk once if work stays paused over 10 minutes.
 
 **1. Make room.** A pane in a tab you own first, a new tab once that tab holds
 about four panes or a split would leave them too small to read. Split wide
@@ -254,5 +260,6 @@ herdr pane close <pane-id>
 herdr tab close <tab-id>
 ```
 
-Panes the user set up are yours to brief and theirs to close, rename, or
-restart.
+Close only panes your board records as "created by me"; looking idle is not a
+reason. Panes the user set up are yours to brief and theirs to close, rename,
+or restart.

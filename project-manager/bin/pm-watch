@@ -1,7 +1,8 @@
 #!/bin/bash
 # pm-watch [--ensure] : keeps an eye on the machine while agents work, because
 # memory climbs AFTER dispatch (tests, builds, browsers). On STOP it rings every
-# manager (Herdr) and posts a desktop notification (macOS). With PM_WATCH_KILL_BROWSERS=1 it also
+# manager (<board>/manager: the delegator, never a front desk) and posts a
+# desktop notification (macOS). With PM_WATCH_KILL_BROWSERS=1 it also
 # closes headless test browsers at CRITICAL pressure (tests fail and rerun;
 # nothing is lost), which is what stops a kernel panic.
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"; pm_home="${PM_HOME:-$HOME/.pm}"; pidf="$pm_home/.watch.pid"; mkdir -p "$pm_home"
@@ -20,13 +21,14 @@ while :; do
   if [ "${PM_WATCH_KILL_BROWSERS:-0}" = 1 ] && [ "$(sysctl -n kern.memorystatus_vm_pressure_level 2>/dev/null || echo 1)" -ge 4 ]; then
     if pkill -f 'chrome-headless-shell|Chrome for Testing' 2>/dev/null; then date +%s > "$pm_home/.watch-killed"; fi
   fi
-  # nudge: a manager whose inbox has unread entries older than 2 minutes gets one line,
+  # nudge: a manager (the delegator, when the board has a front desk) whose inbox or
+# requests/ has unread entries older than 2 minutes gets one line,
   # at most once every 3 minutes, so a lost doorbell never leaves work sitting.
   now=$(date +%s)
   command -v herdr >/dev/null 2>&1 || { last="$v"; sleep 20; continue; }
   for m in "$pm_home"/*/manager; do
     [ -f "$m" ] || continue; d=$(dirname "$m"); n=$(head -1 "$m"); [ -n "$n" ] || continue
-    stale=$(find "$d/inbox" -maxdepth 1 -type f -name '2*' -mmin +2 2>/dev/null | wc -l | tr -d ' ')
+    stale=$(find "$d/inbox" "$d/requests" -maxdepth 1 -type f -name '2*' ! -name '*.tmp' -mmin +2 2>/dev/null | wc -l | tr -d ' ')
     [ "$stale" -gt 0 ] || continue
     lastn=$(cat "$d/inbox/.last-nudge" 2>/dev/null || echo 0)
     [ $(( now - lastn )) -ge 180 ] || continue

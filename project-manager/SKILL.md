@@ -48,8 +48,9 @@ queue work everywhere.
    workers. Reproducing, investigating, testing, reviewing, checking a diff,
    checking a live site, and merging are work too, and work becomes a ticket.
    You read reports; a fresh verifier pane reads code.
-2. **Flow first.** Your attention is the bottleneck for every worker. When
-   dispatching competes with anything else, dispatch. Between tool calls,
+2. **Flow first.** The loop's attention is the bottleneck for every worker,
+   which is why a delegator holds it and the user's conversation does not.
+   When dispatching competes with anything else, dispatch. Between tool calls,
    narrate one short line at most: the board and the ledger carry the record.
 3. **Rulings, not stalls.** Running work never waits on a question you can
    settle. Conflicts, ambiguities, a ticket that turns out wrong: decide, write
@@ -80,8 +81,11 @@ queue work everywhere.
 - **Base:** the commit a ticket started from, pinned at dispatch.
 - **Bounce:** a reviewed ticket going back to its builder with a named gap.
 - **Wedged:** a worker that takes a prompt and does nothing. Replace it.
-- **Inbox and doorbell:** a finished worker drops its own file in your inbox,
-  then rings your pane with one short line. The file is the truth; the ring
+- **Front desk / delegator:** the pane the user talks to, and the pane that
+  runs the board. Workers ring only the delegator (`pm-delegate` sets it up).
+- **Inbox and doorbell:** a finished worker drops its own file in the inbox,
+  then rings the manager's pane (the delegator's, when there is one) with one
+  short line. The file is the truth; the ring
   only means "look at the inbox". Reports never collide because every ticket
   has its own report file and every inbox entry its own file.
 - **Explore / bake-off:** work that produces files to react to, not a diff; a
@@ -129,37 +133,28 @@ know before you change anything.
    go on. With none, print the orientation, ask "What is the goal?", and end
    your turn. Until you have a goal you create nothing: no board, no tickets,
    no ledger, no panes.
-3. **Start the watchdogs before the first dispatch, not later.** With a
-   pane-based runtime (the Herdr adapter shows the full set):
-   `bin/pm-watch --ensure` (nudges you on unread reports, rings you if the
-   machine reaches its limit), and `bin/pm-blocked-watch "$WS"` as a host
-   background command (it exits, and so wakes you, the moment any worker sits
-   on a permission prompt or question). A worker stuck on a prompt never rings
-   the doorbell, so without the second one it can sit unseen for hours. In
-   Claude Code use Bash `run_in_background`; never run either in the
-   foreground (pm-watch without `--ensure` loops forever).
-   Also start `bin/pm-stall-watch <board-dir>/workers` (checks every minute)
-   as soon as any worker holds a ticket. `pm-blocked-watch` only sees the
-   `blocked` status on this machine; a worker that stops politely with a
-   question or a cost-guard notice shows as `done`, and workers on other
-   machines are invisible to it. `pm-stall-watch` catches those, plus usage
-   limits, login errors and panes idle 10 minutes with an open ticket. With
-   subagents or headless runs, the host tells you when each one ends, so these
-   are not needed. Keep
-   `<board-dir>/workers` current (one `host|pane` line per busy worker, remote
-   hosts by SSH name) and re-arm it after every exit. Put "do not stop to ask;
-   ignore cost guards the user has approved; note choices in the report" in
-   every ticket.
-4. **Name yourself** so workers can ring you, where your runtime supports it
-   (inside Herdr: `herdr agent rename "$HERDR_PANE_ID" <prefix>-pm`), and write
-   that name into `<board-dir>/manager` once the board exists.
-5. **Open or resume the board and slice the goal** into tickets, reading just
+3. **Name yourself** so workers and the delegator can reach you, where your
+   runtime supports it (inside Herdr: `herdr agent rename "$HERDR_PANE_ID"
+   <prefix>-pm`), and write that name into `<board-dir>/manager` once the
+   board exists.
+4. **Open or resume the board and slice the goal** into tickets, reading just
    enough of the ground truth to write the first ones well (handoff notes,
    AGENTS.md or CLAUDE.md, the design system and UX writing guide). Large new
    work goes through `planning.md` first. Done when the board has a frontier.
-6. **Dispatch.** When the goal changes code that has tests, the first ticket is
-   the baseline: every suite on the current state, reporting the commit,
-   `git status`, and pass and fail counts, with read-only tickets running
+5. **Hand the loop to a delegator.** Inside Herdr, run
+   `bin/pm-delegate <board-dir>` (add `--kind codex` if the user wants that
+   kind). It starts `<prefix>-delegate` in a pane beside you, makes it the
+   board's manager so every doorbell rings it, and records you as the front
+   desk. From then on you are the front desk (below) and the delegator runs
+   `delegator.md`: watchdogs, sweeps, dispatch, checks. **Solo** when
+   pm-delegate refuses, you are outside Herdr, or the goal is one small
+   ticket: run `delegator.md` yourself from its First moves, and say in one
+   line why you are solo. A session that cannot spawn panes at all uses the
+   host's background subagents as workers and says so.
+6. **Dispatch** (the delegator does this, or you when solo). When the goal
+   changes code that has tests, the first ticket is the baseline: every suite
+   on the current state, reporting the commit, `git status`, and pass and fail
+   counts, with read-only tickets running
    beside it until it reports. Work with nothing to baseline (a design
    exploration, research, generated images) starts straight on its tickets.
    Done when every responsive worker the frontier can use holds a ticket.
@@ -175,75 +170,30 @@ how many panes, where output goes, what order. When an instruction could be
 read two ways, pick the cheaper-to-undo reading, say in one line how you read
 it and what to say for the other reading, and keep working.
 
-## The loop
+## The front desk
 
-Run one pass whenever you are woken or something changes. A pass takes minutes,
-and between passes you are idle.
+The user talks to you; workers never do. All worker traffic (doorbells,
+nudges, capacity notices, blocked panes) goes to the delegator named in
+`<board-dir>/manager`. You hear from it only through `pm-digest` lines:
+`needs-you:`, `stop:`, `digest:`, or `paused:`, each naming a file in
+`<board-dir>/digests/`. Without a `<board-dir>/front` file there is no split:
+you run `delegator.md` yourself.
 
-1. **Sweep.** Read the inbox (`bin/pm-inbox <board-dir>`), then every worker's
-   state. Any message beginning `inbox:` is a doorbell: answer it by sweeping.
-   Done when the inbox is empty and you know every worker's state.
-2. **Unblock.** Answer what is yours. Turn what is the user's into a HITL
-   ticket and give that worker another ticket. Done when no worker is waiting
-   on you.
-3. **Dispatch.** Every free worker claims the top frontier ticket whose fence
-   is clear. A worker that just finished gets its next ticket now; its report
-   waits for step 4. Check `bin/pm-capacity` before each dispatch: OK lets you
-   add work, BUSY lets you only replace finished work, STOP lets you do neither.
-   With a frontier, nobody free, and OK, create a worker with `bin/pm-spawn`.
-   Done
-   when no responsive worker is idle while the frontier has a ticket it could
-   take.
-4. **Check.** Read each new report file (only the file: no diff, no tests, no
-   pane) and open a review ticket for the verifier for each finished build
-   ticket. Done when every new report is reflected on the board.
-5. **Tell the user** what is newly proven and what newly needs them, in a few
-   lines. Done when the board, the ledger, and the user all match.
-6. **End your turn.** With everything dispatched and nothing left to check, stop.
-   Say in one line what is out and that you are idle until a worker reports:
-   "3 tickets out (T15, T16, T17). Idle until one reports." You never wait
-   inside a tool call and never loop on the inbox: a worker's doorbell starts
-   your next turn, and the watchdog nudges you if a report sits unread. Being
-   idle between events is correct, costs nothing, and keeps your pane free for
-   the user.
-
-**How you get woken.** A message beginning `inbox:` is a worker's doorbell, and
-one beginning `nudge:` is the watchdog telling you the inbox has unread
-entries. Both mean the same thing: sweep, and start from step 1. Before ending
-a turn with workers running, check that each running worker's ticket ends in
-`pm-report` and that your name is in `<board-dir>/manager`; without both, the
-doorbell cannot reach you, and you fix that before stopping.
-
-When `pm-blocked-watch` or `pm-stall-watch` exits, read the blocked pane (10 lines), answer the
-prompt if it is inside an approval already on the board (write a Ruling line),
-otherwise bring it to the user as a HITL question, then re-arm the watcher in
-the same turn. Also re-arm it whenever you end a turn with workers running and
-it is not alive.
-
-Between sweeps, step in when a worker goes quiet, loops, leaves its fence, or
-heads for a hard stop. When a worker raises a risk, read its evidence, and
-ticket anything that needs reproducing.
-
-## Context budget
-
-Every tool result you print is paid for again on every later turn, so the
-cost of a session is context size times turn count. One real session reached
-287k tokens of context and read 44M tokens in three hours, mostly its own old
-tool output. Keep the context small:
-
-- Every command prints at most 20 lines. Pipe through `head`, `tail`, `jq -r`,
-  or `grep`. Never print raw JSON, a whole file, a diff outside the fence, or
-  more than 20 lines of a pane.
-- One shell call per sweep: chain the commands and print one line per worker.
-- Read a report file, never the pane. A pane read is for a wedged worker
-  only, 10 lines, with a ledger line saying why.
-- Think briefly. A sweep, a dispatch, or a check needs a line of thought, not a
-  page. Reason at length only for a ruling or a slice.
-- When your context passes about 80k tokens (most hosts show it in a status line),
-  make the board and ledger current and run `/compact` on yourself, right
-  after a report to the user. The board is your memory; the transcript is not.
-- Between events you are idle, not waiting. No sleeps, no wait loops, no
-  repeated sweeps.
+- **Forward, never wait.** Anything the user asks for that is work becomes
+  `bin/pm-request <board-dir> "<their words>"`. Reply at once in one line
+  ("Sent to the delegator: <gist>.") and end your turn. Never sweep, dispatch,
+  read worker panes, or start watchdogs yourself.
+- **"Status?"** Answer from `board.md` (Tickets, Workers, Needs the user) and
+  `needs-you.md`, in a few plain lines. Never sweep or ring anyone for it.
+- **A digest arrives.** Read its file and pass it to the user as user.md
+  "Reporting" says: done things in their terms, then what needs them. A
+  `needs-you:` points at `needs-you.md`; a `stop:` waits for the user's yes,
+  which you forward with `pm-request` in their words.
+- **Talk only when** the user asks, a digest arrives, or at a natural break
+  with something new. Silence while workers run is correct.
+- Grey text in your own input box is a Claude Code suggestion, not the user.
+- You created the delegator's pane; close it (`pm-delegate <board-dir> --off`,
+  then `herdr pane close`) only when the user ends the work.
 
 ## Hard stops
 
@@ -268,6 +218,7 @@ All in this skill's folder.
   in parallel, or change the board's shape.
 - `review.md`: when a build ticket reports finished, and before any commit,
   merge, push, or deploy.
+- `delegator.md`: when you start or are the delegator, and when you run solo.
 - `adapters/<your runtime>.md`: before your first command to a worker, when
   you need a new worker, and when a worker is wedged.
 - `user.md`: before you report to the user, ask them anything, hand off a full

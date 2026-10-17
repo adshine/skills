@@ -1,0 +1,62 @@
+#!/bin/bash
+# pm-delegate <board-dir> [--kind claude|codex] [--prefix <p>]
+# pm-delegate <board-dir> --off
+# Requires Herdr (https://github.com/herdrdev/herdr) and jq.
+# Run by the manager the user talks to. Splits the user's conversation from the
+# worker traffic: starts a DELEGATOR in a new pane beside this one (through
+# pm-spawn, so capacity rules apply), names it <prefix>-delegate, makes it the
+# board's manager (<board>/manager, which every pm-report, pm-watch nudge and
+# capacity notice rings) and records this pane as the FRONT DESK
+# (<board>/front, reached only through pm-digest). Then briefs it with
+# delegator.md. --off undoes the split: this pane becomes the only manager again
+# and the front file goes; close the delegator pane afterwards (you created it).
+set -u
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"; skill="$(dirname "$here")"
+dir="${1:?board dir}"; shift; dir="${dir/#\~/$HOME}"; kind=claude; prefix=""; off=0
+while [ $# -gt 0 ]; do case "$1" in
+  --kind) kind="${2:?kind}"; shift 2;; --prefix) prefix="${2:?prefix}"; shift 2;; --off) off=1; shift;;
+  *) echo "unknown option $1" >&2; exit 2;; esac; done
+case "$kind" in claude|codex) ;; *) echo "--kind must be claude or codex" >&2; exit 2;; esac
+[ -d "$dir" ] || { echo "no board at $dir; make the board first" >&2; exit 2; }
+command -v herdr >/dev/null 2>&1 && [ -n "${HERDR_PANE_ID:-}" ] || {
+  echo "not inside Herdr: no pane to split. Run without a delegator, or use background subagents and say so." >&2; exit 3; }
+log() { echo "$(date '+%Y-%m-%d %H:%M') $*" >> "$dir/ledger.md"; }
+
+me_pane="$HERDR_PANE_ID"
+me="$(herdr agent get "$me_pane" 2>/dev/null | jq -r '.result.agent.name // empty')"; me="${me:-$me_pane}"
+
+if [ $off -eq 1 ]; then
+  d="$(head -1 "$dir/manager" 2>/dev/null)"
+  echo "$me" > "$dir/manager"; rm -f "$dir/front"
+  log "Delegator off: $me is the only manager again (was delegator ${d:-none}); close its pane."
+  echo "manager is $me again; front desk removed. Close ${d:-the delegator}'s pane: you created it."; exit 0
+fi
+
+cur="$(head -1 "$dir/manager" 2>/dev/null)"
+if [ -s "$dir/front" ] && [ -n "$cur" ] && [ "$cur" != "$me" ] && herdr agent get "$cur" >/dev/null 2>&1; then
+  echo "this board already has a live delegator: $cur (front desk $(head -1 "$dir/front"))"; exit 0
+fi
+
+if [ -z "$prefix" ]; then
+  case "$me" in *-pm) prefix="${me%-pm}";; *) prefix="$(basename "$dir" | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9-' | cut -c1-12)";; esac
+  [ -n "$prefix" ] || prefix=pm
+fi
+name="$prefix-delegate"
+cwd="$(sed -n 's/^Project: *//p' "$dir/board.md" 2>/dev/null | head -1)"; [ -d "$cwd" ] || cwd="$PWD"
+
+pane="$(herdr pane split --pane "$me_pane" --direction right --cwd "$cwd" --env PM_GUARD=1 --no-focus 2>/dev/null | jq -r '.result.pane.pane_id // empty')"
+[ -n "$pane" ] || { echo "could not split $me_pane for the delegator" >&2; exit 4; }
+# The delegator runs herdr and pm-* commands all day; a permission prompt would stall every worker.
+args=(); [ "$kind" = claude ] && args=(--permission-mode bypassPermissions)
+if ! "$here/pm-spawn" "$name" "$kind" "$pane" -- ${args[@]+"${args[@]}"}; then
+  herdr pane close "$pane" >/dev/null 2>&1
+  echo "delegator not started (see above); pane $pane closed. Carry on as the only manager." >&2; exit 5
+fi
+herdr agent wait "$name" --until idle --timeout 90000 >/dev/null 2>&1
+
+mkdir -p "$dir/inbox/seen" "$dir/requests/seen" "$dir/digests"
+echo "$me" > "$dir/front"; echo "$name" > "$dir/manager"
+log "Delegator on: $name ($kind, pane $pane, created by $me) is the board's manager; $me is the front desk."
+herdr agent prompt "$name" "You are the delegator for the board $dir. Read $skill/delegator.md and follow it from its first section. The front desk is $me: reach it only with pm-digest. Start by sweeping: $here/pm-inbox $dir" >/dev/null 2>&1 \
+  || echo "warning: could not brief $name; prompt it yourself" >&2
+echo "delegator $name started in pane $pane ($kind). Workers now ring $name; $me (front desk) hears only pm-digest."

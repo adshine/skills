@@ -1,0 +1,25 @@
+#!/bin/bash
+# pm-digest <board-dir> [--kind digest|needs-you|stop|paused] <line> [<line>...]
+# Run by the DELEGATOR. The only way anything reaches the front desk (the pane
+# the user talks to). One argument per line, one line per item, plain English.
+#   digest     a milestone of the user's goal is proven (the default)
+#   needs-you  a new HITL question was added to needs-you.md
+#   stop       a hard stop: the user must say yes before work goes on
+#   paused     capacity has held work back for more than 10 minutes
+# Writes <board>/digests/<stamp>-<kind>.md, then rings the front desk once with
+# "<kind>: <first line> (<file>)". With no <board>/front file there is no front
+# desk: it prints the lines so the manager tells the user itself.
+set -u
+dir="${1:?board dir}"; shift; dir="${dir/#\~/$HOME}"; kind=digest
+if [ "${1:-}" = "--kind" ]; then kind="${2:?kind}"; shift 2; fi
+case "$kind" in digest|needs-you|stop|paused) ;; *) echo "kind must be digest, needs-you, stop or paused" >&2; exit 2 ;; esac
+[ $# -gt 0 ] || { echo "usage: pm-digest <board-dir> [--kind K] <line>..." >&2; exit 2; }
+mkdir -p "$dir/digests"
+f="$dir/digests/$(date +%Y%m%dT%H%M%S)-$kind-$$.md"
+{ for l in "$@"; do echo "- $l"; done; } > "$f.tmp" && mv "$f.tmp" "$f"
+if [ ! -s "$dir/front" ]; then
+  echo "no front desk on this board; tell the user yourself:"; cat "$f"; exit 0
+fi
+more=""; [ $# -gt 1 ] && more=" (+$(( $# - 1 )) more)"
+"$(dirname "${BASH_SOURCE[0]}")/pm-ring" "$dir" front "$kind: ${1:0:160}$more. Read $f"
+exit 0

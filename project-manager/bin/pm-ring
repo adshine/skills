@@ -1,0 +1,28 @@
+#!/bin/bash
+# pm-ring <board-dir> <manager|front> <one-line message>
+# Types one line into the pane named in <board-dir>/manager (the delegator, or
+# the only manager when there is no front desk) or <board-dir>/front (the pane
+# the user talks to). Under a lock per board, so two senders never type into a
+# pane at the same moment. The ring only says "look at the file"; the file the
+# sender wrote first is the truth. Exit 0 on a ring, 1 when nobody to ring.
+set -u
+dir="${1:?board dir}"; role="${2:?manager|front}"; shift 2; msg="$*"
+dir="${dir/#\~/$HOME}"
+case "$role" in manager|front) ;; *) echo "role must be manager or front" >&2; exit 2 ;; esac
+target="$(head -1 "$dir/$role" 2>/dev/null)"
+if [ -z "$target" ] || ! command -v herdr >/dev/null 2>&1; then
+  echo "no $role pane to ring; the file is enough"; exit 1
+fi
+mkdir -p "$dir/inbox"
+lock="$dir/inbox/.bell"
+for _ in $(seq 1 40); do
+  if mkdir "$lock" 2>/dev/null; then break; fi
+  # break a lock left behind by a crashed ring (older than 30s)
+  if [ -n "$(find "$lock" -maxdepth 0 -mmin +0.5 2>/dev/null)" ]; then rmdir "$lock" 2>/dev/null; fi
+  sleep 1
+done
+code=0
+herdr agent prompt "$target" "$msg" >/dev/null 2>&1 && echo "rang $target" || { echo "could not ring $target; the file is enough"; code=1; }
+sleep 1
+rmdir "$lock" 2>/dev/null
+exit $code
