@@ -24,6 +24,7 @@ Read: [Stop Guessing at UI Quality: Interaction QA Skills for AI Coding Agents](
 | [repair-broken-video](repair-broken-video/) | Recover an unplayable `.mov`/`.mp4` (missing `moov` atom) from a healthy same-device reference clip, then re-encode so frames play in order without stutter. | Not a product QA skill; not for truly missing frame data. |
 | [project-manager](project-manager/) | Run one agent as project manager over worker agents (subagents, CLI sessions, or terminal panes): tickets, dispatch, independent review, plain-English reports. | Not a builder; never writes product code itself. |
 | [design-system-layers](design-system-layers/) | Deliver a usable design system in days from a premade React (shadcn/ui) or plain HTML starter (seed color to light/dark tokens, pattern pages first) or fix a fragile one by sorting work into foundation, component, or pattern. | Not extracting a system from an existing site or sweeping code for palette violations. |
+| [reverse-api-engineer](reverse-api-engineer/) | Turn a site with no public API into a working typed client by capturing its real traffic with the reverse-api-engineer CLI, then verify the client returns real data. | Not for sites with a documented API, or for getting around logins, paywalls, or access controls. |
 
 ### Reserved (not shipped)
 
