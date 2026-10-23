@@ -1,0 +1,168 @@
+#!/usr/bin/python3 -I
+"""pm-reap [--dry-run] : automatic clean-up of what agent work leaves behind.
+
+Runs every 15 minutes in the background once installed (`pm-reap --install`, macOS launchd).
+Nothing to run by hand after that.
+Log: ~/.pm/reap.log   Stale-worktree list: ~/.pm/stale-worktrees.txt
+
+1. Test browsers: closes automation browsers (Playwright, Puppeteer, chrome-devtools
+   bridges) whose parent is gone (orphaned) for 10+ minutes, or that have run 4+ hours.
+   Never touches a normal Chrome (no automation flags).
+2. Build caches: only when free disk is under DISK_LOW_GB, deletes rebuildable output
+   (.next .turbo .vite .astro .parcel-cache test-results playwright-report
+   node_modules/.cache) under PM_REAP_ROOT (default ~/Projects) that nobody touched for 2+ days, oldest first,
+   until free disk is back over DISK_OK_GB. Never .wrangler (holds local D1 data).
+3. Temp browser profiles in $TMPDIR older than 1 day.
+4. Worktrees and reports are NEVER deleted. Clean worktrees untouched 7+ days are
+   listed in ~/.pm/stale-worktrees.txt so a person can decide.
+Settings: PM_REAP_ROOT, PM_REAP_DISK_LOW_GB (15), PM_REAP_DISK_OK_GB (25).
+"""
+import os, sys, time, signal, shutil, subprocess, re
+
+HOME = os.path.expanduser("~")
+PROJECTS = os.path.realpath(os.environ.get("PM_REAP_ROOT", os.path.join(HOME, "Projects")))
+LOG = os.path.join(HOME, ".pm", "reap.log")
+STALE = os.path.join(HOME, ".pm", "stale-worktrees.txt")
+DISK_LOW_GB = float(os.environ.get("PM_REAP_DISK_LOW_GB", 15))
+DISK_OK_GB = float(os.environ.get("PM_REAP_DISK_OK_GB", 25))
+CACHE_DIRS = {".next", ".turbo", ".vite", ".astro", ".parcel-cache", "test-results", "playwright-report"}
+DRY = "--dry-run" in sys.argv
+now = time.time()
+
+if "--install" in sys.argv:
+    label = "com.pm.reap"
+    plist = os.path.join(HOME, "Library", "LaunchAgents", label + ".plist")
+    me = os.path.realpath(__file__)
+    os.makedirs(os.path.dirname(plist), exist_ok=True)
+    os.makedirs(os.path.dirname(LOG), exist_ok=True)
+    with open(plist, "w") as f:
+        f.write(f"""<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>{label}</string>
+  <key>ProgramArguments</key><array><string>{me}</string></array>
+  <key>StartInterval</key><integer>900</integer>
+  <key>RunAtLoad</key><true/>
+  <key>LowPriorityIO</key><true/>
+  <key>Nice</key><integer>10</integer>
+  <key>StandardOutPath</key><string>{LOG}.launchd</string>
+  <key>StandardErrorPath</key><string>{LOG}.launchd</string>
+</dict></plist>
+""")
+    dom = f"gui/{os.getuid()}"
+    subprocess.run(["launchctl", "bootout", f"{dom}/{label}"], capture_output=True)
+    r = subprocess.run(["launchctl", "bootstrap", dom, plist], capture_output=True, text=True)
+    print(f"installed {plist}" if r.returncode == 0 else f"launchctl failed: {r.stderr.strip()}")
+    sys.exit(r.returncode)
+
+
+def log(msg):
+    line = time.strftime("%Y-%m-%d %H:%M ") + ("[dry] " if DRY else "") + msg
+    if DRY or sys.stdout.isatty():
+        print(line)
+    if not DRY:
+        os.makedirs(os.path.dirname(LOG), exist_ok=True)
+        with open(LOG, "a") as f:
+            f.write(line + "\n")
+
+
+def free_gb():
+    st = os.statvfs("/System/Volumes/Data" if os.path.exists("/System/Volumes/Data") else "/")
+    return st.f_bavail * st.f_frsize / 1e9
+
+
+def etime_seconds(s):
+    # ps etime: [[dd-]hh:]mm:ss
+    days, _, rest = s.partition("-") if "-" in s else ("0", "", s)
+    parts = [int(p) for p in rest.split(":")]
+    while len(parts) < 3:
+        parts.insert(0, 0)
+    return int(days) * 86400 + parts[0] * 3600 + parts[1] * 60 + parts[2]
+
+
+# 1. test browsers ---------------------------------------------------------
+AUTOMATION = re.compile(r"chrome-headless-shell|Chrome for Testing|/Chromium|ms-playwright|puppeteer")
+AUTO_FLAGS = re.compile(r"--remote-debugging-(port|pipe)|--headless|--enable-automation")
+ps = subprocess.run(["ps", "-axo", "pid=,ppid=,etime=,args="], capture_output=True, text=True).stdout
+killed = 0
+for line in ps.splitlines():
+    m = re.match(r"\s*(\d+)\s+(\d+)\s+(\S+)\s+(.*)", line)
+    if not m:
+        continue
+    pid, ppid, et, args = int(m[1]), int(m[2]), etime_seconds(m[3]), m[4]
+    if "--type=" in args or "Helper" in args or "crashpad" in args:
+        continue  # child processes go away with the main browser
+    is_test = AUTOMATION.search(args) or ("Google Chrome" in args and AUTO_FLAGS.search(args))
+    if not is_test:
+        continue
+    if (ppid == 1 and et > 600) or et > 4 * 3600:
+        log(f"browser: closing pid {pid} (age {et // 60} min, {'orphaned' if ppid == 1 else 'over 4 h'})")
+        if not DRY:
+            try:
+                os.kill(pid, signal.SIGTERM)
+                killed += 1
+            except ProcessLookupError:
+                pass
+
+# 3. temp browser profiles -------------------------------------------------
+tmp = os.environ.get("TMPDIR") or "/tmp"
+for name in os.listdir(tmp) if os.path.isdir(tmp) else []:
+    if not re.match(r"(playwright[_-]|puppeteer_dev|chrome-devtools-mcp-|\.org\.chromium\.Chromium\.)", name):
+        continue
+    p = os.path.join(tmp, name)
+    try:
+        if os.path.isdir(p) and now - os.path.getmtime(p) > 86400:
+            log(f"temp profile: removing {p}")
+            if not DRY:
+                shutil.rmtree(p, ignore_errors=True)
+    except OSError:
+        pass
+
+# 2. build caches, only when disk is low -----------------------------------
+gb = free_gb()
+if gb < DISK_LOW_GB:
+    found = []
+    for root, dirs, _ in os.walk(PROJECTS):
+        if root.count(os.sep) - PROJECTS.count(os.sep) > 7:
+            dirs[:] = []
+            continue
+        keep = []
+        for d in dirs:
+            full = os.path.join(root, d)
+            if d in CACHE_DIRS or (d == ".cache" and os.path.basename(root) == "node_modules"):
+                found.append(full)
+            elif d not in ("node_modules", ".git", ".wrangler"):
+                keep.append(d)
+            elif d == "node_modules":
+                c = os.path.join(full, ".cache")
+                if os.path.isdir(c):
+                    found.append(c)
+        dirs[:] = keep
+    found = [p for p in found if os.path.realpath(p).startswith(PROJECTS + os.sep) and now - os.path.getmtime(p) > 2 * 86400]
+    found.sort(key=os.path.getmtime)
+    log(f"disk: {gb:.1f} GB free (under {DISK_LOW_GB:g}), {len(found)} idle build caches found")
+    for p in found:
+        if free_gb() >= DISK_OK_GB:
+            break
+        log(f"cache: removing {p}")
+        if not DRY:
+            shutil.rmtree(p, ignore_errors=True)
+    log(f"disk: now {free_gb():.1f} GB free")
+
+# 4. stale worktrees, listed only -----------------------------------------
+if not DRY and (not os.path.exists(STALE) or now - os.path.getmtime(STALE) > 6 * 3600):
+    rows = []
+    for root, dirs, files in os.walk(PROJECTS):
+        if root.count(os.sep) - PROJECTS.count(os.sep) > 5:
+            dirs[:] = []
+            continue
+        if ".git" in files:  # a linked worktree has a .git file, not a folder
+            age = (now - os.path.getmtime(root)) / 86400
+            if age >= 7:
+                dirty = subprocess.run(["git", "-C", root, "status", "--porcelain"], capture_output=True, text=True).stdout.strip()
+                rows.append(f"{int(age):>3}d  {'HAS UNSAVED CHANGES' if dirty else 'clean'}  {root}")
+            dirs[:] = []
+        dirs[:] = [d for d in dirs if d not in ("node_modules", ".git")]
+    with open(STALE, "w") as f:
+        f.write("# Worktrees untouched 7+ days (pm-reap never deletes these). Remove with: git worktree remove <path>\n")
+        f.write("\n".join(sorted(rows, reverse=True)) + "\n")

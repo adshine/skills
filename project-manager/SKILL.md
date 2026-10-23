@@ -255,6 +255,9 @@ tool output. Keep the context small:
   project manager, and any pane the user says is not yours, stays untouched.
 - Close or restart only what you created.
 - When `bin/pm-capacity` says STOP, dispatch nothing new until it clears.
+  STOP only happens when free disk is under 1 GB; everything else is BUSY. Install
+  `bin/pm-reap --install` once so leftover test browsers, old temp profiles and
+  idle build caches are cleaned automatically every 15 minutes.
 
 ## Reference: read at the moment named
 
