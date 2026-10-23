@@ -26,8 +26,10 @@ printf '%s\n' "${HERDR_ENV:-outside}" "$HERDR_WORKSPACE_ID" "$HERDR_PANE_ID"
   matches the project folder you were started in. Tell the user in one line
   which you adopted. With no match or several, ask once. Outside there is no
   `--current`, so pass explicit pane IDs, and make your first worker tab with
-  `herdr tab create`. If the list command fails, Herdr is not running: tell the
-  user and give them tickets to paste.
+  `herdr tab create`. If the list command fails, Herdr is not running: use
+  the host's background subagents as workers (`claude-code-subagents.md`),
+  and tell the user in one line that you are doing so. With no subagents
+  either, give them tickets to paste.
 
 The workspace decides the project. The project folder is where the workspace's
 panes live (`herdr pane list --workspace "$WS"` shows each pane's folder), which
@@ -83,6 +85,8 @@ time, spent like this:
 
 1. Read its last 10 lines. If your text is sitting in its input box, send
    `herdr agent send-keys <name> enter` and look again after 20 seconds.
+   Grey text in a Claude Code input box is the tool's own suggestion, not your
+   brief and not user input: never press enter on it.
 2. Still nothing: mark it `wedged` on the board with one line of what you saw
    ("context 99.9%, prompts echo, nothing runs"), return its ticket to the
    frontier, and dispatch that ticket to another worker, creating one if nobody
@@ -120,14 +124,15 @@ You never wait. After dispatch you end your turn, and one of two things starts
 the next one:
 
 - **A doorbell.** A worker's `pm-report` types one line beginning `inbox:` into
-  your pane. It needs your agent name, so set it once at the start:
+  the pane named in `<board-dir>/manager` (the delegator's, when the board has
+  a front desk; the front desk itself is never rung by workers). It needs your agent name, so set it once at the start:
 
 ```bash
 herdr agent rename "$HERDR_PANE_ID" app-pm
-echo app-pm > $PM_HOME/<project>/manager
+echo app-pm > $PM_HOME/<project>/manager   # pm-delegate later swaps in app-delegate
 ```
 
-- **A nudge.** The watchdog (`pm-watch`) types `nudge:` into your pane when
+- **A nudge.** The watchdog (`pm-watch`) types `nudge:` into the manager's pane when
   the inbox has held unread entries for more than two minutes, which covers a
   lost or failed doorbell.
 
@@ -168,7 +173,8 @@ agents are open and refuses while memory pressure is at warning, because an
 idle worker you already have is always cheaper than a new one. A message in
 your pane beginning `capacity: STOP` comes from the watchdog: treat it the same
 way, at once. When your frontier is empty, close the workers you created: open
-agents pile up in swap even when idle.
+agents pile up in swap even when idle. With a front desk only the delegator
+is rung; it tells the front desk once if work stays paused over 10 minutes.
 
 **1. Make room.** A pane in a tab you own first, a new tab once that tab holds
 about four panes or a split would leave them too small to read. Split wide
@@ -190,6 +196,8 @@ and tab create accept it.
 $PM_SKILL/bin/pm-spawn app-w1 claude <pane-id>
 $PM_SKILL/bin/pm-spawn app-w1 codex <pane-id>
 $PM_SKILL/bin/pm-spawn app-w1 pi <pane-id>
+$PM_SKILL/bin/pm-spawn app-w1 grok <pane-id>
+$PM_SKILL/bin/pm-spawn app-w1 opencode <pane-id>
 ```
 
 It checks capacity and refuses unless the verdict is OK, takes turns with other
@@ -201,12 +209,15 @@ your CLIs; by default codex and grok get `--yolo`, opencode `--auto`, pi
 `--no-skills`). A refusal is an answer, not an obstacle:
 reuse, wait, or close.
 
-When the user named the kinds they want, use exactly those. Otherwise use the
+When the user named the kinds they want, or the board records a kind and tab
+for this workspace (SKILL.md, Opening moves), use exactly those, in that tab.
+Otherwise use the
 agent CLIs installed on this machine, in the order the user prefers: take the
 first that starts and is ready for input. When memory is tight, prefer the
 lightest kind: agents that load every helper server (MCP) in the user's
 settings can cost ten times the processes of a minimal one. A cheap, fast
-model suits read-only tickets (research, reproduce).
+model suits read-only tickets (research, reproduce); `opencode` with a cheap
+default model fits that role well.
 
 Name workers with a short project prefix and a number, matching any prefix the
 existing workers use. Pane IDs such as `w1:p6` are not names. Names are
@@ -254,5 +265,6 @@ herdr pane close <pane-id>
 herdr tab close <tab-id>
 ```
 
-Panes the user set up are yours to brief and theirs to close, rename, or
-restart.
+Close only panes your board records as "created by me"; looking idle is not a
+reason. Panes the user set up are yours to brief and theirs to close, rename,
+or restart.

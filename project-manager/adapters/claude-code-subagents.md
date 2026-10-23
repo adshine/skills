@@ -39,3 +39,7 @@ watchdogs: the host tells you when each subagent finishes.
 `pm-spawn`, `pm-blocked-watch`, `pm-stall-watch`, and `pm-watch`'s pane
 nudges are for long-lived workers in panes. With subagents, the completion
 notification replaces all of them.
+
+There is no front desk / delegator split either: `pm-delegate` needs panes, so
+you run `delegator.md` yourself (solo), skip `pm-request` and `pm-digest`, and
+tell the user directly.

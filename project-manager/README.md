@@ -10,6 +10,10 @@ terminal panes (Herdr, tmux, separate sessions) through adapters.
 
 ## What you get
 
+- **A quiet front desk.** Inside Herdr, the pane you talk to hands the board
+  to a delegator pane. Workers ring only the delegator; you hear back in short
+  plain-English digests (done, needs you, stop, paused). Elsewhere one manager
+  does both.
 - **Tickets as files.** Each ticket is the task and the worker's brief in one
   file, so a worker with zero context can finish it. Reports, an inbox, a
   board, and an append-only ledger live beside them, outside your repo.
@@ -65,13 +69,18 @@ project-manager/
   user.md                         reporting, questions, handoffs, crash recovery
   adapters/claude-code-subagents.md
   adapters/herdr.md               optional, for Herdr panes
+  delegator.md                    the loop, watchdogs, digests: run by the delegator, or by you solo
   bin/
-    pm-report  pm-inbox           worker hands in; manager reads the inbox (any runtime)
+    pm-report  pm-inbox           worker hands in; manager reads the inbox and requests (any runtime)
+    pm-request  pm-digest         front desk -> delegator, delegator -> front desk (any runtime; rings need Herdr)
+    pm-ring                       one-line ring into the manager or front desk pane, under a lock (rings need Herdr)
     git                           guardrail wrapper put first on a worker's PATH (any runtime)
     pm-heavy                      one heavy job at a time per machine (any runtime)
     pm-capacity                   OK / BUSY / STOP verdict (macOS and Linux; agent count needs Herdr)
     pm-watch                      capacity alarm and inbox nudges (nudges need Herdr)
     pm-spawn  pm-blocked-watch  pm-stall-watch   Herdr only
+    pm-delegate                   splits off a delegator pane so the pane you talk to stays quiet (Herdr only)
+    pm-opencode-agent             builds an OpenCode agent file from SKILL.md (optional)
 ```
 
 Dependencies: bash, git; `jq` for the Herdr scripts; zsh and python3 for

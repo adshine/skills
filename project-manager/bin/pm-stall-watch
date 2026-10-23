@@ -9,8 +9,9 @@
 #     on screen (a worker that stops politely with a question shows as "done"),
 #   - idle or done for 10 minutes while its ticket is still open.
 # The exit wakes the manager; handle it, then re-arm in the same turn.
-# Targets file: one line per worker, "host|pane" (host "local" = this machine,
-# otherwise an SSH host with herdr; set PM_REMOTE_PATH if herdr lives elsewhere there). Delete a line when its ticket is closed so a
+# Targets file: one line per worker, "host|name" (the agent name; a bare pane id
+# also matches, but a name survives pane moves and reads clearly in alerts) (host "local" = this machine,
+# otherwise an SSH host with herdr; set PM_REMOTE_PATH if herdr lives elsewhere there). Run by the delegator when there is one. Delete a line when its ticket is closed so a
 # finished worker does not trip the idle check. Lines starting with # are ignored.
 set -u
 file="${1:?targets file}"; every="${2:-60}"
@@ -31,7 +32,7 @@ while :; do
     fi
     miss[$h]=0
     st=$(print -r -- "$raw" | python3 -c "import json,sys
-try: print([a['agent_status'] for a in json.load(sys.stdin)['result']['agents'] if (a.get('name') or a['pane_id'])=='$p'][0])
+try: print([a['agent_status'] for a in json.load(sys.stdin)['result']['agents'] if '$p' in (a.get('name'), a['pane_id'])][0])
 except Exception: print('missing')")
     screen=$(run "$h" "herdr agent read '$p' --source visible 2>/dev/null | tail -40")
     hit=$(print -r -- "$screen" | grep -iE "$PATTERN" | tail -1 | cut -c1-200)

@@ -1,0 +1,42 @@
+#!/bin/bash
+# pm-opencode-agent : (re)generate the OpenCode agent file for the project
+# manager from SKILL.md, so the skill stays the single source of truth.
+# Produces ~/.config/opencode/agents/project-manager.md (override with
+# OPENCODE_PM_AGENT). Run it before starting OpenCode as the project manager,
+# and again after SKILL.md changes. Set OPENCODE_PM_MODEL to pick the model.
+set -eu
+skill="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+out="${OPENCODE_PM_AGENT:-$HOME/.config/opencode/agents/project-manager.md}"; mkdir -p "$(dirname "$out")"
+model="${OPENCODE_PM_MODEL:-deepseek/deepseek-v4-flash}"
+{
+cat <<FM
+---
+description: Project manager over worker agents (terminal panes, sessions, subagents). Tickets, dispatch, verify, report. Never builds.
+mode: primary
+model: $model
+temperature: 0.2
+permission:
+  "*": allow
+  skill: deny
+  bash:
+    "*": allow
+    "git push*": deny
+    "git reset --hard*": deny
+    "git clean*": deny
+    "rm -rf /*": deny
+---
+FM
+# body: SKILL.md without its own frontmatter
+awk 'BEGIN{fm=0} NR==1 && /^---$/ {fm=1; next} fm==1 && /^---$/ {fm=2; next} fm!=1 {print}' "$skill/SKILL.md"
+cat <<TAIL
+
+## Standing role (OpenCode)
+
+The project-manager skill above is your standing role for this whole session.
+Its folder is $skill. Its reference files (delegator.md, tickets.md, review.md, user.md,
+planning.md, and adapters/) are read with your read tool at those paths;
+the skill tool is off on purpose. When your workers run in Herdr panes, read
+$skill/adapters/herdr.md before your first herdr command.
+TAIL
+} > "$out"
+echo "$out"

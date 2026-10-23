@@ -1,0 +1,16 @@
+#!/bin/bash
+# pm-request <board-dir> <the user's request, in their words>   (or "-" to read it from stdin)
+# Run by the FRONT DESK to hand a user request to the delegator. Writes
+# <board>/requests/<stamp>.md, rings the delegator with "request: <file>", and
+# returns at once. The front desk tells the user "sent to the delegator" and
+# never waits for an answer; the answer comes back through pm-digest.
+set -u
+dir="${1:?board dir}"; shift; dir="${dir/#\~/$HOME}"
+if [ "${1:-}" = "-" ]; then text="$(cat)"; else text="$*"; fi
+[ -n "$text" ] || { echo "usage: pm-request <board-dir> <request text | ->" >&2; exit 2; }
+mkdir -p "$dir/requests/seen"
+f="$dir/requests/$(date +%Y%m%dT%H%M%S)-$$.md"
+{ echo "Request from the user via the front desk ($(head -1 "$dir/front" 2>/dev/null || echo "${HERDR_PANE_ID:-unknown}")), $(date '+%Y-%m-%d %H:%M:%S'):"; echo; echo "$text"; } > "$f.tmp" && mv "$f.tmp" "$f"
+echo "request filed: $f"
+"$(dirname "${BASH_SOURCE[0]}")/pm-ring" "$dir" manager "request: $f"
+exit 0

@@ -5,8 +5,11 @@
 #   1. check the report file exists
 #   2. drop a uniquely named file in the manager's inbox (the truth; workers
 #      can never overwrite each other because every entry is its own file)
-#   3. ring the manager's pane once, under a lock, so two workers never type
-#      into it at the same moment. The ring only says "look at the inbox".
+#   3. ring the manager's pane once (pm-ring, under a lock, so two workers never
+#      type into it at the same moment). The ring only says "look at the inbox".
+#      With a front desk (<board>/front), the manager file names the delegator,
+#      so workers never reach the pane the user talks to. With no manager file
+#      or no herdr, nothing is rung and this still exits 0: the entry is enough.
 set -u
 dir="${1:?board dir}"; id="${2:?ticket id}"; status="${3:?status}"; shift 3; note="$*"
 dir="${dir/#\~/$HOME}"
@@ -22,19 +25,7 @@ entry="$dir/inbox/$stamp-$id-$status-$$"
 printf '%s %s from %s at %s. Report: %s%s\n' "$id" "$status" "$who" "$(date '+%Y-%m-%d %H:%M:%S')" "$report" "${note:+ Note: $note}" > "$entry.tmp" && mv "$entry.tmp" "$entry"
 echo "inbox: $(basename "$entry")"
 
-manager="$(cat "$dir/manager" 2>/dev/null | head -1)"
-if [ -z "$manager" ] || ! command -v herdr >/dev/null 2>&1; then
-  echo "no manager pane to ring; the inbox entry is enough"; exit 0
-fi
-
-lock="$dir/inbox/.bell"
-for _ in $(seq 1 40); do
-  if mkdir "$lock" 2>/dev/null; then break; fi
-  # break a lock left behind by a crashed ring (older than 30s)
-  if [ -n "$(find "$lock" -maxdepth 0 -mmin +0.5 2>/dev/null)" ]; then rmdir "$lock" 2>/dev/null; fi
-  sleep 1
-done
-herdr agent prompt "$manager" "inbox: $id $status" >/dev/null 2>&1 && echo "rang $manager" || echo "could not ring $manager; the inbox entry is enough"
-sleep 1
-rmdir "$lock" 2>/dev/null
+# Always the delegator (<board>/manager), never the front desk the user talks to.
+# pm-ring exits 1 when there is nobody to ring; that is fine here.
+"$(dirname "${BASH_SOURCE[0]}")/pm-ring" "$dir" manager "inbox: $id $status" || true
 exit 0

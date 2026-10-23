@@ -1,19 +1,25 @@
 #!/bin/bash
 # pm-inbox <board-dir> [--peek]
 # Run by the MANAGER when a doorbell (inbox:) or nudge (nudge:) arrives.
-# Prints every unread inbox entry, oldest first, and moves each to inbox/seen/.
+# Prints every unread inbox entry, oldest first, and moves each to inbox/seen/,
+# then every unread front-desk request (requests/, from pm-request) the same way.
 # Act on ALL of them: never filter this output. --peek prints without marking
 # anything read. There is no --wait: the manager is idle between events and is
 # woken by doorbells and the watchdog's nudge.
 set -u
 dir="${1:?board dir}"; dir="${dir/#\~/$HOME}"; peek=0
 for a in "$@"; do case "$a" in --peek) peek=1;; --wait) echo "pm-inbox: --wait was removed. End your turn; a doorbell or nudge will wake you." >&2; exit 2;; esac; done
-mkdir -p "$dir/inbox/seen"
+mkdir -p "$dir/inbox/seen" "$dir/requests/seen"
 found=0
 for f in "$dir"/inbox/2*; do
   [ -f "$f" ] || continue
   case "$f" in *.tmp) continue ;; esac
   cat "$f"; [ $peek -eq 1 ] || mv "$f" "$dir/inbox/seen/"; found=1
+done
+for f in "$dir"/requests/2*; do
+  [ -f "$f" ] || continue
+  case "$f" in *.tmp) continue ;; esac
+  echo "REQUEST ($(basename "$f")):"; cat "$f"; [ $peek -eq 1 ] || mv "$f" "$dir/requests/seen/"; found=1
 done
 [ $found -eq 0 ] && echo "inbox empty"
 exit 0
