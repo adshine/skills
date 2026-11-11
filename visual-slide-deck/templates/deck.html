@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deck title</title>
+<style>
+  /* Size scale, each step 1.618 times the last: 16, 26, 42, 68, 110, 178 */
+  :root {
+    --paper: #F7F8F9; --ink: #111111; --soft: #6B7280; --line: #E5E7EB; --tile: #EDEEF1;
+    --accent: #9C45D7; --mark: #E8D5F7;
+    --display: system-ui, sans-serif; --sans: system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; background: var(--paper); color: var(--ink); font: 16px/1.5 var(--sans); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h1, h2, h3, p, figure { margin: 0; }
+
+  /* Fixed 1440 x 810 slides, side by side, each scaled to fit the window. The PDF prints them 1:1. */
+  .deck { display: flex; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; background: #1B1C1F; }
+  .deck::-webkit-scrollbar { display: none; }
+  .frame { position: relative; flex: 0 0 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; }
+  .slide { position: absolute; left: 50%; top: 50%; width: 1440px; height: 810px; transform: translate(-50%, -50%) scale(var(--fit, 1)); container-type: size; overflow: hidden; background: var(--paper); padding: 52px 96px 68px; display: flex; flex-direction: column; }
+
+  .slide h2 { font: 700 68px/1 var(--display); letter-spacing: -.03em; max-width: 1000px; text-wrap: balance; }
+  /* Highlight exactly one line tall, so it never reaches the descenders of the line above */
+  mark { background: linear-gradient(var(--mark), var(--mark)) 0 .27em / 100% 1em no-repeat; color: inherit; padding: 0 .14em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+  /* 12-column grid */
+  .grid12 { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 24px; align-items: start; }
+
+  /* Even tiles: object centred, name and one sentence at the foot */
+  .tiles { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); column-gap: 24px; margin-top: 42px; }
+  .tiles article { min-height: 0; display: flex; flex-direction: column; padding: 26px; background: var(--tile); }
+  .tiles img { flex: 1; min-height: 0; width: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  .tiles h3 { margin-top: 16px; font: 600 26px/1.15 var(--display); letter-spacing: -.02em; }
+  .tiles p { margin-top: 6px; color: var(--soft); max-width: 30ch; }
+
+  /* Dark cover and close: plate edge to edge on the smaller side of the 890 | 550 split */
+  .slide.dark { background: #000; color: #fff; padding: 0; display: block; }
+  .dark > * { position: absolute; }
+  .dark .plate { left: 890px; top: 0; width: 550px; height: 810px; background: #E8E1CF center / cover no-repeat; }
+  .dark h1 { left: 64px; top: 500px; font: 700 110px/1 var(--display); letter-spacing: -.02em; }
+  .dark h1 span { display: block; }
+
+  .count { position: fixed; right: 16px; bottom: 12px; font: 500 12px ui-monospace, monospace; color: #C9CBD1; background: rgba(27, 28, 31, .72); padding: 3px 8px; border-radius: 4px; pointer-events: none; }
+
+  @page { size: 1440px 810px; margin: 0; }
+  @media print {
+    html, body { height: auto; } body { overflow: visible; }
+    .deck { display: block; height: auto; overflow: visible; background: none; }
+    .frame { width: 1440px; height: 810px; break-after: page; break-inside: avoid; }
+    .frame:last-child { break-after: auto; }
+    .slide { position: static; transform: none; }
+    .count { display: none; }
+  }
+</style>
+</head>
+<body>
+<main class="deck" id="deck">
+<div class="frame"><section class="slide dark">
+  <div class="plate" role="img" aria-label="Say what this deck's cover picture shows" style="background-image: url(assets/PLATE-FROM-PICTURES-JSON.jpg)"></div>
+  <h1><span>Deck</span><span>title</span></h1>
+</section></div>
+
+<div class="frame"><section class="slide">
+  <h2>The claim, with <mark>one phrase marked</mark></h2>
+  <div class="tiles">
+    <article><img src="assets/object-1.jpg" alt=""><h3>First item</h3><p>One sentence.</p></article>
+    <article><img src="assets/object-2.jpg" alt=""><h3>Second item</h3><p>One sentence.</p></article>
+    <article><img src="assets/object-3.jpg" alt=""><h3>Third item</h3><p>One sentence.</p></article>
+  </div>
+</section></div>
+</main>
+<div class="count" id="count"></div>
+<script>
+  (function () {
+    var deck = document.getElementById('deck'), frames = [].slice.call(deck.children), count = document.getElementById('count'), wheelAt = 0;
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    function fit() { document.documentElement.style.setProperty('--fit', Math.min(window.innerWidth / 1440, window.innerHeight / 810)); }
+    function current() { return Math.max(0, Math.min(frames.length - 1, Math.round(deck.scrollLeft / deck.clientWidth))); }
+    function paint() { count.textContent = pad(current() + 1) + ' / ' + pad(frames.length); }
+    function to(i) { deck.scrollTo({ left: Math.max(0, Math.min(frames.length - 1, i)) * deck.clientWidth }); }
+    deck.addEventListener('scroll', paint, { passive: true });
+    window.addEventListener('resize', function () { var i = current(); fit(); to(i); paint(); });
+    deck.addEventListener('wheel', function (e) {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+      e.preventDefault();
+      var now = Date.now(); if (now - wheelAt < 450 || Math.abs(e.deltaY) < 12) return;
+      wheelAt = now; to(current() + (e.deltaY > 0 ? 1 : -1));
+    }, { passive: false });
+    window.addEventListener('keydown', function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].indexOf(e.key) > -1) { e.preventDefault(); to(current() + 1); }
+      else if (['ArrowLeft', 'ArrowUp', 'PageUp'].indexOf(e.key) > -1) { e.preventDefault(); to(current() - 1); }
+      else if (e.key === 'Home') { e.preventDefault(); to(0); }
+      else if (e.key === 'End') { e.preventDefault(); to(frames.length - 1); }
+    });
+    fit(); paint();
+  })();
+</script>
+</body>
+</html>
