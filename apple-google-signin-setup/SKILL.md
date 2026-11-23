@@ -14,9 +14,9 @@ signed-in Chrome (Claude in Chrome, "Browser 1").
 |---|---|
 | Google Cloud account | alethibusiness@gmail.com (`gcloud` is logged in as it; TLDR Books is project `tldr-books-487703`) |
 | Ghostbar Google project | `ghostbar-signin` (number 495729388401), client "Ghostbar Web" |
-| Apple Developer account | alethibusiness@gmail.com (Alethi team). Signing in needs the owner's password and 2FA |
+| Apple Developer account | alethibusiness@gmail.com, team ALETHI CONSULTING INC (7XKDXXC88Q). Signing in needs the owner's password and 2FA |
 | Support email for an app | Ask the app's docs first. Ghostbar: `ghostbarsupport@alethiconsulting.com` (set by the owner in a Gemini chat, also `MAIL_REPLY_TO` in `worker/wrangler.jsonc`) |
-| Secrets | Bitwarden via `rbw`: `Ghostbar / Google Sign-In / OAuth client` (username = client ID, password = secret) |
+| Secrets | Bitwarden via `rbw`: `Ghostbar / Google Sign-In / OAuth client` (username = client ID, password = secret), `Ghostbar / Sign in with Apple / key` (username = key ID, notes = .p8 and IDs) |
 | Server | Cloudflare Worker, `npx --no-install wrangler secret put NAME` from the worker folder |
 
 One Google project per app, never reuse another app's project: Google's sign-in screen shows the
@@ -57,21 +57,28 @@ project's app name, so reusing TLDR's would say "TLDR Books".
 
 ## Apple (Services ID plus a Sign in with Apple key)
 
-The owner signs in to developer.apple.com (password and 2FA). Then, under the Alethi team:
+The owner signs in to developer.apple.com in Chrome (password and 2FA; agents never type them). Team:
+ALETHI CONSULTING INC, Team ID `7XKDXXC88Q` (shown top right). Ghostbar values, done 23 Nov 2026:
+App ID `com.alethi.ghostbar`, Services ID `com.alethi.ghostbar.signin`, Key ID `Y29V4587S9`.
 
-1. Identifiers > App IDs: an App ID for the app with "Sign in with Apple" on (primary App ID). Reuse the
-   app's own bundle ID if it has one (Ghostbar builds use the local id `com.local.ghostbar.rust` in `app/bundle.sh`, so register a real one in the Alethi team, for example `com.alethi.ghostbar`).
-2. Identifiers > Services IDs: new, identifier `<bundle id>.signin`, description the product name.
-   Configure Sign in with Apple: primary App ID from step 1, domain = SITE_URL host, return URL = the
-   Apple callback (Apple form_posts to it).
-3. Keys: new key, name "<App> Sign in with Apple", tick Sign in with Apple, configure with the primary App
-   ID. Download the `.p8` (only once). Note the Key ID.
-4. Team ID: top right of the developer site, or Membership.
-5. Bitwarden: `<App> / Sign in with Apple / key` with the .p8 contents, key ID, team ID, services ID.
-   Delete the downloaded .p8 after it is in the vault.
-6. Server secrets: `APPLE_SERVICES_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY` (the whole
-   .p8 text, PKCS8 PEM).
-7. Check the start URL for `provider=apple` points at appleid.apple.com with the Services ID.
+1. `https://developer.apple.com/account/resources/identifiers/add/bundleId` > App IDs > App. Description
+   = product name, Explicit bundle ID (Ghostbar builds use the local `com.local.ghostbar.rust` from
+   `app/bundle.sh`, so a real one was registered), tick Sign In with Apple ("Enable as a primary App ID"),
+   Continue, Register.
+2. Same page > Services IDs. Description = product name (Apple shows it on its sign-in screen),
+   identifier `<bundle id>.signin`, Register. Open it from the Services IDs list, tick Sign in with
+   Apple, Configure: **change Primary App ID from TLDR Books to the new App ID** (it defaults to TLDR),
+   domain = SITE_URL host, return URL = the Apple callback. Next, Done, Continue, Save.
+3. `.../resources/authkeys/add`: name "<App> Sign in with Apple", tick Sign in with Apple, Configure,
+   pick the new App ID, Save, Continue, Register. Note the Key ID, then Download (once only; lands in
+   `~/Downloads/AuthKey_<KEYID>.p8`, about 257 bytes).
+4. Bitwarden through stdin, first line = password:
+   `printf '%s\n\n%s\n' "<KEYID>" "$(cat AuthKey.p8) + notes with team, services and app IDs" | rbw add "<App> / Sign in with Apple / key" "<KEYID>"`.
+   Check the PEM in `rbw get --full` matches the file, then move the .p8 to the Trash.
+5. Server secrets: `APPLE_SERVICES_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and
+   `cat AuthKey.p8 | wrangler secret put APPLE_PRIVATE_KEY` (the whole PEM).
+6. Check: the start URL for `provider=apple` points at appleid.apple.com with the Services ID, and
+   `curl -sL` on that URL shows "Sign in to Apple Account", not `invalid_client`.
 
 ## Finish
 
